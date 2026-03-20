@@ -1,0 +1,10 @@
+.gallery-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.gallery-page h1 {
+  text-align: center;
+}
+

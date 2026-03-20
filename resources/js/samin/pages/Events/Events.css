@@ -1,0 +1,10 @@
+.events-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.events-page h1 {
+  text-align: center;
+}
+

@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "needHelp": "Need help?"
+  },
+  "pages": {
+    "main": {
+      "title": "Home Page"
+    },
+    "contact": {
+      "title": "Contact Us"
+    },
+    "gallery": {
+      "title": "Gallery"
+    },
+    "events": {
+      "title": "Events"
+    },
+    "registrationEvent": {
+      "title": "Event Registration"
+    },
+    "getTicket": {
+      "title": "Get Ticket"
+    }
+  },
+  "process": {
+    "subtitle": "Steps",
+    "title": "Process of",
+    "titleSpan": "Ordering Candle Packages",
+    "step1": {
+      "title": "Choose a Package",
+      "description": "Browse our candle package collection, find the perfect package for your occasion."
+    },
+    "step2": {
+      "title": "Contact Us",
+      "description": "Our consultant team is ready to help you with the ordering process or any questions."
+    },
+    "step3": {
+      "title": "Receive Your Candles",
+      "description": "Receive the package and enjoy your candles. We handle all our orders with respect."
+    },
+    "note": "If you've never ordered a package before, we'll guide you through the process."
+  },
+  "products": {
+    "subtitle": "Our Products",
+    "title": "Featured Products",
+    "product1": {
+      "title": "Candle Making Kit",
+      "description": "Complete kit with all tools and materials needed to make your own candles.",
+      "details": {
+        "passengers": "4 Candles",
+        "transmission": "Paraffin Wax",
+        "age": "25 Days"
+      },
+      "price": "800 USD<br><i>per day</i>"
+    },
+    "product2": {
+      "title": "Scented Candles",
+      "description": "A variety of scented candles in different fragrances and sizes.",
+      "details": {
+        "passengers": "6 Candles",
+        "transmission": "Soy Wax",
+        "age": "30 Days"
+      },
+      "price": "600 USD<br><i>per day</i>"
+    },
+    "product3": {
+      "title": "Custom Packages",
+      "description": "Personalized candle packages tailored to your specific needs and preferences.",
+      "details": {
+        "passengers": "8 Candles",
+        "transmission": "Beeswax",
+        "age": "20 Days"
+      },
+      "price": "1000 USD<br><i>per day</i>"
+    },
+    "product4": {
+      "title": "Essential Oil Set",
+      "description": "High-quality essential oils for candle making and aromatherapy.",
+      "details": {
+        "passengers": "10 Oils",
+        "transmission": "Natural Oils",
+        "age": "40 Days"
+      },
+      "price": "500 USD<br><i>per day</i>"
+    },
+    "product5": {
+      "title": "Wick Assortment",
+      "description": "Various types of wicks for different candle sizes and types.",
+      "details": {
+        "passengers": "50 Wicks",
+        "transmission": "Cotton Wicks",
+        "age": "35 Days"
+      },
+      "price": "300 USD<br><i>per day</i>"
+    },
+    "product6": {
+      "title": "Candle Containers",
+      "description": "Beautiful containers and jars for your handmade candles.",
+      "details": {
+        "passengers": "12 Containers",
+        "transmission": "Glass Jars",
+        "age": "45 Days"
+      },
+      "price": "700 USD<br><i>per day</i>"
+    }
+  },
+  "hero": {
+    "slider": {
+      "text1": "Handmade candle kits for every style",
+      "text2": "All-in-one candle making tools & supplies",
+      "text3": "Every candle tells a story of light & scent",
+      "text4": "Starter to pro candle making bundles",
+      "text5": "Customize scent, color and packaging"
+    },
+    "slogans": [
+      "Professional candle making kits for hobbyists and brands",
+      "Complete candle supplies in one curated package",
+      "Corporate New Year gift boxes with bespoke candles",
+      "Seasonal & festive gift bundles for companies and events",
+      "Branded aromatic candle packages tailored to your company"
+    ]
+  },
+  "language": {
+    "fa": "فارسی",
+    "en": "English"
+  },
+  "categories": {
+    "subtitle": "Our Categories",
+    "title": "Product Categories"
+  },
+  "video": {
+    "subtitle": "Explore",
+    "title": "Candle Making",
+    "titleSpan": "Video"
+  },
+  "testimonials": {
+    "subtitle": "Testimonials",
+    "title": "Customer Reviews"
+  },
+  "app": {
+    "subtitle": "Social Media",
+    "title": "We are on social media",
+    "description": "Follow us on social media and watch exciting candle making videos.",
+    "instagram": "Instagram",
+    "telegram": "Telegram"
+  },
+  "footer": {
+    "contact": {
+      "title": "Contact Us",
+      "phone": "09100000000"
+    },
+    "email": {
+      "title": "Send Email",
+      "address": "info@renax.com"
+    },
+    "address": {
+      "title": "Address",
+      "location": "Tehran, Velenjak"
+    },
+    "about": {
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "about": "About Us",
+      "cars": "Cars",
+      "carTypes": "Car Types",
+      "team": "Team",
+      "contact": "Contact Us"
+    },
+    "subscribe": {
+      "title": "Follow Us",
+      "description": "Want to be notified about our services. Just sign up and we will send you a notification via email.",
+      "placeholder": "Email Address"
+    },
+    "copyright": {
+      "text": "© All rights reserved. Designed by",
+      "designer": "iarsalan.rah"
+    }
+  }
+}

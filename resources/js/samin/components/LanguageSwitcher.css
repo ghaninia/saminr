@@ -1,0 +1,130 @@
+.language-switcher {
+  position: relative;
+  display: inline-block;
+}
+
+.language-switcher-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 60px;
+  justify-content: space-between;
+}
+
+.language-switcher-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--secondary);
+}
+
+.language-switcher-button:focus {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.language-label {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.language-arrow {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.language-arrow.open {
+  transform: rotate(180deg);
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 80px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.language-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.language-option.active {
+  background: rgba(204, 157, 90, 0.2);
+  color: var(--secondary);
+}
+
+.language-option .language-label {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.language-check {
+  flex-shrink: 0;
+  color: var(--secondary);
+}
+
+/* RTL Support */
+[dir="rtl"] .language-switcher-button {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .language-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .language-option {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .language-label {
+  text-align: right;
+}
+

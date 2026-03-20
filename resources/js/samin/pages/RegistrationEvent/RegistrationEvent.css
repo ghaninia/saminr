@@ -1,0 +1,10 @@
+.registration-event-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.registration-event-page h1 {
+  text-align: center;
+}
+
