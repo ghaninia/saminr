@@ -8,7 +8,7 @@ function AppSection() {
   const { theme } = useTheme()
 
   return (
-    <section id="app" data-scroll-index="7" className="app section-padding">
+    <section id="app-section" className="app section-padding">
       <div className="container">
         <div className="item">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
