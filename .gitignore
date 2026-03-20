@@ -1,24 +1,38 @@
-*.log
-.DS_Store
+# ─── Environment ──────────────────────────────────────────────────────────────
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-/public/build
-/public/hot
-/public/storage
+.env.*
+!.env.example
+
+# ─── Laravel ──────────────────────────────────────────────────────────────────
+/vendor/
 /storage/*.key
-/storage/pail
-/vendor
+/storage/pail/
+/public/storage
+/public/hot
+/public/build
+/bootstrap/cache/*.php
+.phpunit.result.cache
+/.phpunit.cache
+auth.json
+
+# ─── Node / Frontend ──────────────────────────────────────────────────────────
+/node_modules/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── IDEs ─────────────────────────────────────────────────────────────────────
+/.idea/
+/.vscode/
+/.fleet/
+/.nova/
+/.zed/
+.phpactor.json
+
+# ─── Misc ─────────────────────────────────────────────────────────────────────
 Homestead.json
 Homestead.yaml
-Thumbs.db

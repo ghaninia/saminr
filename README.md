@@ -1,59 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Samin — Handcrafted Candle Studio
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Samin is a bilingual (Persian / English) web storefront for a handcrafted candle brand. It showcases the product catalogue, the candle-making process, upcoming events, a gallery, and a contact page — all served as a single-page application inside a Laravel backend.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12, PHP 8.2 |
+| Frontend | React 18, React Router 6 |
+| Styling | Tailwind CSS v4, tw-animate-css |
+| Icons | Lucide React |
+| Slider | Swiper 12 |
+| Build tool | Vite 7 + laravel-vite-plugin |
+| Runtime | Docker (PHP-FPM, Nginx, Redis) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Project Structure
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```
+resources/
+  application/        # JavaScript entry point & React source
+    app.jsx           # Laravel Vite entry — mounts React
+    client/           # Full React SPA
+      App.jsx         # Router, ThemeProvider, LanguageProvider
+      components/     # Navigation, Footer, Candle, etc.
+      contexts/       # LanguageContext, ThemeContext
+      pages/          # Main, Contact, Gallery, Events, GetTicket, RegistrationEvent
+      translations/   # fa.json, en.json
+  views/
+    home.blade.php    # SPA shell (single HTML file)
+public/
+  fonts/              # YekanBakh, Vazirmatn
+  images/             # Product & content images
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Make](https://www.gnu.org/software/make/)
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Quick Start
 
-## Contributing
+```bash
+# 1. Copy environment file
+cp .env.example .env
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 2. Start all services  (backend + frontend + redis)
+make up
 
-## Code of Conduct
+# 3. Generate app key (first time only)
+make key
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 4. Run database migrations (first time only)
+make migrate
+```
 
-## Security Vulnerabilities
+Open **http://localhost:8080** in your browser.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Vite dev server with HMR runs automatically on **http://localhost:5173**.
+
+---
+
+## Common Commands
+
+```bash
+make up               # Start all services
+make down             # Stop & remove containers
+make restart          # Restart all services
+make logs             # Follow all logs
+make logs-front       # Follow Vite dev server logs
+make shell            # Shell into PHP container
+make front-shell      # Shell into Node container
+
+make artisan cmd="route:list"   # Run any artisan command
+make npm cmd="install lodash"   # Run any npm command
+
+make migrate          # Run migrations
+make fresh            # Fresh migrate + seed
+make test             # Run PHPUnit tests
+make front-build      # Build frontend for production
+```
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `APP_PORT` | `8080` | Nginx public port |
+| `VITE_PORT` | `5173` | Vite dev server port |
+| `VITE_HMR_HOST` | `localhost` | HMR websocket host |
+| `CHOKIDAR_USEPOLLING` | `true` | File watching inside Docker |
+
+---
+
+## Features
+
+- **Bilingual UI** — seamless Persian / English switching with RTL support
+- **Dark / Light theme** — persisted via React context
+- **Product catalogue** — categorised candle collection with a scroll fade effect
+- **Process timeline** — step-by-step candle-making story
+- **Events & ticketing** — event listing, registration, and ticket download pages
+- **Gallery** — photo showcase
+- **Contact page** — enquiry form
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
+

@@ -177,6 +177,8 @@ body {
     transition:
         background-color 0.3s,
         color 0.3s;
+    direction: rtl;
+    text-align: right;
 }
 
 h1 {
