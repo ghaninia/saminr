@@ -48,6 +48,27 @@ services:
     networks:
       - melyo-net
 
+  frontend:
+    image: node:20-alpine
+    container_name: melyo-frontend
+    working_dir: /var/www/html
+    command: >
+      sh -c "
+        npm install &&
+        npm run dev -- --host 0.0.0.0 --port ${VITE_PORT:-5173}
+      "
+    environment:
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    volumes:
+      - ./:/var/www/html:cached
+      - node-modules:/var/www/html/node_modules
+    depends_on:
+      - app
+    ports:
+      - "${VITE_PORT:-5173}:${VITE_PORT:-5173}"
+    networks:
+      - melyo-net
+
   redis:
     image: redis:7.2.4
     container_name: melyo-redis
@@ -62,6 +83,7 @@ services:
 
 volumes:
   redis-data:
+  node-modules:
 
 networks:
   melyo-net:
