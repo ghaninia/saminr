@@ -13,6 +13,8 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
+        Setting::query()->where('key', 'theme_color')->delete();
+
         $localized = static fn (string $fa, string $en): string => json_encode([
             'fa' => $fa,
             'en' => $en,
@@ -100,6 +102,45 @@ class SettingSeeder extends Seeder
             ],
             'product_intro_url' => [
                 'default' => 'https://samincandle.ir/products',
+                'type' => SettingType::SINGLE,
+            ],
+            'site_url' => [
+                'default' => 'https://samincandle.ir',
+                'type' => SettingType::SINGLE,
+            ],
+            'meta_keywords' => [
+                'default' => $localized(
+                    'شمع سازی, شمع دست ساز, شمع معطر, شمع دکوراتیو, خرید شمع',
+                    'candle studio, handmade candles, scented candles, decorative candles, buy candles'
+                ),
+                'type' => SettingType::MULTIPLE,
+            ],
+            'meta_image' => [
+                'default' => '/images/video-cover.avif',
+                'type' => SettingType::IMAGE,
+            ],
+            'meta_robots' => [
+                'default' => 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
+                'type' => SettingType::SINGLE,
+            ],
+            'og_type' => [
+                'default' => 'website',
+                'type' => SettingType::SINGLE,
+            ],
+            'twitter_site' => [
+                'default' => '@samincandle',
+                'type' => SettingType::SINGLE,
+            ],
+            'favicon' => [
+                'default' => '/favicon.ico',
+                'type' => SettingType::IMAGE,
+            ],
+            'apple_touch_icon' => [
+                'default' => '/favicon.ico',
+                'type' => SettingType::IMAGE,
+            ],
+            'default_theme' => [
+                'default' => 'dark',
                 'type' => SettingType::SINGLE,
             ],
         ];
