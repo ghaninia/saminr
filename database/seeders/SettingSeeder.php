@@ -48,8 +48,8 @@ class SettingSeeder extends Seeder
                 'type' => SettingType::MULTIPLE,
             ],
             'logo' => [
-                'default' => $localized('/images/branding/logo-fa-candle.png', '/images/branding/logo-en-candle.png'),
-                'type' => SettingType::MULTIPLE,
+                'default' => '/images/branding/logo-en-candle.png',
+                'type' => SettingType::LINK,
             ],
             'copyright' => [
                 'default' => $localized(
@@ -67,15 +67,15 @@ class SettingSeeder extends Seeder
             ],
             'phone' => [
                 'default' => '02112345678',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
             'email' => [
                 'default' => 'info@samincandle.ir',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::EMAIL,
             ],
             'mobile' => [
                 'default' => '09121234567',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
             'address' => [
                 'default' => $localized(
@@ -86,27 +86,27 @@ class SettingSeeder extends Seeder
             ],
             'instagram' => [
                 'default' => 'https://instagram.com/samincandle',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'telegram' => [
                 'default' => 'https://t.me/samincandle',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'aparat' => [
                 'default' => 'https://www.aparat.com/samincandle',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'youtube' => [
                 'default' => 'https://www.youtube.com/@samincandle',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'product_intro_url' => [
                 'default' => 'https://samincandle.ir/products',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'site_url' => [
                 'default' => 'https://samincandle.ir',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::WEBSITE,
             ],
             'meta_keywords' => [
                 'default' => $localized(
@@ -117,31 +117,31 @@ class SettingSeeder extends Seeder
             ],
             'meta_image' => [
                 'default' => '/images/video-cover.avif',
-                'type' => SettingType::IMAGE,
+                'type' => SettingType::LINK,
             ],
             'meta_robots' => [
                 'default' => 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
             'og_type' => [
                 'default' => 'website',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
             'twitter_site' => [
                 'default' => '@samincandle',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
             'favicon' => [
                 'default' => '/favicon.ico',
-                'type' => SettingType::IMAGE,
+                'type' => SettingType::LINK,
             ],
             'apple_touch_icon' => [
                 'default' => '/favicon.ico',
-                'type' => SettingType::IMAGE,
+                'type' => SettingType::LINK,
             ],
             'default_theme' => [
                 'default' => 'dark',
-                'type' => SettingType::SINGLE,
+                'type' => SettingType::TEXT,
             ],
         ];
 

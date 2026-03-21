@@ -60,6 +60,38 @@ class SettingController extends Controller
                 return;
             }
 
+            if ($setting->type === SettingType::ARRAY) {
+                if (! is_array($value)) {
+                    $validator->errors()->add('value', 'The value must be an array.');
+                }
+
+                return;
+            }
+
+            if ($setting->type === SettingType::NUMBER) {
+                if (! is_numeric($value)) {
+                    $validator->errors()->add('value', 'The value must be a number.');
+                }
+
+                return;
+            }
+
+            if ($setting->type === SettingType::EMAIL) {
+                if (! is_string($value) || filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+                    $validator->errors()->add('value', 'The value must be a valid email address.');
+                }
+
+                return;
+            }
+
+            if ($setting->type === SettingType::WEBSITE) {
+                if (! is_string($value) || filter_var($value, FILTER_VALIDATE_URL) === false) {
+                    $validator->errors()->add('value', 'The value must be a valid URL.');
+                }
+
+                return;
+            }
+
             if (is_array($value)) {
                 $validator->errors()->add('value', 'The value must be a string.');
             }

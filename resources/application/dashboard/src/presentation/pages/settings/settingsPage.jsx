@@ -16,6 +16,11 @@ function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+function isLikelyImageUrl(url) {
+    if (!url) return false;
+    return /\.(png|jpe?g|webp|svg|ico)(\?.*)?$/i.test(url) || url.startsWith('data:image/');
+}
+
 export function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -77,6 +82,12 @@ export function SettingsPage() {
             return;
         }
 
+        if (item.type === 'array') {
+            const data = item.value ?? item.default ?? [];
+            setDraftValue(isPlainObject(data) || Array.isArray(data) ? deepClone(data) : []);
+            return;
+        }
+
         setDraftValue(item.value ?? '');
     };
 
@@ -107,6 +118,17 @@ export function SettingsPage() {
         } finally {
             setSaving(false);
         }
+    };
+
+    const uploadFile = async (file) => {
+        const form = new FormData();
+        form.append('file', file);
+        const res = await adminApi.post('/uploads', form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return res.data?.url ?? '';
     };
 
     if (loading) return <div className="text-sm text-neutral-400">Loading settings…</div>;
@@ -189,13 +211,69 @@ export function SettingsPage() {
                         <div className={useDefault ? 'opacity-60 pointer-events-none' : ''}>
                             {editing.type === 'multiple' ? (
                                 <MultipleEditor value={draftValue} onChange={setDraftValue} />
+                            ) : editing.type === 'array' ? (
+                                <ArrayEditor value={draftValue} onChange={setDraftValue} />
                             ) : editing.type === 'rich_text' || editing.type === 'text' ? (
                                 <Field label="Value">
                                     <Textarea value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} rows={10} />
                                 </Field>
-                            ) : editing.type === 'image' ? (
-                                <Field label="Value" hint="Image URL or path (e.g. /images/foo.png)">
-                                    <Input value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
+                            ) : editing.type === 'image' || editing.type === 'link' ? (
+                                <div className="space-y-3">
+                                    <Field label="Value" hint="File URL or path (e.g. /storage/uploads/...).">
+                                        <Input value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
+                                    </Field>
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="text-xs text-neutral-500">
+                                            Upload an image and it will be stored on the `public` disk.
+                                        </div>
+                                        <label className="inline-flex items-center gap-2">
+                                            <input
+                                                type="file"
+                                                accept=".png,.jpg,.jpeg,.webp,.svg,.ico,image/*"
+                                                className="hidden"
+                                                onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    setSaveError('');
+                                                    try {
+                                                        setSaving(true);
+                                                        const url = await uploadFile(file);
+                                                        if (url) setDraftValue(url);
+                                                    } catch (err) {
+                                                        setSaveError(getApiErrorMessage(err, 'Upload failed.'));
+                                                    } finally {
+                                                        setSaving(false);
+                                                        e.target.value = '';
+                                                    }
+                                                }}
+                                            />
+                                            <Button type="button" variant="subtle" size="sm" disabled={saving}>
+                                                {saving ? 'Uploading…' : 'Upload'}
+                                            </Button>
+                                        </label>
+                                    </div>
+                                    {draftValue && isLikelyImageUrl(String(draftValue)) ? (
+                                        <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
+                                            <div className="text-xs text-neutral-500 mb-2">Preview</div>
+                                            <img
+                                                src={String(draftValue)}
+                                                alt="Preview"
+                                                className="max-h-36 object-contain rounded-lg border border-neutral-800 bg-neutral-950/60"
+                                            />
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ) : editing.type === 'email' ? (
+                                <Field label="Email">
+                                    <Input type="email" autoComplete="email" value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
+                                </Field>
+                            ) : editing.type === 'website' ? (
+                                <Field label="Website URL" hint="Include https://">
+                                    <Input type="url" inputMode="url" value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
+                                </Field>
+                            ) : editing.type === 'number' ? (
+                                <Field label="Number">
+                                    <Input type="number" inputMode="numeric" value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
                                 </Field>
                             ) : (
                                 <Field label="Value">
@@ -286,6 +364,62 @@ function MultipleEditor({ value, onChange }) {
                     <Textarea rows={6} value={fa} onChange={(e) => onChange({ fa: e.target.value, en })} />
                 </Field>
             </div>
+        </div>
+    );
+}
+
+function ArrayEditor({ value, onChange }) {
+    const [text, setText] = useState(() => JSON.stringify(value ?? [], null, 2));
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        setText(JSON.stringify(value ?? [], null, 2));
+        setError('');
+    }, [value]);
+
+    return (
+        <div className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+                <div className="text-xs text-neutral-400">JSON Array/Object</div>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                        try {
+                            const parsed = JSON.parse(text || 'null');
+                            setText(JSON.stringify(parsed, null, 2));
+                            setError('');
+                        } catch {
+                            setError('Invalid JSON.');
+                        }
+                    }}
+                >
+                    Format
+                </Button>
+            </div>
+
+            <Textarea
+                rows={12}
+                value={text}
+                onChange={(e) => {
+                    const next = e.target.value;
+                    setText(next);
+                    try {
+                        const parsed = JSON.parse(next || 'null');
+                        if (parsed === null || typeof parsed !== 'object') {
+                            setError('Value must be a JSON array or object.');
+                            return;
+                        }
+                        setError('');
+                        onChange(parsed);
+                    } catch {
+                        setError('Invalid JSON.');
+                    }
+                }}
+            />
+
+            {error ? <div className="text-sm text-red-400">{error}</div> : null}
         </div>
     );
 }

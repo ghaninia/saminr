@@ -71,7 +71,7 @@ class SettingService implements SettingServiceInterface
             return $this->settingRepository->save($setting);
         }
 
-        $raw = $setting->type === SettingType::MULTIPLE && is_array($value)
+        $raw = in_array($setting->type, [SettingType::MULTIPLE, SettingType::ARRAY], true) && is_array($value)
             ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
             : (string) $value;
 

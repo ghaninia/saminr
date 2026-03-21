@@ -33,23 +33,26 @@ class Setting extends Model
 
     /**
      * When value is null, transparently fall back to default.
-     * JSON is decoded automatically for MULTIPLE type.
+     * JSON is decoded automatically for MULTIPLE and ARRAY types.
      */
     protected function value(): Attribute
     {
         return Attribute::get(function (mixed $value): mixed {
             $raw = $value ?? $this->attributes['default'] ?? null;
-            return $this->type === SettingType::MULTIPLE ? $this->decodeJson($raw) : $raw;
+
+            return in_array($this->type, [SettingType::MULTIPLE, SettingType::ARRAY], true)
+                ? $this->decodeJson($raw)
+                : $raw;
         });
     }
 
     /**
-     * The decoded default value for MULTIPLE type, raw string for others.
+     * The decoded default value for MULTIPLE/ARRAY type, raw string for others.
      */
     protected function resolvedDefault(): Attribute
     {
         return Attribute::get(function (): mixed {
-            return $this->type === SettingType::MULTIPLE
+            return in_array($this->type, [SettingType::MULTIPLE, SettingType::ARRAY], true)
                 ? $this->decodeJson($this->attributes['default'] ?? null)
                 : ($this->attributes['default'] ?? null);
         });

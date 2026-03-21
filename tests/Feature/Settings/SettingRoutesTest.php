@@ -7,6 +7,8 @@ use App\Modules\Auth\Services\Contracts\JwtServiceInterface;
 use App\Modules\Settings\Models\Setting;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SettingRoutesTest extends TestCase
@@ -119,6 +121,31 @@ class SettingRoutesTest extends TestCase
 
         $this->assertSame($payload['fa'], $setting->fresh()->value['fa']);
         $this->assertSame($payload['en'], $setting->fresh()->value['en']);
+    }
+
+    public function test_admin_can_upload_files_for_link_settings(): void
+    {
+        Storage::fake('public');
+        $this->seed(SettingSeeder::class);
+
+        $user = User::factory()->create();
+        $token = $this->authCookieFor($user);
+
+        $file = UploadedFile::fake()->image('logo.png', 256, 256);
+
+        $response = $this
+            ->withCredentials()
+            ->withUnencryptedCookie(config('dashboard_jwt.cookie'), $token)
+            ->post('/api/admin/uploads', [
+                'file' => $file,
+            ]);
+
+        $response->assertOk()->assertJsonStructure(['path', 'url']);
+
+        $path = (string) $response->json('path');
+        $this->assertStringStartsWith('uploads/dashboard/', $path);
+
+        Storage::disk('public')->assertExists($path);
     }
 
     /**
