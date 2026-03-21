@@ -7,6 +7,7 @@ import { LoginPage } from './pages/auth/loginPage.jsx';
 import { ForgotPasswordPage } from './pages/auth/forgotPasswordPage.jsx';
 import { HomePage } from './pages/homePage.jsx';
 import { SettingsPage } from './pages/settings/settingsPage.jsx';
+import { CategoriesPage } from './pages/categories/categoriesPage.jsx';
 
 export default function DashboardApp() {
     return (
@@ -24,6 +25,7 @@ export default function DashboardApp() {
                     >
                         <Route path="/" element={<HomePage />} />
                         <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/categories" element={<CategoriesPage />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
@@ -31,4 +33,3 @@ export default function DashboardApp() {
         </BrowserRouter>
     );
 }
-

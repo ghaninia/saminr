@@ -2,6 +2,7 @@
 
 use App\Modules\Auth\Http\Controllers\Admin\AuthController;
 use App\Modules\Auth\Http\Middleware\AdminJwtMiddleware;
+use App\Modules\Categories\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
@@ -17,4 +18,10 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::get('/settings', [SettingController::class, 'index']);
     Route::patch('/settings/{setting}', [SettingController::class, 'update']);
     Route::post('/uploads', [UploadController::class, 'store']);
+
+    Route::get('/categories', [AdminCategoryController::class, 'index']);
+    Route::post('/categories', [AdminCategoryController::class, 'store']);
+    Route::patch('/categories/{category}', [AdminCategoryController::class, 'update']);
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy']);
+    Route::post('/categories/{category}/upload', [AdminCategoryController::class, 'upload']);
 });
