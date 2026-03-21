@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../../../../contexts/LanguageContext'
+import { useSettings } from '../../../../contexts/SettingsContext'
 import './SectionComponents.css'
 
 const SLOGAN_POSITIONS = [
@@ -22,9 +23,15 @@ const SLOGAN_ANIMATIONS = [
 
 function HeroSection() {
   const { t } = useLanguage()
+  const { getSetting } = useSettings()
   const [currentSlogan, setCurrentSlogan] = useState(null)
 
   const allSlogans = useMemo(() => {
+    const fromSettings = getSetting('slogan')
+    if (Array.isArray(fromSettings) && fromSettings.length > 0) {
+      return fromSettings
+    }
+
     const slogansFromList = t('hero.slogans')
     if (Array.isArray(slogansFromList) && slogansFromList.length > 0) {
       return slogansFromList
@@ -36,7 +43,7 @@ function HeroSection() {
     }
 
     return []
-  }, [t])
+  }, [getSetting, t])
 
   useEffect(() => {
     if (!allSlogans.length) return
