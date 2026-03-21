@@ -13,6 +13,11 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
+        $localized = static fn (string $fa, string $en): string => json_encode([
+            'fa' => $fa,
+            'en' => $en,
+        ], JSON_UNESCAPED_UNICODE);
+
         $slogans = json_encode([
             ['fa' => 'روشنایی دست ساز برای لحظه های ماندگار', 'en' => 'Handcrafted light for lasting moments'],
             ['fa' => 'رایحه ای گرم برای خانه ای آرام', 'en' => 'A warm fragrance for a calm home'],
@@ -29,45 +34,34 @@ class SettingSeeder extends Seeder
                 'default' => $slogans,
                 'type'    => SettingType::MULTIPLE,
             ],
-            'title_fa' => [
-                'default' => 'شمع سازی ثمین',
-                'type' => SettingType::SINGLE,
+            'title' => [
+                'default' => $localized('شمع سازی ثمین', 'Samin Candle Studio'),
+                'type' => SettingType::MULTIPLE,
             ],
-            'description_fa' => [
-                'default' => 'تولید و فروش شمع های دست ساز، معطر و دکوراتیو برای هدیه، منزل و مراسم خاص.',
-                'type' => SettingType::TEXT,
+            'description' => [
+                'default' => $localized(
+                    'تولید و فروش شمع های دست ساز، معطر و دکوراتیو برای هدیه، منزل و مراسم خاص.',
+                    'Handcrafted scented and decorative candles for gifts, home styling, and special events.'
+                ),
+                'type' => SettingType::MULTIPLE,
             ],
-            'title_en' => [
-                'default' => 'Samin Candle Studio',
-                'type' => SettingType::SINGLE,
+            'logo' => [
+                'default' => $localized('/images/branding/logo-fa-candle.png', '/images/branding/logo-en-candle.png'),
+                'type' => SettingType::MULTIPLE,
             ],
-            'description_en' => [
-                'default' => 'Handcrafted scented and decorative candles for gifts, home styling, and special events.',
-                'type' => SettingType::TEXT,
+            'copyright' => [
+                'default' => $localized(
+                    'تمامی حقوق این وب سایت برای شمع سازی ثمین محفوظ است.',
+                    'All rights reserved for Samin Candle Studio.'
+                ),
+                'type' => SettingType::MULTIPLE,
             ],
-            'logo_fa' => [
-                'default' => '/images/branding/logo-fa-candle.png',
-                'type' => SettingType::IMAGE,
-            ],
-            'logo_en' => [
-                'default' => '/images/branding/logo-en-candle.png',
-                'type' => SettingType::IMAGE,
-            ],
-            'copyright_fa' => [
-                'default' => 'تمامی حقوق این وب سایت برای شمع سازی ثمین محفوظ است.',
-                'type' => SettingType::SINGLE,
-            ],
-            'copyright_en' => [
-                'default' => 'All rights reserved for Samin Candle Studio.',
-                'type' => SettingType::SINGLE,
-            ],
-            'aboutus_fa' => [
-                'default' => 'ما در شمع سازی ثمین با استفاده از موم باکیفیت و رایحه های الهام گرفته از طبیعت، شمع هایی می سازیم که فضا را گرم، آرام و متفاوت می کنند.',
-                'type' => SettingType::RICH_TEXT,
-            ],
-            'aboutus_en' => [
-                'default' => 'At Samin Candle Studio, we craft premium candles with clean wax and nature-inspired scents to create warm, calming, and memorable spaces.',
-                'type' => SettingType::RICH_TEXT,
+            'aboutus' => [
+                'default' => $localized(
+                    'ما در شمع سازی ثمین با استفاده از موم باکیفیت و رایحه های الهام گرفته از طبیعت، شمع هایی می سازیم که فضا را گرم، آرام و متفاوت می کنند.',
+                    'At Samin Candle Studio, we craft premium candles with clean wax and nature-inspired scents to create warm, calming, and memorable spaces.'
+                ),
+                'type' => SettingType::MULTIPLE,
             ],
             'phone' => [
                 'default' => '02112345678',
@@ -82,8 +76,11 @@ class SettingSeeder extends Seeder
                 'type' => SettingType::SINGLE,
             ],
             'address' => [
-                'default' => 'تهران، خیابان ولیعصر، پلاک ۱۲۳',
-                'type' => SettingType::TEXT,
+                'default' => $localized(
+                    'تهران، خیابان ولیعصر، پلاک ۱۲۳',
+                    '123 Vali Asr Street, Tehran'
+                ),
+                'type' => SettingType::MULTIPLE,
             ],
             'instagram' => [
                 'default' => 'https://instagram.com/samincandle',
