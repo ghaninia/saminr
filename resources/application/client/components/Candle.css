@@ -4,6 +4,7 @@
     margin: 40px auto;
     width: 110px;
     z-index: 3;
+    float: left;
 }
 .candle .candle-body {
   width: 110px;
