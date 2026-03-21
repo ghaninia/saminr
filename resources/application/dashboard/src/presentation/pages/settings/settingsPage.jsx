@@ -21,6 +21,46 @@ function isLikelyImageUrl(url) {
     return /\.(png|jpe?g|webp|svg|ico)(\?.*)?$/i.test(url) || url.startsWith('data:image/');
 }
 
+function truncate(text, max = 70) {
+    const value = String(text ?? '');
+    if (value.length <= max) return value;
+    return `${value.slice(0, max - 1)}…`;
+}
+
+function summarizeSettingValue(item) {
+    const value = item?.value ?? null;
+
+    if (value === null || value === undefined || value === '') return 'Empty';
+
+    if (typeof value === 'string') {
+        const filename = value.split('?')[0].split('#')[0].split('/').pop();
+        return truncate(filename && filename.length < 40 ? `${filename}` : value, 70);
+    }
+
+    if (Array.isArray(value)) {
+        if (value.length === 0) return 'Empty';
+        const first = value[0];
+        if (first && typeof first === 'object' && ('en' in first || 'fa' in first)) {
+            return `${value.length} items · ${truncate(first.en ?? first.fa ?? '…', 50)}`;
+        }
+        return `${value.length} items`;
+    }
+
+    if (isPlainObject(value)) {
+        if ('en' in value || 'fa' in value) {
+            return `${truncate(value.en ?? '…', 45)} · ${truncate(value.fa ?? '…', 45)}`;
+        }
+
+        try {
+            return truncate(JSON.stringify(value), 70);
+        } catch {
+            return 'Object';
+        }
+    }
+
+    return truncate(String(value), 70);
+}
+
 export function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -167,7 +207,9 @@ export function SettingsPage() {
                         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-4 hover:bg-neutral-900/40">
                             <div className="min-w-0">
                                 <div className="text-sm font-medium truncate">{item.key}</div>
-                                <div className="mt-1 text-xs text-neutral-400">{item.type}</div>
+                                <div className="mt-1 text-xs text-neutral-400 truncate">
+                                    {summarizeSettingValue(item)}
+                                </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
@@ -203,10 +245,7 @@ export function SettingsPage() {
                 {editing ? (
                     <div className="space-y-4">
                         <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <div className="text-xs text-neutral-400">Type</div>
-                                <div className="text-sm text-neutral-200">{editing.type}</div>
-                            </div>
+                            <div className="text-xs text-neutral-400">Editing setting</div>
                             <label className="flex items-center gap-2 text-sm text-neutral-300">
                                 <input
                                     type="checkbox"
