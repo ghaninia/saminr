@@ -1,7 +1,15 @@
 /* Dashboard-only custom styles (scoped via #dashboard mount) */
 
+html,
+body {
+    height: auto;
+    min-height: 100%;
+    background: rgb(5, 5, 5);
+}
+
 #dashboard {
     color-scheme: dark;
+    min-height: 100%;
 }
 
 #dashboard .dash-bg {
@@ -54,4 +62,3 @@
     border: 2px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
 }
-
