@@ -1,11 +1,16 @@
 import { useLanguage } from '../../../../contexts/LanguageContext'
-import { useTheme } from '../../../../contexts/ThemeContext'
-import { Instagram, Youtube } from 'lucide-react'
+import { useSettings } from '../../../../contexts/SettingsContext'
+import { Instagram, Youtube, PlayCircle } from 'lucide-react'
 import Candle from './../../../../components/Candle'
 
 function AppSection() {
   const { t } = useLanguage()
-  const { theme } = useTheme()
+  const { getSetting } = useSettings()
+
+  const siteDescription = getSetting('description', { fallback: t('app.description') })
+  const instagram = getSetting('instagram', { fallback: '#', localized: false })
+  const aparat = getSetting('aparat', { fallback: '#', localized: false })
+  const youtube = getSetting('youtube', { fallback: '#', localized: false })
 
   return (
     <section id="app-section" className="app section-padding">
@@ -15,12 +20,16 @@ function AppSection() {
             <div className="lg:col-span-6">
               <h6>{t('app.subtitle')}</h6>
               <h3>{t('app.title')}</h3>
-              <p className="mb-30">{t('app.description')}</p>
-              <a href="#0" className="button-3 mb-20 mr-10">
+              <p className="mb-30">{siteDescription}</p>
+              <a href={instagram} target="_blank" rel="noreferrer" className="button-3 mb-20 mr-10">
                 {t('app.instagram')}
                 <Instagram className="ml-2" />
               </a>
-              <a href="#0" className="button-3 mb-20">
+              <a href={aparat} target="_blank" rel="noreferrer" className="button-3 mb-20 mr-10">
+                {t('app.aparat')}
+                <PlayCircle className="ml-2" />
+              </a>
+              <a href={youtube} target="_blank" rel="noreferrer" className="button-3 mb-20">
                 {t('app.youtube')}
                 <Youtube className="ml-2" />
               </a>
