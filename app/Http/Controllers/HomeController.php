@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Settings\Services\SettingService;
+use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke(Request $request, SettingService $settingService): View
+    public function __invoke(Request $request, SettingServiceInterface $settingService): View
     {
         $locale = $this->resolveLocale($request);
 

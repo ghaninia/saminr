@@ -5,9 +5,10 @@ namespace App\Modules\Settings\Services;
 use App\Modules\Settings\Enums\SettingType;
 use App\Modules\Settings\Models\Setting;
 use App\Modules\Settings\Repositories\Contracts\SettingRepositoryInterface;
+use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 
-class SettingService
+class SettingService implements SettingServiceInterface
 {
     public function __construct(private readonly SettingRepositoryInterface $settingRepository)
     {
