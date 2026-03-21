@@ -1,5 +1,7 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../../../../contexts/LanguageContext'
 import { useTheme } from '../../../../contexts/ThemeContext'
+import { apiClient } from '../../../../apis'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation } from 'swiper/modules'
 import { ArrowUpRight } from 'lucide-react'
@@ -8,54 +10,99 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import './SectionComponents.css'
 
-function CategoriesSection({ categories = [] }) {
-  const { t } = useLanguage()
+const DEFAULT_CATEGORY_IMAGE = '/images/file-corrupted.svg'
+
+function normalizeCategoriesResponse(payload) {
+  if (Array.isArray(payload)) {
+    return payload
+  }
+
+  return Array.isArray(payload?.data) ? payload.data : []
+}
+
+function resolveLocalizedText(value, locale) {
+  if (!value) {
+    return ''
+  }
+
+  if (typeof value === 'string') {
+    return value
+  }
+
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return value?.[locale] ?? value?.fa ?? value?.en ?? ''
+  }
+
+  return ''
+}
+
+function CategoriesSection({ categories }) {
+  const { t, language } = useLanguage()
   const { theme } = useTheme()
+  const [apiCategories, setApiCategories] = useState([])
+  const [isLoading, setIsLoading] = useState(categories === undefined)
 
-  const defaultCategories = [
-    {
-      title: 'Wood Wick Candle',
-      subtitle: 'Natural wood wick',
-      image: '/images/category1.webp'
-    },
-    {
-      title: 'Soy Candle',
-      subtitle: 'Eco-friendly soy wax',
-      image: '/images/category2.webp'
-    },
-    {
-      title: 'Sparklers',
-      subtitle: 'Sparkling effects',
-      image: '/images/category3.webp'
-    },
-    {
-      title: 'Trick Candle',
-      subtitle: 'Fun trick candles',
-      image: '/images/category4.webp'
-    },
-    {
-      title: 'Floating Candle',
-      subtitle: 'Floating on water',
-      image: '/images/category5.webp'
-    },
-    {
-      title: 'Citronella Candle',
-      subtitle: 'Mosquito repellent',
-      image: '/images/category6.webp'
-    },
-    {
-      title: 'Taper Candle',
-      subtitle: 'Classic taper design',
-      image: '/images/category7.webp'
-    },
-    {
-      title: 'Pillar Candle',
-      subtitle: 'Sturdy pillar shape',
-      image: '/images/category8.webp'
-    },
-  ]
+  useEffect(() => {
+    if (categories !== undefined) {
+      return
+    }
 
-  const categoriesList = categories.length > 0 ? categories : defaultCategories
+    let isMounted = true
+    setIsLoading(true)
+
+    apiClient
+      .getClientCategories()
+      .then((payload) => {
+        if (!isMounted) {
+          return
+        }
+
+        setApiCategories(normalizeCategoriesResponse(payload))
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return
+        }
+
+        setApiCategories([])
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return
+        }
+
+        setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [categories])
+
+  const categoriesList = useMemo(() => {
+    const source = Array.isArray(categories) ? categories : apiCategories
+
+    return source
+      .map((category) => {
+        const title = resolveLocalizedText(category?.title, language)
+        const subtitle = resolveLocalizedText(category?.subtitle, language)
+        const rawImage = typeof category?.image === 'string' ? category.image.trim() : ''
+        const isFallbackImage = !rawImage
+
+        return {
+          id: category?.id,
+          image: rawImage ? rawImage : DEFAULT_CATEGORY_IMAGE,
+          isFallbackImage,
+          title,
+          subtitle
+        }
+      })
+      .filter((category) => category.title)
+  }, [apiCategories, categories, language])
+
+  if (isLoading || categoriesList.length === 0) {
+    return null
+  }
 
   return (
     <section className={`categories section-padding`}>
@@ -68,7 +115,7 @@ function CategoriesSection({ categories = [] }) {
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}
-          loop={true}
+          loop={categoriesList.length > 3}
           pagination={{ clickable: true }}
           navigation={false}
           breakpoints={{
@@ -81,15 +128,30 @@ function CategoriesSection({ categories = [] }) {
           }}
           className="categories-swiper"
         >
-          {categoriesList.map((category, index) => (
-            <SwiperSlide key={index}>
+          {categoriesList.map((category) => (
+            <SwiperSlide key={category.id ?? category.title}>
               <div className="item mb-15">
                 <div className="img">
-                  <img src={category.image} className="img-fluid" alt={category.title} />
+                  <img
+                    src={category.image}
+                    className="img-fluid"
+                    alt={category.title}
+                    loading="lazy"
+                    data-fallback={category.isFallbackImage ? '1' : undefined}
+                    onError={(event) => {
+                      if (event.currentTarget.dataset.fallbackApplied) {
+                        return
+                      }
+
+                      event.currentTarget.dataset.fallbackApplied = '1'
+                      event.currentTarget.dataset.fallback = '1'
+                      event.currentTarget.src = DEFAULT_CATEGORY_IMAGE
+                    }}
+                  />
                 </div>
                 <div className="info">
                   <h2 className="title">{category.title}</h2>
-                  <p className="subtitle">{category.subtitle}</p>
+                  {category.subtitle ? <p className="subtitle">{category.subtitle}</p> : null}
                 </div>
                 <div className="curv-butn">
                   <a href="#" className="vid">

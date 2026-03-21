@@ -841,11 +841,32 @@ section .swiper-button-prev::after {
     isolation: isolate;
 }
 .categories .item .img {
+    position: relative;
     -webkit-transition: all .5s;
     transition: all .5s;
     overflow: hidden;
     border-radius: 20px 20px 0 20px;
-        isolation: isolate;
+    isolation: isolate;
+    height: clamp(220px, 28vw, 340px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(80% 70% at 50% 0%, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0) 60%),
+      linear-gradient(135deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.08));
+}
+
+[data-theme="dark"] .categories .item .img {
+    background: radial-gradient(80% 70% at 50% 0%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+}
+
+.categories .item .img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 100% at 50% 100%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0) 55%);
+    opacity: 0.22;
 }
 .categories .item .img:hover img {
     -webkit-filter: none;
@@ -861,6 +882,20 @@ section .swiper-button-prev::after {
 .categories .item .img img {
     -webkit-transition: all .5s;
     transition: all .5s;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.categories .item .img img[data-fallback='1'] {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 42px;
+    opacity: 0.22;
+    filter: grayscale(1);
+    transform: none !important;
 }
 .categories .item .info {
   position: absolute;
