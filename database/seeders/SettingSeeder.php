@@ -49,7 +49,7 @@ class SettingSeeder extends Seeder
             ],
             'logo' => [
                 'default' => '/images/branding/logo-en-candle.png',
-                'type' => SettingType::LINK,
+                'type' => SettingType::FILE,
             ],
             'copyright' => [
                 'default' => $localized(
@@ -117,7 +117,7 @@ class SettingSeeder extends Seeder
             ],
             'meta_image' => [
                 'default' => '/images/video-cover.avif',
-                'type' => SettingType::LINK,
+                'type' => SettingType::FILE,
             ],
             'meta_robots' => [
                 'default' => 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
@@ -133,11 +133,11 @@ class SettingSeeder extends Seeder
             ],
             'favicon' => [
                 'default' => '/favicon.ico',
-                'type' => SettingType::LINK,
+                'type' => SettingType::FILE,
             ],
             'apple_touch_icon' => [
                 'default' => '/favicon.ico',
-                'type' => SettingType::LINK,
+                'type' => SettingType::FILE,
             ],
             'default_theme' => [
                 'default' => 'dark',

@@ -131,6 +131,7 @@ class SettingRoutesTest extends TestCase
         $user = User::factory()->create();
         $token = $this->authCookieFor($user);
 
+        $setting = Setting::query()->where('key', 'favicon')->firstOrFail();
         $file = UploadedFile::fake()->image('logo.png', 256, 256);
 
         $response = $this
@@ -138,14 +139,15 @@ class SettingRoutesTest extends TestCase
             ->withUnencryptedCookie(config('dashboard_jwt.cookie'), $token)
             ->post('/api/admin/uploads', [
                 'file' => $file,
+                'setting_id' => $setting->id,
             ]);
 
-        $response->assertOk()->assertJsonStructure(['path', 'url']);
+        $response->assertOk()->assertJsonStructure(['url', 'setting' => ['id', 'key', 'value', 'type']]);
+        $this->assertSame($setting->id, $response->json('setting.id'));
+        $this->assertSame('favicon', $response->json('setting.key'));
+        $this->assertNotEmpty((string) $response->json('url'));
 
-        $path = (string) $response->json('path');
-        $this->assertStringStartsWith('uploads/dashboard/', $path);
-
-        Storage::disk('public')->assertExists($path);
+        $this->assertNotEmpty(Storage::disk('public')->allFiles('uploads'));
     }
 
     /**

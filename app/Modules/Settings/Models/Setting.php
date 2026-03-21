@@ -6,10 +6,13 @@ use App\Modules\Settings\Enums\SettingType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Setting extends Model
+class Setting extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     /**
      * @var list<string>
@@ -56,6 +59,14 @@ class Setting extends Model
                 ? $this->decodeJson($this->attributes['default'] ?? null)
                 : ($this->attributes['default'] ?? null);
         });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        // Use the setting key as the collection name and keep only one file per key.
+        if (! empty($this->key)) {
+            $this->addMediaCollection($this->key)->singleFile();
+        }
     }
 
     private function decodeJson(?string $value): mixed
