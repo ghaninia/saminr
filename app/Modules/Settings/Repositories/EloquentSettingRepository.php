@@ -24,4 +24,11 @@ class EloquentSettingRepository implements SettingRepositoryInterface
             ->where('key', $key)
             ->first();
     }
+
+    public function save(Setting $setting): Setting
+    {
+        $setting->save();
+
+        return $setting;
+    }
 }

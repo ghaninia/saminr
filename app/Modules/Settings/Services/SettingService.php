@@ -63,6 +63,23 @@ class SettingService implements SettingServiceInterface
             : $setting->default;
     }
 
+    public function updateValue(Setting $setting, mixed $value): Setting
+    {
+        if ($value === null) {
+            $setting->setAttribute('value', null);
+
+            return $this->settingRepository->save($setting);
+        }
+
+        $raw = $setting->type === SettingType::MULTIPLE && is_array($value)
+            ? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            : (string) $value;
+
+        $setting->setAttribute('value', $raw);
+
+        return $this->settingRepository->save($setting);
+    }
+
     private function decodeJson(?string $value): mixed
     {
         if ($value === null) {

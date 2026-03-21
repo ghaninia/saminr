@@ -13,4 +13,6 @@ interface SettingRepositoryInterface
     public function listAll(): Collection;
 
     public function findByKey(string $key): ?Setting;
+
+    public function save(Setting $setting): Setting;
 }

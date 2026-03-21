@@ -17,5 +17,6 @@ interface SettingServiceInterface
     public function getValue(string $key): mixed;
 
     public function getDefault(string $key): mixed;
-}
 
+    public function updateValue(Setting $setting, mixed $value): Setting;
+}

@@ -13,6 +13,11 @@ class SettingRoutesTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function authCookieFor(User $user): string
+    {
+        return app(JwtServiceInterface::class)->issueForUser($user);
+    }
+
     public function test_client_settings_route_returns_settings_list(): void
     {
         $this->seed(SettingSeeder::class);
@@ -40,7 +45,7 @@ class SettingRoutesTest extends TestCase
         $expectedCount = Setting::query()->count();
 
         $user = User::factory()->create();
-        $token = app(JwtServiceInterface::class)->issueForUser($user);
+        $token = $this->authCookieFor($user);
 
         $response = $this
             ->withCredentials()
@@ -59,6 +64,61 @@ class SettingRoutesTest extends TestCase
         $this->assertCount($expectedCount, $response->json('data'));
 
         $this->assertSloganStructure($response->json('data'));
+    }
+
+    public function test_admin_can_update_single_setting_value(): void
+    {
+        $this->seed(SettingSeeder::class);
+
+        $user = User::factory()->create();
+        $token = $this->authCookieFor($user);
+
+        $setting = Setting::query()->where('key', 'phone')->firstOrFail();
+
+        $response = $this
+            ->withCredentials()
+            ->withUnencryptedCookie(config('dashboard_jwt.cookie'), $token)
+            ->patchJson("/api/admin/settings/{$setting->id}", [
+                'value' => '02199999999',
+            ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.key', 'phone')
+            ->assertJsonPath('data.value', '02199999999');
+
+        $this->assertSame('02199999999', $setting->fresh()->value);
+    }
+
+    public function test_admin_can_update_multiple_localized_setting_value(): void
+    {
+        $this->seed(SettingSeeder::class);
+
+        $user = User::factory()->create();
+        $token = $this->authCookieFor($user);
+
+        $setting = Setting::query()->where('key', 'title')->firstOrFail();
+
+        $payload = [
+            'fa' => 'تیتر جدید',
+            'en' => 'New title',
+        ];
+
+        $response = $this
+            ->withCredentials()
+            ->withUnencryptedCookie(config('dashboard_jwt.cookie'), $token)
+            ->patchJson("/api/admin/settings/{$setting->id}", [
+                'value' => $payload,
+            ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.key', 'title')
+            ->assertJsonPath('data.value.fa', $payload['fa'])
+            ->assertJsonPath('data.value.en', $payload['en']);
+
+        $this->assertSame($payload['fa'], $setting->fresh()->value['fa']);
+        $this->assertSame($payload['en'], $setting->fresh()->value['en']);
     }
 
     /**

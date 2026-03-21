@@ -14,4 +14,5 @@ Route::prefix('auth')->group(function (): void {
 
 Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::get('/settings', [SettingController::class, 'index']);
+    Route::patch('/settings/{setting}', [SettingController::class, 'update']);
 });
