@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
+import { useSettings } from '../contexts/SettingsContext'
 import { useTheme } from '../contexts/ThemeContext'
 import LanguageSwitcher from './LanguageSwitcher'
 import ThemeSwitcher from './ThemeSwitcher'
@@ -8,8 +9,12 @@ import './Navigation.css'
 
 function Navigation() {
   const { t } = useLanguage()
+  const { getSetting } = useSettings()
   const { theme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const navTitle = getSetting('title', { fallback: 'Samin' })
+  const phone = getSetting('phone', { fallback: '8551004444' })
+  const phoneHref = `tel:${String(phone).replace(/\s+/g, '')}`
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -26,12 +31,12 @@ function Navigation() {
           <div className="navigation-content">
             {/* Logo */}
             <div className="nav-logo-wrapper">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="nav-logo"
                 onClick={closeMenu}
               >
-                Samin
+                {navTitle}
               </Link>
             </div>
             {/* Desktop Menu */}
@@ -75,7 +80,7 @@ function Navigation() {
                   <div className="text">
                     <p>{t('nav.needHelp')}</p>
                     <h5>
-                      <a href="tel:8551004444">855 100 4444</a>
+                      <a href={phoneHref}>{phone}</a>
                     </h5>
                   </div>
                 </div>

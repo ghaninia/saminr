@@ -1,9 +1,27 @@
 import { useLanguage } from '../contexts/LanguageContext'
-import { Phone, Mail, MapPin, Facebook, Youtube, MessageCircle, ArrowUpRight } from 'lucide-react'
+import { useSettings } from '../contexts/SettingsContext'
+import { Phone, Mail, MapPin, Instagram, Youtube, PlayCircle, ArrowUpRight } from 'lucide-react'
 import './Footer.css'
 
 function Footer() {
   const { t } = useLanguage()
+  const { getSetting } = useSettings()
+
+  const phone = getSetting('phone', { fallback: t('footer.contact.phone'), localized: false })
+  const mobile = getSetting('mobile', { fallback: null, localized: false })
+  const contactNumbers = [phone, mobile].filter(Boolean).join(' - ')
+  const supportHref = `tel:${String(phone || mobile || '').replace(/\s+/g, '')}`
+
+  const email = getSetting('email', { fallback: t('footer.email.address'), localized: false })
+  const address = getSetting('address', { fallback: t('footer.address.location') })
+  const aboutUs = getSetting('aboutus', { fallback: t('footer.about.description') })
+  const siteDescription = getSetting('description', { fallback: t('footer.subscribe.description') })
+  const instagram = getSetting('instagram', { fallback: '#', localized: false })
+  const aparat = getSetting('aparat', { fallback: '#', localized: false })
+  const youtube = getSetting('youtube', { fallback: '#', localized: false })
+  const copyright = getSetting('copyright', {
+    fallback: `${t('footer.copyright.text')} ${t('footer.copyright.designer')}`
+  })
 
   return (
     <footer className="footer">
@@ -21,7 +39,7 @@ function Footer() {
                   </div>
                   <div className="footer-contact-link-content">
                     <h6>{t('footer.contact.title')}</h6>
-                    <p>{t('footer.contact.phone')}</p>
+                    <p><a href={supportHref}>{contactNumbers || t('footer.contact.phone')}</a></p>
                   </div>
                 </div>
                 <div className="footer-contact-links-divider hidden md:block"></div>
@@ -33,7 +51,7 @@ function Footer() {
                   </div>
                   <div className="footer-contact-link-content">
                     <h6>{t('footer.email.title')}</h6>
-                    <p>{t('footer.email.address')}</p>
+                    <p>{email}</p>
                   </div>
                 </div>
                 <div className="footer-contact-links-divider hidden md:block"></div>
@@ -45,7 +63,7 @@ function Footer() {
                   </div>
                   <div className="footer-contact-link-content">
                     <h6>{t('footer.address.title')}</h6>
-                    <p>{t('footer.address.location')}</p>
+                    <p>{address}</p>
                   </div>
                 </div>
               </div>
@@ -62,21 +80,21 @@ function Footer() {
                   <img alt="" src="img/logo-light.png" />
                 </div>
                 <div className="widget-text">
-                  <p className="mb-4">{t('footer.about.description')}</p>
+                  <p className="mb-4">{aboutUs}</p>
                   <div className="social-icons">
                     <ul className="flex space-x-2">
                       <li>
-                        <a href="#" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
-                          <MessageCircle className="w-5 h-5" />
+                        <a href={aparat} target="_blank" rel="noreferrer" aria-label="Aparat" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                          <PlayCircle className="w-5 h-5" />
                         </a>
                       </li>
                       <li>
-                        <a href="#" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
-                          <Facebook className="w-5 h-5" />
+                        <a href={instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                          <Instagram className="w-5 h-5" />
                         </a>
                       </li>
                       <li>
-                        <a href="#" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                        <a href={youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
                           <Youtube className="w-5 h-5" />
                         </a>
                       </li>
@@ -102,7 +120,7 @@ function Footer() {
             <div className="md:col-span-4 widget-area">
               <div className="widget">
                 <h3 className="widget-title mb-4">{t('footer.subscribe.title')}</h3>
-                <p className="mb-4">{t('footer.subscribe.description')}</p>
+                <p className="mb-4">{siteDescription}</p>
                 <div className="widget-newsletter">
                   <form action="#" className="flex">
                     <input placeholder={t('footer.subscribe.placeholder')} required type="email" className="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-l" />
@@ -119,7 +137,7 @@ function Footer() {
         <div className="bottom-footer-text py-10">
           <div className="copyright text-center">
             <p className="text-gray-500 text-sm">
-              {t('footer.copyright.text')} <a href="#" className="text-white hover:text-yellow-500" target="_blank">{t('footer.copyright.designer')}</a>
+              {copyright}
             </p>
           </div>
         </div>
