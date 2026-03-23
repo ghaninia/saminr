@@ -57,6 +57,8 @@ export function DashboardLayout() {
                                 <NavItem to="/" label="Home" />
                                 <NavItem to="/settings" label="Settings" />
                                 <NavItem to="/categories" label="Categories" />
+                                <NavItem to="/subscribers" label="Subscribers" />
+                                <NavItem to="/newsletters" label="Newsletters" />
                             </nav>
                         </Card>
                     </aside>

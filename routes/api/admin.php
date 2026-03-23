@@ -3,6 +3,8 @@
 use App\Modules\Auth\Http\Controllers\Admin\AuthController;
 use App\Modules\Auth\Http\Middleware\AdminJwtMiddleware;
 use App\Modules\Categories\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Modules\Newsletter\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
+use App\Modules\Newsletter\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +26,11 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::patch('/categories/{category}', [AdminCategoryController::class, 'update']);
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy']);
     Route::post('/categories/{category}/upload', [AdminCategoryController::class, 'upload']);
+
+    Route::get('/subscribers', [AdminSubscriberController::class, 'index']);
+    Route::delete('/subscribers/{subscriber}', [AdminSubscriberController::class, 'destroy']);
+
+    Route::get('/newsletters', [AdminNewsletterController::class, 'index']);
+    Route::post('/newsletters', [AdminNewsletterController::class, 'store']);
+    Route::post('/newsletters/{newsletter}/send', [AdminNewsletterController::class, 'send']);
 });

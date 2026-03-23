@@ -177,7 +177,11 @@
     "subscribe": {
       "title": "Follow Us",
       "description": "Want to be notified about our services. Just sign up and we will send you a notification via email.",
-      "placeholder": "Email Address"
+      "placeholder": "Email Address",
+      "fullnamePlaceholder": "Full name",
+      "success": "You have been subscribed successfully.",
+      "rateLimited": "Too many requests. Please try again later.",
+      "error": "Subscription failed. Please try again."
     },
     "copyright": {
       "text": "© All rights reserved. Designed by",
