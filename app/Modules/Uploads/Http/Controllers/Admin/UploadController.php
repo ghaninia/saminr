@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\Settings\Enums\SettingType;
 use App\Modules\Settings\Models\Setting;
 use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
+use App\Modules\Uploads\Http\Requests\Admin\UploadStoreRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class UploadController extends Controller
 {
@@ -15,24 +15,16 @@ class UploadController extends Controller
     {
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(UploadStoreRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'file' => ['required', 'file', 'max:4096', 'mimes:png,jpg,jpeg,webp,svg,ico'],
-            'setting_id' => ['required', 'integer', 'exists:settings,id'],
-        ], [
-            'file.required' => 'A file is required.',
-            'file.mimes' => 'Only png, jpg, jpeg, webp, svg, and ico files are allowed.',
-            'file.max' => 'Maximum file size is 4MB.',
-            'setting_id.required' => 'A setting_id is required.',
-        ]);
+        $validated = $request->validated();
 
         /** @var Setting $setting */
         $setting = Setting::query()->findOrFail($validated['setting_id']);
 
         if (! in_array($setting->type, [SettingType::FILE, SettingType::LINK, SettingType::IMAGE], true)) {
             return response()->json([
-                'message' => 'This setting does not support file uploads.',
+                'message' => __('responses.uploads.setting_no_uploads'),
             ], 422);
         }
 

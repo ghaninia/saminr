@@ -4,6 +4,8 @@ namespace App\Modules\Auth\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Modules\Auth\Http\Requests\Admin\ForgotPasswordRequest;
+use App\Modules\Auth\Http\Requests\Admin\LoginRequest;
 use App\Modules\Auth\Services\Contracts\JwtServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,19 +19,16 @@ class AuthController extends Controller
     {
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string', 'min:6'],
-        ]);
+        $credentials = $request->validated();
 
         /** @var User|null $user */
         $user = User::query()->where('email', $credentials['email'])->first();
 
         if (! $user || ! Hash::check($credentials['password'], (string) $user->password)) {
             return response()->json([
-                'message' => 'Invalid email or password.',
+                'message' => __('responses.auth.invalid_credentials'),
             ], 422);
         }
 
@@ -37,7 +36,7 @@ class AuthController extends Controller
 
         return response()
             ->json([
-                'message' => 'Logged in successfully.',
+                'message' => __('responses.auth.logged_in'),
                 'user' => [
                     'id' => $user->getKey(),
                     'name' => $user->name,
@@ -64,20 +63,18 @@ class AuthController extends Controller
     public function logout(): JsonResponse
     {
         return response()
-            ->json(['message' => 'Logged out successfully.'])
+            ->json(['message' => __('responses.auth.logged_out')])
             ->withCookie($this->forgetCookie());
     }
 
-    public function forgotPassword(Request $request): JsonResponse
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        $payload = $request->validate([
-            'email' => ['required', 'email'],
-        ]);
+        $payload = $request->validated();
 
         Password::broker()->sendResetLink(['email' => $payload['email']]);
 
         return response()->json([
-            'message' => 'If that email address exists, a password reset link has been sent.',
+            'message' => __('responses.auth.password_reset_sent'),
         ]);
     }
 

@@ -57,7 +57,7 @@ class JwtService implements JwtServiceInterface
 
         $appKey = (string) config('app.key', '');
         if ($appKey === '') {
-            throw new RuntimeException('Missing APP_KEY. Set APP_KEY or DASHBOARD_JWT_SECRET.');
+            throw new RuntimeException(__('responses.errors.missing_app_key'));
         }
 
         return hash('sha256', $appKey);

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Newsletter\Services;
 
+use App\Modules\Newsletter\Exceptions\NewsletterAlreadyQueuedException;
+use App\Modules\Newsletter\Exceptions\NoSubscribersFoundException;
 use App\Modules\Newsletter\Mail\NewsletterMailable;
 use App\Modules\Newsletter\Models\Newsletter;
 use App\Modules\Newsletter\Models\Subscriber;
@@ -29,11 +31,11 @@ class NewsletterService implements NewsletterServiceInterface
     public function queueSend(Newsletter $newsletter): Newsletter
     {
         if ($newsletter->status === 'queued') {
-            throw new \RuntimeException('This newsletter is already queued.');
+            throw new NewsletterAlreadyQueuedException();
         }
 
         if (! Subscriber::query()->exists()) {
-            throw new \RuntimeException('No subscribers found.');
+            throw new NoSubscribersFoundException();
         }
 
         $newsletter->forceFill([
@@ -101,4 +103,3 @@ class NewsletterService implements NewsletterServiceInterface
         }
     }
 }
-

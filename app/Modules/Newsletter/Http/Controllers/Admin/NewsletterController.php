@@ -3,12 +3,14 @@
 namespace App\Modules\Newsletter\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Newsletter\Exceptions\NewsletterAlreadyQueuedException;
+use App\Modules\Newsletter\Exceptions\NoSubscribersFoundException;
+use App\Modules\Newsletter\Http\Requests\Admin\NewsletterStoreRequest;
 use App\Modules\Newsletter\Http\Resources\NewsletterResource;
 use App\Modules\Newsletter\Jobs\SendNewsletterToSubscribersJob;
 use App\Modules\Newsletter\Models\Newsletter;
 use App\Modules\Newsletter\Services\Contracts\NewsletterServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class NewsletterController extends Controller
@@ -22,12 +24,9 @@ class NewsletterController extends Controller
         return NewsletterResource::collection($this->newsletterService->listPaginated(50));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(NewsletterStoreRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'subject' => ['required', 'string', 'max:255'],
-            'html' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
         $newsletter = $this->newsletterService->create((string) $validated['subject'], (string) $validated['html']);
 
@@ -41,17 +40,20 @@ class NewsletterController extends Controller
     {
         try {
             $newsletter = $this->newsletterService->queueSend($newsletter);
-        } catch (\RuntimeException $e) {
-            $message = $e->getMessage();
-            $status = $message === 'This newsletter is already queued.' ? 409 : 422;
-
-            return response()->json(['message' => $message], $status);
+        } catch (NewsletterAlreadyQueuedException) {
+            return response()->json([
+                'message' => __('responses.newsletter.already_queued'),
+            ], 409);
+        } catch (NoSubscribersFoundException) {
+            return response()->json([
+                'message' => __('responses.newsletter.no_subscribers'),
+            ], 422);
         }
 
         SendNewsletterToSubscribersJob::dispatch((int) $newsletter->getKey());
 
         return response()->json([
-            'message' => 'Newsletter queued.',
+            'message' => __('responses.newsletter.queued'),
             'data' => (new NewsletterResource($newsletter->fresh()))->resolve(),
         ]);
     }

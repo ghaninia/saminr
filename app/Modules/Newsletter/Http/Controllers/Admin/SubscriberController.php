@@ -30,7 +30,7 @@ class SubscriberController extends Controller
         $this->subscriberService->delete($subscriber);
 
         return response()->json([
-            'message' => 'Deleted.',
+            'message' => __('responses.common.deleted'),
         ]);
     }
 }

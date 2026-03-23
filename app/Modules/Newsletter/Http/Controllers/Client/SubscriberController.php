@@ -3,9 +3,9 @@
 namespace App\Modules\Newsletter\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Newsletter\Http\Requests\Client\SubscriberStoreRequest;
 use App\Modules\Newsletter\Services\Contracts\SubscriberServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class SubscriberController extends Controller
 {
@@ -13,12 +13,9 @@ class SubscriberController extends Controller
     {
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(SubscriberStoreRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'fullname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         $subscriber = $this->subscriberService->subscribe(
             (string) $validated['fullname'],
@@ -26,7 +23,7 @@ class SubscriberController extends Controller
         );
 
         return response()->json([
-            'message' => 'Subscribed.',
+            'message' => __('responses.newsletter.subscribed'),
             'data' => [
                 'id' => $subscriber->getKey(),
                 'fullname' => $subscriber->fullname,
