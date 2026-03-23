@@ -6,13 +6,14 @@ import { Phone, Mail, MapPin, Instagram, Youtube, PlayCircle, ArrowUpRight } fro
 import './Footer.css'
 
 function Footer() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const { getSetting } = useSettings()
   const [fullname, setFullname] = useState('')
   const [subscriberEmail, setSubscriberEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [subscribeError, setSubscribeError] = useState('')
   const [subscribeNotice, setSubscribeNotice] = useState('')
+  const inputDirection = language === 'fa' ? 'rtl' : 'ltr'
 
   const phone = getSetting('phone', { fallback: t('footer.contact.phone'), localized: false })
   const mobile = getSetting('mobile', { fallback: null, localized: false })
@@ -155,30 +156,35 @@ function Footer() {
                 <h3 className="widget-title mb-4">{t('footer.subscribe.title')}</h3>
                 <p className="mb-4">{siteDescription}</p>
                 <div className="widget-newsletter">
-                  <form onSubmit={onSubscribe} className="space-y-2">
-                    <input
-                      placeholder={t('footer.subscribe.fullnamePlaceholder')}
-                      required
-                      type="text"
-                      value={fullname}
-                      onChange={(e) => setFullname(e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded"
-                    />
-                    <div className="flex">
+                  <form onSubmit={onSubscribe} className="newsletter-form" noValidate>
+                    <div className="newsletter-fields">
+                      <input
+                        placeholder={t('footer.subscribe.fullnamePlaceholder')}
+                        required
+                        type="text"
+                        value={fullname}
+                        onChange={(e) => setFullname(e.target.value)}
+                        dir={inputDirection}
+                        autoComplete="name"
+                        className="newsletter-input"
+                      />
                       <input
                         placeholder={t('footer.subscribe.placeholder')}
                         required
                         type="email"
                         value={subscriberEmail}
                         onChange={(e) => setSubscriberEmail(e.target.value)}
-                        className="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-l"
+                        dir={inputDirection}
+                        autoComplete="email"
+                        className="newsletter-input"
                       />
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="px-4 py-2 bg-yellow-500 text-black rounded-r hover:bg-yellow-600 flex items-center justify-center disabled:opacity-60"
+                        className="newsletter-submit disabled:opacity-60"
+                        aria-label={t('footer.subscribe.title')}
                       >
-                      <ArrowUpRight className="w-4 h-4" />
+                        <ArrowUpRight className="w-4 h-4" />
                       </button>
                     </div>
                     {subscribeNotice ? <div className="text-sm text-green-400">{subscribeNotice}</div> : null}

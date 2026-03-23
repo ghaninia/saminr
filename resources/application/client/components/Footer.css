@@ -216,55 +216,83 @@
 .widget-newsletter {
     position: relative;
 }
-.widget-newsletter input {
-    direction: rtl;
-    height: 60px;
+.widget-newsletter .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.widget-newsletter .newsletter-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.widget-newsletter .newsletter-input {
+    height: 52px;
     width: 100%;
-    border: none;
-    background: transparent;
+    border: 1px solid #333;
+    background: #141414;
     font-size: 14px;
     color: #fff;
     outline: none;
-    padding: 0 20px 0 90px;
-    border: 1px solid #f5b754;
-    border-radius: 30px;
+    padding: 0 16px;
+    border-radius: 14px;
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
 }
-.widget-newsletter button {
-    height: 50px;
-    width: 50px;
-    border: none;
-    background: #f5b754;
-    font-size: 14px;
-    font-weight: 700;
-    color: #1b1b1b;
-    outline: none;
-    padding: 0px 16px;
-    cursor: pointer;
-    display: inline-block;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 100%;
-    line-height: 55px;
-    outline: none;
-    -webkit-transform: rotate(270deg);
-    transform: rotate(270deg);
-    -webkit-transition: all 0.7s linear;
-    -o-transition: all 0.7s linear;
-    transition: all 0.7s linear;
-}
-.widget-newsletter input::placeholder {
+
+.widget-newsletter .newsletter-input::placeholder {
     color: rgba(255, 255, 255, 0.8);
 }
-.widget-newsletter:hover button {
-    background: #fff;
+
+.widget-newsletter .newsletter-input:focus {
+    border-color: #f5b754;
+    box-shadow: 0 0 0 3px rgba(245, 183, 84, 0.18);
+    background: #101010;
+}
+
+.widget-newsletter .newsletter-submit {
+    height: 52px;
+    min-width: 52px;
+    padding: 0 16px;
+    border: none;
+    background: #f5b754;
     color: #1b1b1b;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.widget-newsletter .newsletter-submit:disabled {
+    cursor: not-allowed;
+}
+
+.widget-newsletter .newsletter-submit:hover:not(:disabled) {
+    background: #fff;
+    transform: translateY(-1px);
+}
+
+.widget-newsletter .newsletter-submit:active:not(:disabled) {
+    transform: translateY(0px);
+}
+
+.widget-newsletter .newsletter-submit:focus-visible {
     outline: none;
-    -webkit-transform: rotate(230deg);
-    transform: rotate(230deg);
-    -webkit-transition: all 0.7s linear;
-    -o-transition: all 0.7s linear;
-    transition: all 0.7s linear;
+    box-shadow: 0 0 0 3px rgba(245, 183, 84, 0.25);
+}
+
+@media screen and (max-width: 767px) {
+    .widget-newsletter .newsletter-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .widget-newsletter .newsletter-submit {
+        width: 100%;
+    }
 }
 @media screen and (max-width: 767px) {
     .footer-contact-links-wrapper {
