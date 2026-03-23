@@ -97,13 +97,13 @@ export function NewslettersPage() {
         }
     };
 
-    if (loading) return <div className="text-sm text-neutral-400">Loading newsletters…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading newsletters…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
         <div>
             <div className="text-lg font-semibold">Newsletters</div>
-            <div className="mt-1 text-sm text-neutral-400">Create and send newsletters (API: `/api/admin/newsletters`).</div>
+            <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Create and send newsletters (API: `/api/admin/newsletters`).</div>
             {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
             {sendError ? <div className="mt-2 text-sm text-red-400">{sendError}</div> : null}
 
@@ -145,22 +145,22 @@ export function NewslettersPage() {
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <div className="text-sm font-medium">History</div>
-                            <div className="mt-1 text-xs text-neutral-400">{newsletters.length} loaded</div>
+                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">{newsletters.length} loaded</div>
                         </div>
                         <Button variant="subtle" onClick={sendNewsletter} disabled={!selectedNewsletter || sending}>
                             {sending ? 'Queuing…' : 'Send to all'}
                         </Button>
                     </div>
 
-                    <div className="mt-4 overflow-hidden rounded-xl border border-neutral-800">
-                        <div className="divide-y divide-neutral-800">
+                    <div className="mt-4 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                        <div className="divide-y divide-[color:var(--dash-border)]">
                             {newsletters.length === 0 ? (
-                                <div className="px-3 py-4 text-sm text-neutral-400">No newsletters.</div>
+                                <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">No newsletters.</div>
                             ) : (
                                 newsletters.map((item) => (
                                     <label
                                         key={item.id}
-                                        className="flex cursor-pointer items-start gap-3 px-3 py-2 hover:bg-neutral-900/40"
+                                        className="flex cursor-pointer items-start gap-3 px-3 py-2 hover:bg-[color:var(--dash-surface-3)]"
                                     >
                                         <input
                                             type="radio"
@@ -170,10 +170,10 @@ export function NewslettersPage() {
                                             onChange={() => setSelectedNewsletterId(item.id)}
                                         />
                                         <div className="min-w-0 flex-1">
-                                            <div className="truncate text-sm text-neutral-200">
+                                            <div className="truncate text-sm">
                                                 {safeText(item.subject)}
                                             </div>
-                                            <div className="mt-1 text-xs text-neutral-400">
+                                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">
                                                 Status: {safeText(item.status) || 'draft'}
                                                 {item.sent_count ? ` • Sent: ${item.sent_count}` : ''}
                                                 {item.last_error ? ` • Error: ${safeText(item.last_error)}` : ''}
@@ -189,8 +189,8 @@ export function NewslettersPage() {
 
             <Modal open={previewOpen} onClose={() => setPreviewOpen(false)} title="HTML Preview">
                 <div className="space-y-3">
-                    <div className="text-xs text-neutral-400">Preview uses your current draft HTML.</div>
-                    <div className="rounded-xl border border-neutral-800 bg-white text-neutral-900 p-4 overflow-auto max-h-[60vh]">
+                    <div className="text-xs text-[color:var(--dash-muted)]">Preview uses your current draft HTML.</div>
+                    <div className="rounded-xl border border-[color:var(--dash-border)] bg-white text-neutral-900 p-4 overflow-auto max-h-[60vh]">
                         {/* eslint-disable-next-line react/no-danger */}
                         <div dangerouslySetInnerHTML={{ __html: String(html ?? '') }} />
                     </div>
@@ -199,4 +199,3 @@ export function NewslettersPage() {
         </div>
     );
 }
-

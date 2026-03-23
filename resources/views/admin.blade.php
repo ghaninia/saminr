@@ -27,6 +27,17 @@
         <meta name="twitter:image" content="{{ $meta['image'] ?? '' }}">
         <meta name="twitter:site" content="{{ $meta['twitter_site'] ?? '' }}">
 
+        <script>
+            (() => {
+                try {
+                    const theme = localStorage.getItem('theme');
+                    if (theme) document.documentElement.setAttribute('data-theme', theme);
+                } catch {
+                    // noop
+                }
+            })();
+        </script>
+
         @viteReactRefresh
         @vite(['resources/application/dashboard/app.jsx'])
     </head>

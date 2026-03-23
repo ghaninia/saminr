@@ -6,8 +6,8 @@ export function Textarea({ className = '', rows = 4, ...props }) {
             rows={rows}
             className={[
                 'dash-input',
-                'w-full rounded-xl bg-neutral-950/60 border border-neutral-800 px-3 py-2 text-sm outline-none',
-                'focus:border-indigo-500/50 placeholder:text-neutral-600',
+                'w-full rounded-xl bg-[color:var(--dash-input-bg)] border border-[color:var(--dash-border)] px-3 py-2 text-sm outline-none',
+                'text-[color:var(--dash-fg)] focus:border-[color:var(--dash-primary)] placeholder:text-[color:var(--dash-placeholder)]',
                 'resize-y',
                 className,
             ].join(' ')}
@@ -15,4 +15,3 @@ export function Textarea({ className = '', rows = 4, ...props }) {
         />
     );
 }
-

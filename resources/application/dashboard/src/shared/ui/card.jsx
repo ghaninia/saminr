@@ -5,8 +5,8 @@ export function Card({ className = '', ...props }) {
         <div
             className={[
                 'dash-card',
-                'rounded-2xl border border-neutral-800 bg-neutral-900/40',
-                'backdrop-blur supports-[backdrop-filter]:bg-neutral-900/30',
+                'rounded-2xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]',
+                'backdrop-blur supports-[backdrop-filter]:bg-[color:var(--dash-surface)]',
                 className,
             ].join(' ')}
             {...props}

@@ -96,7 +96,7 @@ export function SubscribersPage() {
         }
     };
 
-    if (loading) return <div className="text-sm text-neutral-400">Loading subscribers…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading subscribers…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
@@ -104,10 +104,10 @@ export function SubscribersPage() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">Subscribers</div>
-                    <div className="mt-1 text-sm text-neutral-400">
+                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">
                         Manage newsletter subscribers (API: `/api/admin/subscribers`).
                     </div>
-                    <div className="mt-1 text-xs text-neutral-500">{subtitle}</div>
+                    <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">{subtitle}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
                 <div className="flex items-end gap-3">
@@ -129,22 +129,22 @@ export function SubscribersPage() {
                 </div>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-xl border border-neutral-800">
-                <div className="grid grid-cols-12 gap-2 bg-neutral-900/60 px-3 py-2 text-xs text-neutral-400">
+            <div className="mt-5 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                <div className="grid grid-cols-12 gap-2 bg-[color:var(--dash-surface-3)] px-3 py-2 text-xs text-[color:var(--dash-muted)]">
                     <div className="col-span-5">Fullname</div>
                     <div className="col-span-6">Email</div>
                     <div className="col-span-1 text-right"> </div>
                 </div>
-                <div className="divide-y divide-neutral-800">
+                <div className="divide-y divide-[color:var(--dash-border)]">
                     {subscribers.length === 0 ? (
-                        <div className="px-3 py-4 text-sm text-neutral-400">No subscribers.</div>
+                        <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">No subscribers.</div>
                     ) : (
                         subscribers.map((item) => (
                             <div key={item.id} className="grid grid-cols-12 gap-2 px-3 py-2 text-sm">
-                                <div className="col-span-5 truncate text-neutral-200">
+                                <div className="col-span-5 truncate">
                                     {safeText(item.fullname) || '—'}
                                 </div>
-                                <div className="col-span-6 truncate text-neutral-300">{safeText(item.email)}</div>
+                                <div className="col-span-6 truncate text-[color:var(--dash-muted)]">{safeText(item.email)}</div>
                                 <div className="col-span-1 text-right">
                                     <button
                                         type="button"
@@ -162,4 +162,3 @@ export function SubscribersPage() {
         </div>
     );
 }
-

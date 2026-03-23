@@ -197,7 +197,7 @@ export function CategoriesPage() {
         return res.data ?? {};
     };
 
-    if (loading) return <div className="text-sm text-neutral-400">Loading categories…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading categories…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
@@ -205,7 +205,7 @@ export function CategoriesPage() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">Categories</div>
-                    <div className="mt-1 text-sm text-neutral-400">Manage categories (API: `/api/admin/categories`).</div>
+                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Manage categories (API: `/api/admin/categories`).</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
                 <div className="flex items-end gap-3">
@@ -222,14 +222,17 @@ export function CategoriesPage() {
                 </div>
             </div>
 
-            <div className="mt-4 divide-y divide-neutral-800 rounded-xl border border-neutral-800 overflow-hidden">
+            <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
                 {filtered.map((item) => (
-                    <div key={item.id} className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-neutral-900/40">
+                    <div
+                        key={item.id}
+                        className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]"
+                    >
                         <div className="min-w-0">
                             <div className="text-sm font-medium truncate">
                                 {item?.title?.en || item?.title?.fa || 'Untitled'}
                             </div>
-                            <div className="mt-1 text-xs text-neutral-400 truncate">
+                            <div className="mt-1 text-xs text-[color:var(--dash-muted)] truncate">
                                 {item.short_link} · {item?.subtitle?.en || item?.subtitle?.fa || '—'}
                             </div>
                         </div>
@@ -243,7 +246,9 @@ export function CategoriesPage() {
                         </div>
                     </div>
                 ))}
-                {!filtered.length ? <div className="px-4 py-3 text-sm text-neutral-400">No categories found.</div> : null}
+                {!filtered.length ? (
+                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">No categories found.</div>
+                ) : null}
             </div>
 
             <Modal
@@ -331,7 +336,7 @@ export function CategoriesPage() {
 
                         <div className="space-y-3">
                             <div className="flex items-center justify-between gap-3">
-                                <div className="text-xs text-neutral-500">
+                                <div className="text-xs text-[color:var(--dash-muted-2)]">
                                     Upload an image for this category. Stored on the `public` disk under `uploads/`.
                                 </div>
                                 <div className="inline-flex items-center gap-2">
@@ -383,34 +388,34 @@ export function CategoriesPage() {
 
                             {saving && uploadProgress > 0 ? (
                                 <div className="space-y-1">
-                                    <div className="flex items-center justify-between text-xs text-neutral-500">
+                                    <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted-2)]">
                                         <div>Uploading</div>
                                         <div>{uploadProgress}%</div>
                                     </div>
-                                    <div className="h-2 rounded-full bg-neutral-900 border border-neutral-800 overflow-hidden">
+                                    <div className="h-2 rounded-full bg-[color:var(--dash-surface-3)] border border-[color:var(--dash-border)] overflow-hidden">
                                         <div className="h-full bg-indigo-500/70" style={{ width: `${uploadProgress}%` }} />
                                     </div>
                                 </div>
                             ) : null}
 
                             {selectedPreviewUrl ? (
-                                <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
-                                    <div className="text-xs text-neutral-500 mb-2">Selected file preview</div>
+                                <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                    <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Selected file preview</div>
                                     <img
                                         src={selectedPreviewUrl}
                                         alt="Selected preview"
-                                        className="max-h-36 object-contain rounded-lg border border-neutral-800 bg-neutral-950/60"
+                                        className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
                                     />
                                 </div>
                             ) : null}
 
                             {draft.image && isLikelyImageUrl(String(draft.image)) ? (
-                                <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
-                                    <div className="text-xs text-neutral-500 mb-2">Stored image preview</div>
+                                <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                    <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Stored image preview</div>
                                     <img
                                         src={String(draft.image)}
                                         alt="Preview"
-                                        className="max-h-36 object-contain rounded-lg border border-neutral-800 bg-neutral-950/60"
+                                        className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
                                     />
                                 </div>
                             ) : null}

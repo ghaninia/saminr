@@ -10,9 +10,9 @@ export function Button({ className = '', variant = 'primary', size = 'md', ...pr
     };
 
     const variants = {
-        primary: 'dash-btn-primary bg-white text-neutral-900 hover:bg-neutral-100',
-        subtle: 'bg-neutral-800 text-neutral-100 hover:bg-neutral-700',
-        ghost: 'bg-transparent text-neutral-200 hover:bg-neutral-800/60',
+        primary: 'dash-btn-primary bg-[color:var(--dash-btn-primary-bg)] text-[color:var(--dash-btn-primary-fg)] hover:bg-[color:var(--dash-btn-primary-hover)]',
+        subtle: 'bg-[color:var(--dash-btn-subtle-bg)] text-[color:var(--dash-fg)] hover:bg-[color:var(--dash-btn-subtle-hover)]',
+        ghost: 'bg-transparent text-[color:var(--dash-fg)] hover:bg-[color:var(--dash-surface-3)]',
         danger: 'bg-red-500/90 text-white hover:bg-red-500',
     };
 

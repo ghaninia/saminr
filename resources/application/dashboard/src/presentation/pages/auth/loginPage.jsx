@@ -6,6 +6,7 @@ import { Card } from '../../../shared/ui/card.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { getApiErrorMessage } from '../../../infrastructure/http/adminApi.js';
+import { ThemeToggle } from '../../../shared/ui/themeToggle.jsx';
 
 export function LoginPage() {
     const { user, login } = useAuth();
@@ -22,16 +23,19 @@ export function LoginPage() {
     }, [user, navigate]);
 
     return (
-        <div className="dash-bg min-h-screen text-neutral-100 grid place-items-center px-4">
+        <div className="dash-bg min-h-screen grid place-items-center px-4">
             <Card className="w-full max-w-md p-6">
-                <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-2xl bg-neutral-800 grid place-items-center text-xs tracking-wider text-neutral-200">
-                        ADM
+                <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-2xl bg-[color:var(--dash-surface-2)] border border-[color:var(--dash-border)] grid place-items-center text-xs tracking-wider">
+                            ADM
+                        </div>
+                        <div>
+                            <div className="text-lg font-semibold">Sign in</div>
+                            <div className="mt-0.5 text-sm text-[color:var(--dash-muted)]">Admin access only.</div>
+                        </div>
                     </div>
-                    <div>
-                        <div className="text-lg font-semibold">Sign in</div>
-                        <div className="mt-0.5 text-sm text-neutral-400">Admin access only.</div>
-                    </div>
+                    <ThemeToggle />
                 </div>
 
                 <form
@@ -71,11 +75,11 @@ export function LoginPage() {
                         {submitting ? 'Signing in…' : 'Sign in'}
                     </Button>
 
-                    <div className="text-sm text-neutral-400 flex items-center justify-between">
-                        <Link className="underline hover:text-neutral-200" to="/forgot-password">
+                    <div className="text-sm text-[color:var(--dash-muted)] flex items-center justify-between">
+                        <Link className="underline hover:text-[color:var(--dash-fg)]" to="/forgot-password">
                             Forgot password?
                         </Link>
-                        <div className="text-xs text-neutral-500">v1</div>
+                        <div className="text-xs text-[color:var(--dash-muted-2)]">v1</div>
                     </div>
                 </form>
             </Card>

@@ -6,6 +6,7 @@ import { Button } from '../../../shared/ui/button.jsx';
 import { Card } from '../../../shared/ui/card.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
+import { ThemeToggle } from '../../../shared/ui/themeToggle.jsx';
 
 export function ForgotPasswordPage() {
     const navigate = useNavigate();
@@ -15,10 +16,15 @@ export function ForgotPasswordPage() {
     const [error, setError] = useState('');
 
     return (
-        <div className="dash-bg min-h-screen text-neutral-100 grid place-items-center px-4">
+        <div className="dash-bg min-h-screen grid place-items-center px-4">
             <Card className="w-full max-w-md p-6">
-                <div className="text-lg font-semibold">Reset password</div>
-                <div className="mt-1 text-sm text-neutral-400">We will email you a reset link.</div>
+                <div className="flex items-start justify-between gap-3">
+                    <div>
+                        <div className="text-lg font-semibold">Reset password</div>
+                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">We will email you a reset link.</div>
+                    </div>
+                    <ThemeToggle />
+                </div>
 
                 <form
                     className="mt-6 space-y-3"
@@ -49,8 +55,12 @@ export function ForgotPasswordPage() {
                         {submitting ? 'Sending…' : 'Send reset link'}
                     </Button>
 
-                    <div className="text-sm text-neutral-400">
-                        <button type="button" className="underline hover:text-neutral-200" onClick={() => navigate('/login')}>
+                    <div className="text-sm text-[color:var(--dash-muted)]">
+                        <button
+                            type="button"
+                            className="underline hover:text-[color:var(--dash-fg)]"
+                            onClick={() => navigate('/login')}
+                        >
                             Back to sign in
                         </button>
                     </div>

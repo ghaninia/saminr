@@ -183,7 +183,7 @@ export function SettingsPage() {
         return res.data ?? {};
     };
 
-    if (loading) return <div className="text-sm text-neutral-400">Loading settings…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading settings…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
@@ -191,7 +191,7 @@ export function SettingsPage() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">Settings</div>
-                    <div className="mt-1 text-sm text-neutral-400">Edit settings (API: `/api/admin/settings/:id`).</div>
+                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Edit settings (API: `/api/admin/settings/:id`).</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
                 <div className="w-60">
@@ -201,13 +201,13 @@ export function SettingsPage() {
                 </div>
             </div>
 
-            <div className="mt-4 divide-y divide-neutral-800 rounded-xl border border-neutral-800 overflow-hidden">
+            <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
                 {filtered.map((item) => (
                     <details key={item.id} className="group">
-                        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-4 hover:bg-neutral-900/40">
+                        <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]">
                             <div className="min-w-0">
                                 <div className="text-sm font-medium truncate">{item.key}</div>
-                                <div className="mt-1 text-xs text-neutral-400 truncate">
+                                <div className="mt-1 text-xs text-[color:var(--dash-muted)] truncate">
                                     {summarizeSettingValue(item)}
                                 </div>
                             </div>
@@ -224,17 +224,19 @@ export function SettingsPage() {
                                 >
                                     Edit
                                 </Button>
-                                <div className="text-xs text-neutral-500 group-open:text-neutral-300">View</div>
+                                <div className="text-xs text-[color:var(--dash-muted-2)] group-open:text-[color:var(--dash-muted)]">View</div>
                             </div>
                         </summary>
                         <div className="px-4 pb-4">
-                            <pre className="dash-scroll text-xs text-neutral-200 bg-neutral-950/50 border border-neutral-800 rounded-lg px-3 py-2 overflow-auto">
+                            <pre className="dash-scroll text-xs text-[color:var(--dash-fg)] bg-[color:var(--dash-input-bg)] border border-[color:var(--dash-border)] rounded-lg px-3 py-2 overflow-auto">
                                 {JSON.stringify(item.value, null, 2)}
                             </pre>
                         </div>
                     </details>
                 ))}
-                {!filtered.length ? <div className="px-4 py-3 text-sm text-neutral-400">No settings found.</div> : null}
+                {!filtered.length ? (
+                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">No settings found.</div>
+                ) : null}
             </div>
 
             <Modal
@@ -245,8 +247,8 @@ export function SettingsPage() {
                 {editing ? (
                     <div className="space-y-4">
                         <div className="flex items-start justify-between gap-4">
-                            <div className="text-xs text-neutral-400">Editing setting</div>
-                            <label className="flex items-center gap-2 text-sm text-neutral-300">
+                            <div className="text-xs text-[color:var(--dash-muted)]">Editing setting</div>
+                            <label className="flex items-center gap-2 text-sm text-[color:var(--dash-muted)]">
                                 <input
                                     type="checkbox"
                                     checked={useDefault}
@@ -274,7 +276,7 @@ export function SettingsPage() {
                                         <Input value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} readOnly />
                                     </Field>
                                     <div className="flex items-center justify-between gap-3">
-                                        <div className="text-xs text-neutral-500">
+                                        <div className="text-xs text-[color:var(--dash-muted-2)]">
                                             Upload an image. Stored on the `public` disk under `uploads/`.
                                         </div>
                                         <div className="inline-flex items-center gap-2">
@@ -326,11 +328,11 @@ export function SettingsPage() {
                                     </div>
                                     {saving && uploadProgress > 0 ? (
                                         <div className="space-y-1">
-                                            <div className="flex items-center justify-between text-xs text-neutral-500">
+                                            <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted-2)]">
                                                 <div>Uploading</div>
                                                 <div>{uploadProgress}%</div>
                                             </div>
-                                            <div className="h-2 rounded-full bg-neutral-900 border border-neutral-800 overflow-hidden">
+                                            <div className="h-2 rounded-full bg-[color:var(--dash-surface-3)] border border-[color:var(--dash-border)] overflow-hidden">
                                                 <div
                                                     className="h-full bg-indigo-500/70"
                                                     style={{ width: `${uploadProgress}%` }}
@@ -339,22 +341,22 @@ export function SettingsPage() {
                                         </div>
                                     ) : null}
                                     {selectedPreviewUrl ? (
-                                        <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
-                                            <div className="text-xs text-neutral-500 mb-2">Selected file preview</div>
+                                        <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                            <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Selected file preview</div>
                                             <img
                                                 src={selectedPreviewUrl}
                                                 alt="Selected preview"
-                                                className="max-h-36 object-contain rounded-lg border border-neutral-800 bg-neutral-950/60"
+                                                className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
                                             />
                                         </div>
                                     ) : null}
                                     {draftValue && isLikelyImageUrl(String(draftValue)) ? (
-                                        <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
-                                            <div className="text-xs text-neutral-500 mb-2">Stored file preview</div>
+                                        <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                            <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Stored file preview</div>
                                             <img
                                                 src={String(draftValue)}
                                                 alt="Preview"
-                                                className="max-h-36 object-contain rounded-lg border border-neutral-800 bg-neutral-950/60"
+                                                className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
                                             />
                                         </div>
                                     ) : null}
@@ -397,12 +399,12 @@ function MultipleEditor({ value, onChange }) {
     if (Array.isArray(value)) {
         return (
             <div className="space-y-3">
-                <div className="text-xs text-neutral-400">Localized list (fa/en)</div>
+                <div className="text-xs text-[color:var(--dash-muted)]">Localized list (fa/en)</div>
                 <div className="space-y-3">
                     {value.map((row, idx) => (
-                        <div key={idx} className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-3">
+                        <div key={idx} className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
                             <div className="flex items-center justify-between gap-3">
-                                <div className="text-xs text-neutral-500">Item {idx + 1}</div>
+                                <div className="text-xs text-[color:var(--dash-muted-2)]">Item {idx + 1}</div>
                                 <Button
                                     type="button"
                                     size="sm"
@@ -451,7 +453,7 @@ function MultipleEditor({ value, onChange }) {
 
     return (
         <div className="space-y-3">
-            <div className="text-xs text-neutral-400">Localized value (fa/en)</div>
+            <div className="text-xs text-[color:var(--dash-muted)]">Localized value (fa/en)</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Field label="English (en)">
                     <Textarea rows={6} value={en} onChange={(e) => onChange({ fa, en: e.target.value })} />
@@ -476,7 +478,7 @@ function ArrayEditor({ value, onChange }) {
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between gap-3">
-                <div className="text-xs text-neutral-400">JSON Array/Object</div>
+                <div className="text-xs text-[color:var(--dash-muted)]">JSON Array/Object</div>
                 <Button
                     type="button"
                     size="sm"
