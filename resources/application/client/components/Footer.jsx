@@ -66,7 +66,7 @@ function Footer() {
             <div className="links dark footer-contact-links">
               <div className="footer-contact-links-wrapper grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon mr-4">
+                  <div className="image-wrapper footer-contact-link-icon">
                     <div className="icon-footer flex items-center justify-center">
                       <Phone className="w-6 h-6" />
                     </div>
@@ -78,7 +78,7 @@ function Footer() {
                 </div>
                 <div className="footer-contact-links-divider hidden md:block"></div>
                 <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon mr-4">
+                  <div className="image-wrapper footer-contact-link-icon">
                     <div className="icon-footer flex items-center justify-center">
                       <Mail className="w-6 h-6" />
                     </div>
@@ -90,7 +90,7 @@ function Footer() {
                 </div>
                 <div className="footer-contact-links-divider hidden md:block"></div>
                 <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon mr-4">
+                  <div className="image-wrapper footer-contact-link-icon">
                     <div className="icon-footer flex items-center justify-center">
                       <MapPin className="w-6 h-6" />
                     </div>

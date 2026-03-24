@@ -18,6 +18,11 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     // Save to localStorage when language changes
     localStorage.setItem('language', language)
+
+    // Keep document language and direction in sync with selected language.
+    const dir = language === 'fa' ? 'rtl' : 'ltr'
+    document.documentElement.setAttribute('lang', language)
+    document.documentElement.setAttribute('dir', dir)
   }, [language])
 
   const changeLanguage = (lang) => {
@@ -27,11 +32,11 @@ export function LanguageProvider({ children }) {
   const t = (key) => {
     const keys = key.split('.')
     let value = translations[language]
-    
+
     for (const k of keys) {
       value = value?.[k]
     }
-    
+
     return value || key
   }
 

@@ -178,8 +178,16 @@ body {
     transition:
         background-color 0.3s,
         color 0.3s;
+}
+
+html[dir='rtl'] body {
     direction: rtl;
     text-align: right;
+}
+
+html[dir='ltr'] body {
+    direction: ltr;
+    text-align: left;
 }
 
 h1 {
@@ -591,7 +599,7 @@ html[data-theme='light'] .background {
     bottom: 0px;
     padding: 0 110px 25px 20px;
     width: 100%;
-    text-align: left;
+    text-align: start;
     z-index: 2;
 
 }
@@ -604,7 +612,7 @@ html[data-theme='light'] .background {
     margin-bottom: 10px;
 }
 .products .item .title h4 {
-    text-align: right;
+    text-align: inherit;
     color: #fff;
     font-size: 21px;
     margin-bottom: 5px;
@@ -1496,6 +1504,19 @@ section .swiper-button-prev::after {
     position: relative;
     display: block;
 }
+
+.app .app-social-link {
+    margin-inline-end: 10px;
+}
+
+.app .app-social-icon {
+    margin-inline-start: 0.5rem;
+}
+
+.app .app-social-link:last-of-type {
+    margin-inline-end: 0;
+}
+
 @media screen and (max-width: 991px) {
     .app .item {
     padding: 30px 30px 0px 30px;

@@ -263,14 +263,14 @@
 .navigation .navbar-left:before {
   content: '';
   position: absolute;
-  right: 0px;
+  inset-inline-start: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
   height: 60%;
   background-color: rgba(0,0,0,.1);
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  z-index: 1; 
+  z-index: 1;
 }
 
 
@@ -279,7 +279,7 @@
   display: flex;
   align-items: center;
   z-index: 5;
-  margin-left: 20px;
+  margin-inline-start: 20px;
 }
 
 .navigation .navbar-left .wrap .icon {
@@ -296,7 +296,7 @@
 }
 
 .navigation .navbar-left .wrap .text {
-  margin-right: 10px;
+  margin-inline-start: 10px;
   top: 3px;
   position: relative;
 }

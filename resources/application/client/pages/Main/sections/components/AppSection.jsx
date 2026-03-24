@@ -21,17 +21,17 @@ function AppSection() {
               <h6>{t('app.subtitle')}</h6>
               <h3>{t('app.title')}</h3>
               <p className="mb-30">{siteDescription}</p>
-              <a href={instagram} target="_blank" rel="noreferrer" className="button-3 mb-20 mr-10">
+              <a href={instagram} target="_blank" rel="noreferrer" className="button-3 mb-20 app-social-link">
                 {t('app.instagram')}
-                <Instagram className="ml-2" />
+                <Instagram className="app-social-icon" />
               </a>
-              <a href={aparat} target="_blank" rel="noreferrer" className="button-3 mb-20 mr-10">
+              <a href={aparat} target="_blank" rel="noreferrer" className="button-3 mb-20 app-social-link">
                 {t('app.aparat')}
-                <PlayCircle className="ml-2" />
+                <PlayCircle className="app-social-icon" />
               </a>
-              <a href={youtube} target="_blank" rel="noreferrer" className="button-3 mb-20">
+              <a href={youtube} target="_blank" rel="noreferrer" className="button-3 mb-20 app-social-link">
                 {t('app.youtube')}
-                <Youtube className="ml-2" />
+                <Youtube className="app-social-icon" />
               </a>
             </div>
             <div className="lg:col-span-6">
