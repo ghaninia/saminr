@@ -6,6 +6,11 @@
     z-index: 3;
     float: left;
 }
+
+html[dir="ltr"] .candle {
+    float: right;
+}
+
 .candle .candle-body {
   width: 110px;
   height: 139px;
