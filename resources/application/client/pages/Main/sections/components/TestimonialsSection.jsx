@@ -1,33 +1,43 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../../../../contexts/LanguageContext'
-import { useTheme } from '../../../../contexts/ThemeContext'
 import { Star, Quote } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { apiClient } from '../../../../apis'
 import 'swiper/css'
 
 function TestimonialsSection() {
   const { t, language } = useLanguage()
-  const { theme } = useTheme()
+  const [items, setItems] = useState([])
 
-  const reviews = [
-    {
-      name: 'پوریا میرزایی',
-      role: 'مشتری',
-      text: 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.',
-      image: '/images/candle1.jpg'
-    },
-    {
-      name: 'نسترن سلطانی',
-      role: 'مشتری',
-      text: 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.',
-      image: '/images/candle2.jpg'
-    },
-    {
-      name: 'فروغ فدایی',
-      role: 'مشتری',
-      text: 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.',
-      image: '/images/candle3.jpg'
+  useEffect(() => {
+    let mounted = true
+
+    apiClient
+      .getClientReviews({ lang: language })
+      .then((res) => {
+        if (!mounted) return
+        setItems(Array.isArray(res?.data) ? res.data : [])
+      })
+      .catch(() => {
+        if (!mounted) return
+        setItems([])
+      })
+
+    return () => {
+      mounted = false
     }
-  ]
+  }, [language])
+
+  const reviews = useMemo(() => {
+    return items.map((item) => ({
+      id: item?.id,
+      name: item?.name || item?.fullname?.[language] || item?.fullname?.fa || item?.fullname?.en || '',
+      role: item?.user_type_label || (language === 'fa' ? 'مشتری' : 'Customer'),
+      text: item?.text || item?.review?.[language] || item?.review?.fa || item?.review?.en || '',
+      image: item?.avatar || '/images/file-corrupted.svg',
+      star: Math.min(5, Math.max(1, Number(item?.star || 5)))
+    }))
+  }, [items, language])
 
   return (
     <section className="testimonials section-padding mt-15">
@@ -52,11 +62,11 @@ function TestimonialsSection() {
               }}
             >
               {reviews.map((review, index) => (
-                <SwiperSlide key={index}>
+                <SwiperSlide key={review.id ?? index}>
                   <div className="item">
                     <div className="stars">
                       <span className="rate">
-                        {[...Array(5)].map((_, i) => (
+                        {[...Array(review.star || 5)].map((_, i) => (
                           <Star key={i} size={10} fill="#f5b754" color="#f5b754" />
                         ))}
                       </span>
