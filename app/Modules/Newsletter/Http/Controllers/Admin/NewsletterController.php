@@ -10,18 +10,27 @@ use App\Modules\Newsletter\Http\Resources\NewsletterResource;
 use App\Modules\Newsletter\Jobs\SendNewsletterToSubscribersJob;
 use App\Modules\Newsletter\Models\Newsletter;
 use App\Modules\Newsletter\Services\Contracts\NewsletterServiceInterface;
+use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class NewsletterController extends Controller
 {
-    public function __construct(private readonly NewsletterServiceInterface $newsletterService)
+    public function __construct(
+        private readonly NewsletterServiceInterface $newsletterService,
+        private readonly SettingServiceInterface $settingService,
+    )
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return NewsletterResource::collection($this->newsletterService->listPaginated(50));
+        $defaultPerPage = (int) ($this->settingService->getValue('dashboard_items_per_page') ?? 10);
+        $requestedPerPage = (int) $request->query('per_page', $defaultPerPage);
+        $perPage = max(1, min(100, $requestedPerPage));
+
+        return NewsletterResource::collection($this->newsletterService->listPaginated($perPage));
     }
 
     public function store(NewsletterStoreRequest $request): JsonResponse

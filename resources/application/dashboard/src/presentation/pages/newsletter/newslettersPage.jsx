@@ -4,7 +4,9 @@ import { Button } from '../../../shared/ui/button.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { Modal } from '../../../shared/ui/modal.jsx';
+import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
+import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 
 function safeText(value) {
     return String(value ?? '').trim();
@@ -16,6 +18,10 @@ export function NewslettersPage() {
     const [notice, setNotice] = useState('');
 
     const [newsletters, setNewsletters] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
+    const perPage = useDashboardPerPage();
     const [selectedNewsletterId, setSelectedNewsletterId] = useState(null);
 
     const [creating, setCreating] = useState(false);
@@ -28,31 +34,35 @@ export function NewslettersPage() {
 
     const [previewOpen, setPreviewOpen] = useState(false);
 
-    const load = async () => {
+    const load = async (page = 1) => {
         setError('');
         setNotice('');
-        const res = await adminApi.get('/newsletters');
+        const res = await adminApi.get('/newsletters', {
+            params: {
+                page,
+                per_page: perPage,
+            },
+        });
+
+        const meta = res.data?.meta ?? {};
         setNewsletters(res.data?.data ?? []);
+        setCurrentPage(typeof meta.current_page === 'number' ? meta.current_page : page);
+        setTotalPages(typeof meta.last_page === 'number' ? meta.last_page : 1);
+        setTotal(typeof meta.total === 'number' ? meta.total : 0);
     };
 
     useEffect(() => {
-        let mounted = true;
         (async () => {
             try {
-                await load();
+                await load(currentPage);
             } catch (err) {
-                if (!mounted) return;
                 setError(getApiErrorMessage(err, 'Unable to load newsletters.'));
             } finally {
-                if (!mounted) return;
                 setLoading(false);
             }
         })();
-        return () => {
-            mounted = false;
-        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [currentPage, perPage]);
 
     const selectedNewsletter = useMemo(() => {
         if (!selectedNewsletterId) return null;
@@ -67,7 +77,8 @@ export function NewslettersPage() {
             const payload = { subject: safeText(subject), html: String(html ?? '') };
             const res = await adminApi.post('/newsletters', payload);
             const created = res.data?.data ?? res.data;
-            setNewsletters((prev) => [created, ...prev]);
+            setCurrentPage(1);
+            await load(1);
             setSelectedNewsletterId(created?.id ?? null);
             setSubject('');
             setHtml('');
@@ -145,7 +156,7 @@ export function NewslettersPage() {
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <div className="text-sm font-medium">History</div>
-                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">{newsletters.length} loaded</div>
+                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">Showing {newsletters.length} of {total}</div>
                         </div>
                         <Button variant="subtle" onClick={sendNewsletter} disabled={!selectedNewsletter || sending}>
                             {sending ? 'Queuing…' : 'Send to all'}
@@ -184,6 +195,14 @@ export function NewslettersPage() {
                             )}
                         </div>
                     </div>
+
+                    <Pagination
+                        page={currentPage}
+                        totalPages={totalPages}
+                        totalItems={total}
+                        perPage={perPage}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </div>
 

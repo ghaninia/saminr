@@ -143,6 +143,10 @@ class SettingSeeder extends Seeder
                 'default' => 'dark',
                 'type' => SettingType::TEXT,
             ],
+            'dashboard_items_per_page' => [
+                'default' => '10',
+                'type' => SettingType::NUMBER,
+            ],
         ];
 
         foreach ($settings as $key => $payload) {

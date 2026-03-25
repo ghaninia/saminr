@@ -3,6 +3,8 @@ import { adminApi, getApiErrorMessage } from '../../../infrastructure/http/admin
 import { Button } from '../../../shared/ui/button.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
+import { Pagination } from '../../../shared/ui/pagination.jsx';
+import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 
 function safeText(value) {
     return String(value ?? '').trim();
@@ -14,48 +16,48 @@ export function SubscribersPage() {
     const [notice, setNotice] = useState('');
 
     const [subscriberSearch, setSubscriberSearch] = useState('');
+    const [appliedSearch, setAppliedSearch] = useState('');
     const [subscribers, setSubscribers] = useState([]);
-    const [total, setTotal] = useState(null);
+    const [total, setTotal] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const perPage = useDashboardPerPage();
 
-    const load = async (search = '') => {
+    const load = async (search = '', page = 1) => {
         setError('');
         setNotice('');
         const q = safeText(search);
-        const res = await adminApi.get('/subscribers', { params: q ? { search: q } : {} });
+        const params = { page, per_page: perPage };
+        if (q) params.search = q;
+        const res = await adminApi.get('/subscribers', { params });
+
+        const meta = res.data?.meta ?? {};
         setSubscribers(res.data?.data ?? []);
-        setTotal(typeof res.data?.meta?.total === 'number' ? res.data.meta.total : null);
+        setTotal(typeof meta.total === 'number' ? meta.total : 0);
+        setCurrentPage(typeof meta.current_page === 'number' ? meta.current_page : page);
+        setTotalPages(typeof meta.last_page === 'number' ? meta.last_page : 1);
     };
 
     useEffect(() => {
-        let mounted = true;
         (async () => {
             try {
-                await load('');
+                await load(appliedSearch, currentPage);
             } catch (err) {
-                if (!mounted) return;
                 setError(getApiErrorMessage(err, 'Unable to load subscribers.'));
             } finally {
-                if (!mounted) return;
                 setLoading(false);
             }
         })();
-        return () => {
-            mounted = false;
-        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [appliedSearch, currentPage, perPage]);
 
     const subtitle = useMemo(() => {
-        if (total === null) return `${subscribers.length} loaded`;
         return `Showing ${subscribers.length} of ${total}`;
     }, [subscribers.length, total]);
 
-    const refresh = async () => {
-        try {
-            await load(subscriberSearch);
-        } catch (err) {
-            setError(getApiErrorMessage(err, 'Unable to refresh.'));
-        }
+    const search = () => {
+        setCurrentPage(1);
+        setAppliedSearch(subscriberSearch);
     };
 
     const removeSubscriber = async (item) => {
@@ -65,7 +67,12 @@ export function SubscribersPage() {
         setNotice('');
         try {
             await adminApi.delete(`/subscribers/${item.id}`);
-            setSubscribers((prev) => prev.filter((x) => x.id !== item.id));
+            const nextPage = subscribers.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+            if (nextPage !== currentPage) {
+                setCurrentPage(nextPage);
+            } else {
+                await load(appliedSearch, currentPage);
+            }
             setNotice('Subscriber deleted.');
         } catch (err) {
             setError(getApiErrorMessage(err, 'Unable to delete subscriber.'));
@@ -120,7 +127,7 @@ export function SubscribersPage() {
                             />
                         </Field>
                     </div>
-                    <Button variant="subtle" onClick={refresh}>
+                    <Button variant="subtle" onClick={search}>
                         Search
                     </Button>
                     <Button variant="subtle" onClick={copyEmails} disabled={subscribers.length === 0}>
@@ -159,6 +166,14 @@ export function SubscribersPage() {
                     )}
                 </div>
             </div>
+
+            <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={total}
+                perPage={perPage}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 }

@@ -4,7 +4,9 @@ import { Button } from '../../../shared/ui/button.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { Modal } from '../../../shared/ui/modal.jsx';
+import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
+import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 
 function isLikelyImageUrl(url) {
     if (!url) return false;
@@ -50,6 +52,8 @@ export function ReviewsPage() {
     const [items, setItems] = useState([]);
     const [query, setQuery] = useState('');
     const [notice, setNotice] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = useDashboardPerPage();
 
     const [editing, setEditing] = useState(null);
     const [draft, setDraft] = useState(emptyReviewDraft());
@@ -90,6 +94,23 @@ export function ReviewsPage() {
             return name.includes(q) || text.includes(q);
         });
     }, [items, query]);
+
+    const totalPages = useMemo(() => Math.max(1, Math.ceil(filtered.length / perPage)), [filtered.length, perPage]);
+
+    const pagedItems = useMemo(() => {
+        const start = (currentPage - 1) * perPage;
+        return filtered.slice(start, start + perPage);
+    }, [filtered, currentPage, perPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, perPage]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
 
     const openCreate = () => {
         setNotice('');
@@ -196,6 +217,7 @@ export function ReviewsPage() {
                 <div>
                     <div className="text-lg font-semibold">Reviews</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Manage customer reviews.</div>
+                    <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">Showing {pagedItems.length} of {filtered.length}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
                 <div className="flex items-end gap-3">
@@ -213,7 +235,7 @@ export function ReviewsPage() {
             </div>
 
             <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
-                {filtered.map((item) => (
+                {pagedItems.map((item) => (
                     <div
                         key={item.id}
                         className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]"
@@ -248,6 +270,14 @@ export function ReviewsPage() {
                     <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">No reviews found.</div>
                 ) : null}
             </div>
+
+            <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={filtered.length}
+                perPage={perPage}
+                onPageChange={setCurrentPage}
+            />
 
             <Modal
                 open={Boolean(editing)}

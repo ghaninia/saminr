@@ -4,7 +4,9 @@ import { Button } from '../../../shared/ui/button.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { Modal } from '../../../shared/ui/modal.jsx';
+import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
+import { updateDashboardPerPageCache, useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 
 function deepClone(value) {
     if (value === null || value === undefined) return value;
@@ -67,6 +69,8 @@ export function SettingsPage() {
     const [items, setItems] = useState([]);
     const [query, setQuery] = useState('');
     const [notice, setNotice] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = useDashboardPerPage();
 
     const [editing, setEditing] = useState(null);
     const [draftValue, setDraftValue] = useState('');
@@ -105,6 +109,23 @@ export function SettingsPage() {
         if (!q) return items;
         return items.filter((item) => String(item.key ?? '').toLowerCase().includes(q));
     }, [items, query]);
+
+    const totalPages = useMemo(() => Math.max(1, Math.ceil(filtered.length / perPage)), [filtered.length, perPage]);
+
+    const pagedItems = useMemo(() => {
+        const start = (currentPage - 1) * perPage;
+        return filtered.slice(start, start + perPage);
+    }, [filtered, currentPage, perPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, perPage]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
 
     const openEditor = (item) => {
         setNotice('');
@@ -156,6 +177,11 @@ export function SettingsPage() {
                 value: useDefault ? null : draftValue,
             });
             const updated = res.data?.data ?? res.data;
+
+            if (String(updated?.key ?? '') === 'dashboard_items_per_page') {
+                updateDashboardPerPageCache(updated?.value ?? updated?.default ?? 10);
+            }
+
             setItems((prev) => prev.map((x) => (x.id === editing.id ? updated : x)));
             setEditing(null);
             setNotice('Saved.');
@@ -202,7 +228,7 @@ export function SettingsPage() {
             </div>
 
             <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
-                {filtered.map((item) => (
+                {pagedItems.map((item) => (
                     <details key={item.id} className="group">
                         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]">
                             <div className="min-w-0">
@@ -238,6 +264,14 @@ export function SettingsPage() {
                     <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">No settings found.</div>
                 ) : null}
             </div>
+
+            <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={filtered.length}
+                perPage={perPage}
+                onPageChange={setCurrentPage}
+            />
 
             <Modal
                 open={Boolean(editing)}
