@@ -3,6 +3,7 @@
 namespace App\Modules\Reviews\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Reviews\Http\Requests\Admin\ReviewUploadRequest;
 use App\Modules\Reviews\Http\Requests\Admin\ReviewUpsertRequest;
 use App\Modules\Reviews\Http\Resources\ReviewResource;
 use App\Modules\Reviews\Models\Review;
@@ -43,6 +44,18 @@ class ReviewController extends Controller
 
         return response()->json([
             'message' => __('responses.common.deleted'),
+        ]);
+    }
+
+    public function upload(ReviewUploadRequest $request, Review $review): JsonResponse
+    {
+        $file = $request->file('file');
+
+        $url = $this->reviewService->uploadAvatar($review, $file);
+
+        return response()->json([
+            'url'    => $url,
+            'review' => (new ReviewResource($review->fresh()))->resolve(),
         ]);
     }
 }

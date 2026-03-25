@@ -6,6 +6,10 @@ import { Input } from '../../../shared/ui/input.jsx';
 import { Modal } from '../../../shared/ui/modal.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 
+function isLikelyImageUrl(url) {
+    if (!url) return false;
+    return /\.(png|jpe?g|webp|svg|ico)(\?.*)?$/i.test(url) || url.startsWith('data:image/');
+}
 const USER_TYPES = [
     { value: 'customer', label: 'Customer' },
     { value: 'admin', label: 'Admin' },
@@ -51,6 +55,9 @@ export function ReviewsPage() {
     const [draft, setDraft] = useState(emptyReviewDraft());
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [selectedPreviewUrl, setSelectedPreviewUrl] = useState('');
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         let mounted = true;
@@ -89,6 +96,9 @@ export function ReviewsPage() {
         setSaveError('');
         setEditing({ id: null });
         setDraft(emptyReviewDraft());
+        setUploadProgress(0);
+        if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+        setSelectedPreviewUrl('');
     };
 
     const openEdit = (item) => {
@@ -102,6 +112,9 @@ export function ReviewsPage() {
             avatar: item?.avatar ?? '',
             user_type: item?.user_type ?? 'customer',
         });
+        setUploadProgress(0);
+        if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+        setSelectedPreviewUrl('');
     };
 
     const closeEditor = () => {
@@ -109,6 +122,9 @@ export function ReviewsPage() {
         setEditing(null);
         setDraft(emptyReviewDraft());
         setSaveError('');
+        setUploadProgress(0);
+        if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+        setSelectedPreviewUrl('');
     };
 
     const save = async () => {
@@ -158,6 +174,19 @@ export function ReviewsPage() {
         }
     };
 
+    const uploadFile = async (reviewId, file) => {
+        const form = new FormData();
+        form.append('file', file);
+        const res = await adminApi.post(`/reviews/${reviewId}/upload`, form, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress: (evt) => {
+                if (!evt.total) return;
+                const percent = Math.min(100, Math.max(0, Math.round((evt.loaded / evt.total) * 100)));
+                setUploadProgress(percent);
+            },
+        });
+        return res.data ?? {};
+    };
     if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading reviews…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
@@ -302,15 +331,93 @@ export function ReviewsPage() {
                                 onChange={(e) => setDraft((p) => ({ ...p, avatar: e.target.value }))}
                             />
                         </Field>
-                        {draft.avatar ? (
-                            <div className="mt-1">
-                                <img
-                                    src={draft.avatar}
-                                    alt="avatar preview"
-                                    className="h-14 w-14 rounded-full object-cover border border-[color:var(--dash-border)]"
-                                />
+
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="text-xs text-[color:var(--dash-muted-2)]">
+                                    Upload an avatar image for this reviewer.
+                                </div>
+                                <div className="inline-flex items-center gap-2">
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".png,.jpg,.jpeg,.webp,.svg,.ico,image/*"
+                                        className="hidden"
+                                        disabled={!editing?.id}
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file || !editing?.id) return;
+                                            setSaveError('');
+                                            try {
+                                                setSaving(true);
+                                                setUploadProgress(0);
+                                                if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
+                                                setSelectedPreviewUrl(URL.createObjectURL(file));
+
+                                                const payload = await uploadFile(editing.id, file);
+                                                const url = payload?.url ?? '';
+                                                const updatedReview = payload?.review ?? null;
+                                                if (url) setDraft((p) => ({ ...p, avatar: url }));
+                                                if (updatedReview?.id) {
+                                                    setItems((prev) => prev.map((x) => (x.id === updatedReview.id ? updatedReview : x)));
+                                                    setEditing((prev) => (prev?.id === updatedReview.id ? updatedReview : prev));
+                                                    setNotice('Uploaded.');
+                                                }
+                                            } catch (err) {
+                                                setSaveError(getApiErrorMessage(err, 'Upload failed.'));
+                                            } finally {
+                                                setSaving(false);
+                                                setUploadProgress(0);
+                                                e.target.value = '';
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="subtle"
+                                        size="sm"
+                                        disabled={saving || !editing?.id}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        {saving ? 'Uploading…' : editing?.id ? 'Choose file' : 'Save first'}
+                                    </Button>
+                                </div>
                             </div>
-                        ) : null}
+
+                            {saving && uploadProgress > 0 ? (
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted-2)]">
+                                        <div>Uploading</div>
+                                        <div>{uploadProgress}%</div>
+                                    </div>
+                                    <div className="h-2 rounded-full bg-[color:var(--dash-surface-3)] border border-[color:var(--dash-border)] overflow-hidden">
+                                        <div className="h-full bg-indigo-500/70" style={{ width: `${uploadProgress}%` }} />
+                                    </div>
+                                </div>
+                            ) : null}
+
+                            {selectedPreviewUrl ? (
+                                <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                    <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Selected file preview</div>
+                                    <img
+                                        src={selectedPreviewUrl}
+                                        alt="Selected preview"
+                                        className="h-16 w-16 rounded-full object-cover border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
+                                    />
+                                </div>
+                            ) : null}
+
+                            {draft.avatar && isLikelyImageUrl(String(draft.avatar)) ? (
+                                <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
+                                    <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Stored avatar preview</div>
+                                    <img
+                                        src={String(draft.avatar)}
+                                        alt="Avatar preview"
+                                        className="h-16 w-16 rounded-full object-cover border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
+                                    />
+                                </div>
+                            ) : null}
+                        </div>
 
                         <div className="flex justify-end gap-2 pt-2">
                             <Button variant="ghost" onClick={closeEditor} disabled={saving}>

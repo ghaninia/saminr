@@ -17,4 +17,11 @@ interface ReviewRepositoryInterface
     public function update(Review $review, array $data): Review;
 
     public function delete(Review $review): void;
+
+    /**
+     * Upload a file to the avatar media collection, persist the URL on the model, and return it.
+     *
+     * @param  \Illuminate\Http\UploadedFile  $file
+     */
+    public function uploadAvatar(Review $review, \Illuminate\Http\UploadedFile $file): string;
 }

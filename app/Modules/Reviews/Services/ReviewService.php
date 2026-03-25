@@ -35,4 +35,9 @@ class ReviewService implements ReviewServiceInterface
     {
         $this->reviewRepository->delete($review);
     }
+
+    public function uploadAvatar(Review $review, \Illuminate\Http\UploadedFile $file): string
+    {
+        return $this->reviewRepository->uploadAvatar($review, $file);
+    }
 }

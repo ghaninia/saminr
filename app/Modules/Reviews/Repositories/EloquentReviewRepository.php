@@ -35,4 +35,17 @@ class EloquentReviewRepository implements ReviewRepositoryInterface
     {
         $review->delete();
     }
+
+    public function uploadAvatar(Review $review, \Illuminate\Http\UploadedFile $file): string
+    {
+        $media = $review
+            ->addMedia($file)
+            ->toMediaCollection('avatar');
+
+        $url = $media->getUrl();
+
+        $review->update(['avatar' => $url]);
+
+        return $url;
+    }
 }

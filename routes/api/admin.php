@@ -39,4 +39,5 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::post('/reviews', [AdminReviewController::class, 'store']);
     Route::patch('/reviews/{review}', [AdminReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
+    Route::post('/reviews/{review}/upload', [AdminReviewController::class, 'upload']);
 });
