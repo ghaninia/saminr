@@ -5,6 +5,7 @@ use App\Modules\Auth\Http\Middleware\AdminJwtMiddleware;
 use App\Modules\Categories\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Modules\Newsletter\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Modules\Newsletter\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
+use App\Modules\Reviews\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
@@ -33,4 +34,9 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::get('/newsletters', [AdminNewsletterController::class, 'index']);
     Route::post('/newsletters', [AdminNewsletterController::class, 'store']);
     Route::post('/newsletters/{newsletter}/send', [AdminNewsletterController::class, 'send']);
+
+    Route::get('/reviews', [AdminReviewController::class, 'index']);
+    Route::post('/reviews', [AdminReviewController::class, 'store']);
+    Route::patch('/reviews/{review}', [AdminReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
 });

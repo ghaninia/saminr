@@ -8,6 +8,10 @@ use App\Modules\Newsletter\Services\Contracts\NewsletterServiceInterface;
 use App\Modules\Newsletter\Services\Contracts\SubscriberServiceInterface;
 use App\Modules\Newsletter\Services\NewsletterService;
 use App\Modules\Newsletter\Services\SubscriberService;
+use App\Modules\Reviews\Repositories\Contracts\ReviewRepositoryInterface;
+use App\Modules\Reviews\Repositories\EloquentReviewRepository;
+use App\Modules\Reviews\Services\Contracts\ReviewServiceInterface;
+use App\Modules\Reviews\Services\ReviewService;
 use App\Modules\Settings\Repositories\Contracts\SettingRepositoryInterface;
 use App\Modules\Settings\Repositories\EloquentSettingRepository;
 use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
@@ -29,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(JwtServiceInterface::class, JwtService::class);
         $this->app->bind(SubscriberServiceInterface::class, SubscriberService::class);
         $this->app->bind(NewsletterServiceInterface::class, NewsletterService::class);
+        $this->app->bind(ReviewRepositoryInterface::class, EloquentReviewRepository::class);
+        $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
     }
 
     /**
