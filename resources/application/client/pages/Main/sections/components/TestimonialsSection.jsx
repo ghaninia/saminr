@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
 function TestimonialsSection() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const { theme } = useTheme()
 
   const reviews = [
@@ -39,6 +39,8 @@ function TestimonialsSection() {
             </div>
           <div className="col-md-12">
             <Swiper
+              key={language}
+              dir={language === 'fa' ? 'rtl' : 'ltr'}
               spaceBetween={30}
               slidesPerView={3}
               loop={true}

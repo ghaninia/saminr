@@ -112,6 +112,8 @@ function CategoriesSection({ categories }) {
           <h1 className="section-title">{t('categories.title')}</h1>
         </div>
         <Swiper
+          key={language}
+          dir={language === 'fa' ? 'rtl' : 'ltr'}
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}

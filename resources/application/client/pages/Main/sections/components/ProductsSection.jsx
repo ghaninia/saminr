@@ -9,7 +9,7 @@ import 'swiper/css/navigation'
 import './SectionComponents.css'
 
 function ProductsSection({ products = [] }) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const { theme } = useTheme()
 
   const defaultProducts = [
@@ -52,6 +52,8 @@ function ProductsSection({ products = [] }) {
           <h1 className="section-title">{t('products.title')}</h1>
         </div>
         <Swiper
+          key={language}
+          dir={language === 'fa' ? 'rtl' : 'ltr'}
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}
