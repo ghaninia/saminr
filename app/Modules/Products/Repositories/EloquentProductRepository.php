@@ -168,9 +168,15 @@ class EloquentProductRepository implements ProductRepositoryInterface
         $variants = (array) Arr::get($data, 'variants', []);
 
         foreach ($variants as $variantData) {
+            $skuType = (string) Arr::get($variantData, 'sku_type', 'numeric');
+            $sku = $skuType === 'numeric' && Arr::get($variantData, 'sku') !== null
+                ? (string) Arr::get($variantData, 'sku')
+                : null;
+
             /** @var ProductVariant $variant */
             $variant = $product->variants()->create([
-                'sku' => Arr::get($variantData, 'sku') !== null ? (string) Arr::get($variantData, 'sku') : null,
+                'sku_type' => $skuType,
+                'sku' => $sku,
                 'price' => (float) Arr::get($variantData, 'price', 0),
                 'is_default' => (bool) Arr::get($variantData, 'is_default', false),
                 'sort_order' => (int) Arr::get($variantData, 'sort_order', 0),

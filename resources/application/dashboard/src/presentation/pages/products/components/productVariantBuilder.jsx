@@ -1,6 +1,12 @@
 import React from 'react';
 import { Input } from '../../../../shared/ui/input.jsx';
 
+const SKU_TYPES = [
+    { value: 'numeric', label: 'عددی' },
+    { value: 'infinite', label: 'بینهایت' },
+    { value: 'contact', label: 'تماس بگیرید' },
+];
+
 function parseNumber(value, fallback = 0) {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
@@ -68,7 +74,36 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                     </div>
                                 </div>
                                 <div className="px-4 py-3">
-                                    <Input value={variant?.sku ?? ''} onChange={(event) => updateVariant(index, { sku: event.target.value })} />
+                                    <div className="space-y-2">
+                                        <select
+                                            className="w-full rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-sm"
+                                            value={variant?.sku_type ?? 'numeric'}
+                                            onChange={(event) => {
+                                                const nextType = event.target.value;
+                                                updateVariant(index, {
+                                                    sku_type: nextType,
+                                                    sku: nextType === 'numeric' ? (variant?.sku ?? '') : '',
+                                                });
+                                            }}
+                                        >
+                                            {SKU_TYPES.map((type) => (
+                                                <option key={type.value} value={type.value}>{type.label}</option>
+                                            ))}
+                                        </select>
+                                        {(variant?.sku_type ?? 'numeric') === 'numeric' ? (
+                                            <Input
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
+                                                placeholder="مثال: 100245"
+                                                value={variant?.sku ?? ''}
+                                                onChange={(event) => updateVariant(index, { sku: event.target.value.replace(/[^0-9]/g, '') })}
+                                            />
+                                        ) : (
+                                            <div className="rounded-xl border border-dashed border-[color:var(--dash-border)] px-3 py-2 text-xs text-[color:var(--dash-muted)]">
+                                                برای این نوع، فقط SKU Type ذخیره می شود.
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="px-4 py-3">
                                     <Input type="number" min="0" step="0.01" value={variant?.price ?? 0} onChange={(event) => updateVariant(index, { price: event.target.value })} />

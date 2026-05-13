@@ -57,6 +57,7 @@ class ProductUpsertRequest extends FormRequest
             'attributes.*.values.*.sort_order' => ['nullable', 'integer', 'min:0'],
 
             'variants' => ['nullable', 'array'],
+            'variants.*.sku_type' => ['required', Rule::in(['numeric', 'infinite', 'contact'])],
             'variants.*.sku' => ['nullable', 'string', 'max:255'],
             'variants.*.price' => ['required', 'numeric', 'min:0'],
             'variants.*.is_default' => ['nullable', 'boolean'],
@@ -101,6 +102,30 @@ class ProductUpsertRequest extends FormRequest
             foreach ($attributes as $index => $attribute) {
                 $label = Arr::get($attribute, 'label');
                 $this->validateLocalizedObject($validator, "attributes.{$index}.label", $label);
+            }
+
+            $variants = $this->input('variants');
+            if (! is_array($variants)) {
+                return;
+            }
+
+            foreach ($variants as $index => $variant) {
+                $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
+                $sku = Arr::get($variant, 'sku');
+
+                if ($skuType !== 'numeric') {
+                    continue;
+                }
+
+                $skuString = is_string($sku) ? trim($sku) : '';
+                if ($skuString === '') {
+                    $validator->errors()->add("variants.{$index}.sku", 'SKU is required when SKU type is numeric.');
+                    continue;
+                }
+
+                if (! preg_match('/^[0-9]+$/', $skuString)) {
+                    $validator->errors()->add("variants.{$index}.sku", 'SKU must contain only numbers when SKU type is numeric.');
+                }
             }
         });
     }
@@ -159,9 +184,13 @@ class ProductUpsertRequest extends FormRequest
 
         $validated['variants'] = array_map(static function (array $variant): array {
             $options = is_array(Arr::get($variant, 'options')) ? Arr::get($variant, 'options') : [];
+            $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
+            $rawSku = Arr::get($variant, 'sku');
+            $sku = $skuType === 'numeric' ? ($rawSku !== null ? (string) $rawSku : null) : null;
 
             return [
-                'sku' => Arr::get($variant, 'sku') !== null ? (string) Arr::get($variant, 'sku') : null,
+                'sku_type' => $skuType,
+                'sku' => $sku,
                 'price' => (float) Arr::get($variant, 'price', 0),
                 'is_default' => (bool) Arr::get($variant, 'is_default', false),
                 'sort_order' => (int) Arr::get($variant, 'sort_order', 0),

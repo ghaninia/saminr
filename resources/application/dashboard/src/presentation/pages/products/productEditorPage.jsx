@@ -78,6 +78,7 @@ function syncVariantsWithAttributes(existingVariants, attributes, basePrice) {
 
         return {
             ...(current ?? emptyVariantDraft(index)),
+            sku_type: current?.sku_type ?? 'numeric',
             sku: current?.sku ?? '',
             price: current?.price ?? parseNumber(basePrice, 0),
             is_default: current ? Boolean(current.is_default) : (!hasDefault && index === 0),
@@ -196,8 +197,14 @@ export function ProductEditorPage() {
             const hasDefault = (draft?.variants ?? []).some((variant) => Boolean(variant?.is_default));
             if (!hasDefault) nextErrors.variant_default = 'Select one default variant.';
 
-            const hasMissingSku = (draft?.variants ?? []).some((variant) => !String(variant?.sku ?? '').trim());
-            if (hasMissingSku) nextErrors.variant_sku = 'SKU is required for all variants.';
+            const hasMissingSkuType = (draft?.variants ?? []).some((variant) => !String(variant?.sku_type ?? '').trim());
+            if (hasMissingSkuType) nextErrors.variant_sku_type = 'SKU type is required for all variants.';
+
+            const hasMissingSku = (draft?.variants ?? []).some((variant) => {
+                if (String(variant?.sku_type ?? 'numeric') !== 'numeric') return false;
+                return !String(variant?.sku ?? '').trim();
+            });
+            if (hasMissingSku) nextErrors.variant_sku = 'SKU is required when SKU type is numeric.';
         }
 
         return nextErrors;
@@ -339,7 +346,10 @@ export function ProductEditorPage() {
                     })),
                 })),
                 variants: (draft.variants ?? []).map((variant, index) => ({
-                    sku: String(variant?.sku ?? '').trim() || null,
+                    sku_type: String(variant?.sku_type ?? 'numeric'),
+                    sku: String(variant?.sku_type ?? 'numeric') === 'numeric'
+                        ? (String(variant?.sku ?? '').trim() || null)
+                        : null,
                     price: parseNumber(variant?.price, 0),
                     is_default: Boolean(variant?.is_default),
                     sort_order: parseNumber(variant?.sort_order, index),
@@ -488,6 +498,7 @@ export function ProductEditorPage() {
                         onChange={(variants) => setDraft((previous) => ({ ...previous, variants }))}
                     />
                     {validationErrors.variants ? <div className="text-xs text-red-400">{validationErrors.variants}</div> : null}
+                    {validationErrors.variant_sku_type ? <div className="text-xs text-red-400">{validationErrors.variant_sku_type}</div> : null}
                     {validationErrors.variant_default ? <div className="text-xs text-red-400">{validationErrors.variant_default}</div> : null}
                     {validationErrors.variant_sku ? <div className="text-xs text-red-400">{validationErrors.variant_sku}</div> : null}
                 </>

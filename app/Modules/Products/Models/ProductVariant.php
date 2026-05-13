@@ -16,6 +16,7 @@ class ProductVariant extends Model
      */
     protected $fillable = [
         'product_id',
+        'sku_type',
         'sku',
         'price',
         'is_default',
@@ -28,6 +29,7 @@ class ProductVariant extends Model
     protected function casts(): array
     {
         return [
+            'sku_type' => 'string',
             'price' => 'float',
             'is_default' => 'boolean',
             'sort_order' => 'integer',

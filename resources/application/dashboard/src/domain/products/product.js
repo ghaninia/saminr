@@ -37,6 +37,7 @@ export function emptyAttributeValueDraft(index = 0) {
 
 export function emptyVariantDraft(index = 0) {
     return {
+        sku_type: 'numeric',
         sku: '',
         price: 0,
         is_default: index === 0,
@@ -108,6 +109,8 @@ export function normalizeProductDraft(source) {
                         ? source.variants.map((variant, variantIndex) => ({
                                     ...emptyVariantDraft(variantIndex),
                                     ...variant,
+                            sku_type: String(variant?.sku_type ?? 'numeric'),
+                            sku: variant?.sku ?? '',
                                     price: Number(variant?.price ?? 0),
                                     sort_order: Number(variant?.sort_order ?? variantIndex),
                                     is_default: Boolean(variant?.is_default),

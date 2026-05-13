@@ -56,6 +56,7 @@ class ProductResource extends JsonResource
             'variants' => $this->whenLoaded('variants', function () {
                 return $this->variants->map(fn ($variant): array => [
                     'id' => $variant->id,
+                    'sku_type' => $variant->sku_type,
                     'sku' => $variant->sku,
                     'price' => $variant->price,
                     'is_default' => $variant->is_default,
