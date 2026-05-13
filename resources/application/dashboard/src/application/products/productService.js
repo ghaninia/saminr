@@ -19,6 +19,9 @@ export const productService = {
     updateProduct(id, payload) {
         return productRepository.update(id, payload);
     },
+    setProductStatus(id, isActive) {
+        return productRepository.setStatus(id, isActive);
+    },
     deleteProduct(id) {
         return productRepository.remove(id);
     },

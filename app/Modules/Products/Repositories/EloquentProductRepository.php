@@ -52,6 +52,13 @@ class EloquentProductRepository implements ProductRepositoryInterface
         });
     }
 
+    public function setStatus(Product $product, bool $isActive): Product
+    {
+        $product->update(['is_active' => $isActive]);
+
+        return $product->fresh(['categories', 'attributes', 'selectedAttributeValues', 'variants.options.attribute', 'variants.options.value']) ?? $product;
+    }
+
     public function delete(Product $product): void
     {
         $product->delete();

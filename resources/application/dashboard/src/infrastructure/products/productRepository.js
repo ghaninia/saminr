@@ -25,6 +25,12 @@ export const productRepository = {
         const res = await adminApi.patch(`/products/${id}`, payload);
         return res.data?.data ?? res.data;
     },
+    async setStatus(id, isActive) {
+        const res = await adminApi.patch(`/products/${id}/status`, {
+            is_active: Boolean(isActive),
+        });
+        return res.data?.data ?? res.data;
+    },
     async remove(id) {
         await adminApi.delete(`/products/${id}`);
     },

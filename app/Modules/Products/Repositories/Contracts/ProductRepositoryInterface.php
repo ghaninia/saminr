@@ -18,6 +18,8 @@ interface ProductRepositoryInterface
     /** @param array<string, mixed> $data */
     public function update(Product $product, array $data): Product;
 
+    public function setStatus(Product $product, bool $isActive): Product;
+
     public function delete(Product $product): void;
 
     /** @param \Illuminate\Http\UploadedFile $file */

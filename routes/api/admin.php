@@ -47,6 +47,7 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::get('/products/{product}', [AdminProductController::class, 'show']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::patch('/products/{product}', [AdminProductController::class, 'update']);
+    Route::patch('/products/{product}/status', [AdminProductController::class, 'setStatus']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
     Route::post('/products/{product}/upload', [AdminProductController::class, 'upload']);
     Route::get('/product-attributes', [AdminProductAttributeController::class, 'index']);

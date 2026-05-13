@@ -36,6 +36,11 @@ class ProductService implements ProductServiceInterface
         return $this->productRepository->update($product, $data);
     }
 
+    public function setStatus(Product $product, bool $isActive): Product
+    {
+        return $this->productRepository->setStatus($product, $isActive);
+    }
+
     public function delete(Product $product): void
     {
         $this->productRepository->delete($product);

@@ -8,6 +8,7 @@ use App\Modules\Products\Http\Requests\Admin\ProductUpsertRequest;
 use App\Modules\Products\Http\Resources\ProductResource;
 use App\Modules\Products\Models\Product;
 use App\Modules\Products\Services\Contracts\ProductServiceInterface;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -39,6 +40,17 @@ class ProductController extends Controller
     public function update(ProductUpsertRequest $request, Product $product): ProductResource
     {
         $updated = $this->productService->update($product, $request->validatedPayload());
+
+        return new ProductResource($updated);
+    }
+
+    public function setStatus(Request $request, Product $product): ProductResource
+    {
+        $validated = $request->validate([
+            'is_active' => ['required', 'boolean'],
+        ]);
+
+        $updated = $this->productService->setStatus($product, (bool) $validated['is_active']);
 
         return new ProductResource($updated);
     }
