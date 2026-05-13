@@ -91,4 +91,45 @@ class ProductController extends Controller
             'product' => (new ProductResource($updated))->resolve(),
         ]);
     }
+
+    public function deleteMedia(Request $request, Product $product): JsonResponse
+    {
+        $validated = $request->validate([
+            'field' => ['required', 'string', 'in:cover_image,intro_video,gallery'],
+            'index' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $field = $validated['field'];
+        $index = $validated['index'];
+
+        $collection = match ($field) {
+            'intro_video' => 'intro_video',
+            'gallery' => 'gallery',
+            default => 'cover_image',
+        };
+
+        if ($field === 'gallery' && $index !== null) {
+            // Delete specific gallery image
+            $media = $product->getMedia($collection);
+            if (isset($media[$index])) {
+                $media[$index]->delete();
+            }
+            // Update gallery array to remove the deleted item
+            $gallery = is_array($product->gallery) ? $product->gallery : [];
+            if (isset($gallery[$index])) {
+                unset($gallery[$index]);
+                $product->update(['gallery' => array_values($gallery)]);
+            }
+        } else {
+            // Delete all media in the collection
+            $product->clearMediaCollection($collection);
+            $product->update([$field => null]);
+        }
+
+        $updated = $product->fresh(['categories', 'attributes', 'selectedAttributeValues', 'variants.options.attribute', 'variants.options.value']) ?? $product;
+
+        return response()->json([
+            'product' => (new ProductResource($updated))->resolve(),
+        ]);
+    }
 }

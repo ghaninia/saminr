@@ -15,10 +15,18 @@ import { Input } from '../../../shared/ui/input.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { ProductAttributeSelector } from './components/productAttributeSelector.jsx';
 import { ProductVariantBuilder } from './components/productVariantBuilder.jsx';
+import { ProductGalleryManager } from './components/productGalleryManager.jsx';
 
 function parseNumber(value, fallback = 0) {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function extractMediaUrl(media) {
+    if (!media) return null;
+    if (typeof media === 'string') return media;
+    if (typeof media === 'object' && typeof media.original_url === 'string') return media.original_url;
+    return null;
 }
 
 function buildVariantSignature(options) {
@@ -96,10 +104,8 @@ export function ProductEditorPage() {
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
     const [notice, setNotice] = useState('');
-    const [uploadField, setUploadField] = useState('cover_image');
     const [activeStep, setActiveStep] = useState(0);
     const [validationErrors, setValidationErrors] = useState({});
-    const fileInputRef = useRef(null);
 
     const editorSteps = [
         { key: 'basics', label: 'Basics' },
@@ -307,9 +313,13 @@ export function ProductEditorPage() {
                 description: draft.description,
                 short_link: draft.short_link,
                 base_price: parseNumber(draft.base_price, 0),
-                cover_image: draft.cover_image || null,
-                intro_video: draft.intro_video || null,
-                gallery: Array.isArray(draft.gallery) ? draft.gallery.filter(Boolean) : [],
+                cover_image: extractMediaUrl(draft.cover_image),
+                intro_video: extractMediaUrl(draft.intro_video),
+                gallery: Array.isArray(draft.gallery)
+                    ? draft.gallery
+                        .map((entry) => extractMediaUrl(entry))
+                        .filter((entry) => typeof entry === 'string' && entry.length > 0)
+                    : [],
                 is_active: Boolean(draft.is_active),
                 category_ids: Array.isArray(draft.category_ids) ? draft.category_ids : [],
                 attributes: (draft.attributes ?? []).map((attribute, index) => ({
@@ -355,22 +365,6 @@ export function ProductEditorPage() {
             setSaveError(getApiErrorMessage(requestError, 'Unable to save product.'));
         } finally {
             setSaving(false);
-        }
-    };
-
-    const uploadMedia = async (file) => {
-        if (!productId || !file) return;
-
-        const form = new FormData();
-        form.append('file', file);
-        form.append('field', uploadField);
-
-        const payload = await productService.uploadProductMedia(productId, form);
-        const updatedProduct = payload?.product ?? null;
-
-        if (updatedProduct?.id) {
-            setDraft(normalizeProductDraft(updatedProduct));
-            setNotice('Media uploaded.');
         }
     };
 
@@ -499,20 +493,7 @@ export function ProductEditorPage() {
 
             {activeStep === 3 ? (
                 <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
-                    <div>
-                        <div className="text-base font-semibold">Media</div>
-                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Upload media after the product exists. New products can upload files right after the first save.</div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                        <select className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-sm" value={uploadField} onChange={(event) => setUploadField(event.target.value)}>
-                            <option value="cover_image">Cover image</option>
-                            <option value="gallery">Gallery</option>
-                            <option value="intro_video">Intro video</option>
-                        </select>
-                        <input ref={fileInputRef} type="file" className="hidden" onChange={(event) => uploadMedia(event.target.files?.[0])} />
-                        <Button type="button" variant="subtle" disabled={!productId} onClick={() => fileInputRef.current?.click()}>Upload media</Button>
-                        {!productId ? <span className="text-xs text-[color:var(--dash-muted)]">Save the product once to enable uploads.</span> : null}
-                    </div>
+                    <ProductGalleryManager productId={productId} draft={draft} onDraftChange={setDraft} />
                 </section>
             ) : null}
 

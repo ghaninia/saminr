@@ -20,9 +20,9 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'short_link' => $this->short_link,
             'base_price' => $this->base_price,
-            'cover_image' => $this->cover_image,
-            'intro_video' => $this->intro_video,
-            'gallery' => $this->gallery ?? [],
+            'cover_image' => $this->getMediaForCollection('cover_image'),
+            'intro_video' => $this->getMediaForCollection('intro_video'),
+            'gallery' => $this->getMediaForCollection('gallery', true),
             'is_active' => $this->is_active,
             'categories' => $this->whenLoaded('categories', function () {
                 return $this->categories->map(fn ($category): array => [
@@ -73,6 +73,33 @@ class ProductResource extends JsonResource
             }, []),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+        ];
+    }
+
+    /**
+     * Get media for a collection as formatted array
+     */
+    private function getMediaForCollection(string $collection, bool $isArray = false): array|object|null
+    {
+        $media = $this->getMedia($collection);
+
+        if ($isArray) {
+            return $media->map(fn ($item) => [
+                'id' => $item->id,
+                'file_name' => $item->file_name,
+                'original_url' => $item->getUrl(),
+            ])->values()->all();
+        }
+
+        if ($media->isEmpty()) {
+            return null;
+        }
+
+        $first = $media->first();
+        return [
+            'id' => $first->id,
+            'file_name' => $first->file_name,
+            'original_url' => $first->getUrl(),
         ];
     }
 }
