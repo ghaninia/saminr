@@ -387,10 +387,7 @@ export function ProductEditorPage() {
                     {saveError ? <div className="mt-3 text-sm text-red-400">{saveError}</div> : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button type="button" variant="ghost" onClick={() => navigate('/products')}>Cancel</Button>
-                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
-                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
-                    <Button type="button" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save product'}</Button>
+                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save product'}</Button>
                 </div>
             </div>
 
@@ -404,7 +401,7 @@ export function ProductEditorPage() {
                             <button
                                 key={step.key}
                                 type="button"
-                                className={`rounded-2xl border px-3 py-2 text-sm transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : completed ? 'border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
+                                className={`inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-2xl border px-3 text-sm transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : completed ? 'border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
                                 onClick={() => goToStep(index)}
                             >
                                 {index + 1}. {step.label}
@@ -417,7 +414,12 @@ export function ProductEditorPage() {
             {activeStep === 0 ? (
                 <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
                     <div>
-                        <div className="text-base font-semibold">Product basics</div>
+                        <div className="inline-flex items-center gap-2 text-base font-semibold">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-[color:var(--dash-accent)]" aria-hidden="true">
+                                <path d="M4 5h16M4 12h16M4 19h10" />
+                            </svg>
+                            Product basics
+                        </div>
                         <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Keep the basic information here. Pricing stays inside the variant section below.</div>
                     </div>
 
@@ -502,9 +504,9 @@ export function ProductEditorPage() {
                     Step {activeStep + 1} of {editorSteps.length}: {editorSteps[activeStep].label}
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button type="button" variant="ghost" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
-                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
-                    <Button type="button" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save product'}</Button>
+                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="ghost" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
+                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
+                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save product'}</Button>
                 </div>
             </section>
         </div>
