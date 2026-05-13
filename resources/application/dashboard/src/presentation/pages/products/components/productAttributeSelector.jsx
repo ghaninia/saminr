@@ -169,7 +169,7 @@ export function ProductAttributeSelector({
                                                         <button
                                                             key={`${attribute.id}-${valueEntry.id ?? valueEntry.value}`}
                                                             type="button"
-                                                            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${selected ? 'border-transparent bg-[color:var(--dash-accent)] text-black' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
+                                                            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
                                                             onClick={() => onToggleCatalogValue(index, valueEntry)}
                                                         >
                                                             {swatchColor ? (

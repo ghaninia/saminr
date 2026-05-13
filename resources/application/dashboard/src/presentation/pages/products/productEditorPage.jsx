@@ -97,7 +97,16 @@ export function ProductEditorPage() {
     const [saveError, setSaveError] = useState('');
     const [notice, setNotice] = useState('');
     const [uploadField, setUploadField] = useState('cover_image');
+    const [activeStep, setActiveStep] = useState(0);
+    const [validationErrors, setValidationErrors] = useState({});
     const fileInputRef = useRef(null);
+
+    const editorSteps = [
+        { key: 'basics', label: 'Basics' },
+        { key: 'attributes', label: 'Attributes' },
+        { key: 'variants', label: 'Variants' },
+        { key: 'media', label: 'Media' },
+    ];
 
     useEffect(() => {
         let mounted = true;
@@ -153,6 +162,60 @@ export function ProductEditorPage() {
         () => (draft.attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0),
         [draft.attributes]
     );
+
+    const validateStep = (step) => {
+        const nextErrors = {};
+
+        if (step === 0) {
+            if (!String(draft?.title?.en ?? '').trim()) nextErrors.title_en = 'Title EN is required.';
+            if (!String(draft?.title?.fa ?? '').trim()) nextErrors.title_fa = 'Title FA is required.';
+            if (!String(draft?.short_link ?? '').trim()) nextErrors.short_link = 'Short link is required.';
+            if (!Number.isFinite(Number(draft?.base_price)) || Number(draft?.base_price) < 0) nextErrors.base_price = 'Base price must be a valid number.';
+            if (!Array.isArray(draft?.category_ids) || draft.category_ids.length === 0) nextErrors.category_ids = 'Select at least one category.';
+        }
+
+        if (step === 1) {
+            if (!Array.isArray(draft?.attributes) || draft.attributes.length === 0) {
+                nextErrors.attributes = 'Attach at least one attribute.';
+            } else if (configuredAttributes.length === 0) {
+                nextErrors.attributes = 'Select at least one value for attached attributes.';
+            }
+        }
+
+        if (step === 2) {
+            if (!Array.isArray(draft?.variants) || draft.variants.length === 0) {
+                nextErrors.variants = 'At least one variant must be generated.';
+            }
+
+            const hasDefault = (draft?.variants ?? []).some((variant) => Boolean(variant?.is_default));
+            if (!hasDefault) nextErrors.variant_default = 'Select one default variant.';
+
+            const hasMissingSku = (draft?.variants ?? []).some((variant) => !String(variant?.sku ?? '').trim());
+            if (hasMissingSku) nextErrors.variant_sku = 'SKU is required for all variants.';
+        }
+
+        return nextErrors;
+    };
+
+    const canMoveToStep = (targetStep) => {
+        if (targetStep <= activeStep) return true;
+
+        const currentErrors = validateStep(activeStep);
+        setValidationErrors((previous) => ({ ...previous, ...currentErrors }));
+        if (Object.keys(currentErrors).length > 0) {
+            setSaveError('Please complete required fields before continuing.');
+            return false;
+        }
+
+        setSaveError('');
+        return true;
+    };
+
+    const goToStep = (targetStep) => {
+        const boundedTarget = Math.max(0, Math.min(editorSteps.length - 1, targetStep));
+        if (!canMoveToStep(boundedTarget)) return;
+        setActiveStep(boundedTarget);
+    };
 
     const attachExistingAttribute = (attributeId) => {
         const source = attributeCatalog.find((attribute) => attribute.id === attributeId);
@@ -216,6 +279,23 @@ export function ProductEditorPage() {
     };
 
     const save = async () => {
+        const allErrors = {
+            ...validateStep(0),
+            ...validateStep(1),
+            ...validateStep(2),
+        };
+
+        if (Object.keys(allErrors).length > 0) {
+            setValidationErrors(allErrors);
+            setSaveError('Please complete all required fields before saving.');
+
+            if (allErrors.title_en || allErrors.title_fa || allErrors.short_link || allErrors.base_price || allErrors.category_ids) setActiveStep(0);
+            else if (allErrors.attributes) setActiveStep(1);
+            else if (allErrors.variants || allErrors.variant_default || allErrors.variant_sku) setActiveStep(2);
+
+            return;
+        }
+
         setSaving(true);
         setSaveError('');
         setNotice('');
@@ -297,6 +377,9 @@ export function ProductEditorPage() {
     if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading product editor…</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
+    const isFirstStep = activeStep === 0;
+    const isLastStep = activeStep === editorSteps.length - 1;
+
     return (
         <div className="space-y-5">
             <div className="flex flex-col gap-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5 md:flex-row md:items-start md:justify-between">
@@ -311,86 +394,136 @@ export function ProductEditorPage() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <Button type="button" variant="ghost" onClick={() => navigate('/products')}>Cancel</Button>
+                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
+                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
                     <Button type="button" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save product'}</Button>
                 </div>
             </div>
 
-            <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
-                <div>
-                    <div className="text-base font-semibold">Product basics</div>
-                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Keep the basic information here. Pricing stays inside the variant section below.</div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field label="Title EN"><Input value={draft.title.en} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, en: event.target.value }, short_link: shortLinkTouched ? previous.short_link : slugify(event.target.value) }))} /></Field>
-                    <Field label="Title FA"><Input value={draft.title.fa} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, fa: event.target.value } }))} /></Field>
-                    <Field label="Short link"><Input value={draft.short_link} onChange={(event) => { setShortLinkTouched(true); setDraft((previous) => ({ ...previous, short_link: event.target.value })); }} /></Field>
-                    <Field label="Base price"><Input type="number" min="0" step="0.01" value={draft.base_price} onChange={(event) => setDraft((previous) => ({ ...previous, base_price: event.target.value }))} /></Field>
-                    <Field label="Subtitle EN"><Input value={draft.subtitle.en} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, en: event.target.value } }))} /></Field>
-                    <Field label="Subtitle FA"><Input value={draft.subtitle.fa} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, fa: event.target.value } }))} /></Field>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field label="Description EN"><Textarea rows={5} value={draft.description.en} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, en: event.target.value } }))} /></Field>
-                    <Field label="Description FA"><Textarea rows={5} value={draft.description.fa} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, fa: event.target.value } }))} /></Field>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => {
-                        const selected = (draft.category_ids ?? []).includes(category.id);
+            <section className="rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-3">
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                    {editorSteps.map((step, index) => {
+                        const selected = index === activeStep;
+                        const completed = index < activeStep;
 
                         return (
                             <button
-                                key={category.id}
+                                key={step.key}
                                 type="button"
-                                className={`rounded-full border px-3 py-1.5 text-xs transition ${selected ? 'border-transparent bg-[color:var(--dash-accent)] text-black' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
-                                onClick={() => setDraft((previous) => ({
-                                    ...previous,
-                                    category_ids: selected
-                                        ? (previous.category_ids ?? []).filter((id) => id !== category.id)
-                                        : [...(previous.category_ids ?? []), category.id],
-                                }))}
+                                className={`rounded-2xl border px-3 py-2 text-sm transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : completed ? 'border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
+                                onClick={() => goToStep(index)}
                             >
-                                {category?.title?.fa || category?.title?.en || category?.name || `#${category.id}`}
+                                {index + 1}. {step.label}
                             </button>
                         );
                     })}
                 </div>
-
-                <label className="inline-flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={Boolean(draft.is_active)} onChange={(event) => setDraft((previous) => ({ ...previous, is_active: event.target.checked }))} />
-                    Product is active
-                </label>
             </section>
 
-            <ProductAttributeSelector
-                attributeCatalog={attributeCatalog}
-                attributes={draft.attributes ?? []}
-                onAttachAttribute={attachExistingAttribute}
-                onRemoveAttribute={removeAttribute}
-                onToggleCatalogValue={toggleCatalogValue}
-            />
+            {activeStep === 0 ? (
+                <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
+                    <div>
+                        <div className="text-base font-semibold">Product basics</div>
+                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Keep the basic information here. Pricing stays inside the variant section below.</div>
+                    </div>
 
-            <ProductVariantBuilder
-                attributes={configuredAttributes}
-                variants={draft.variants ?? []}
-                onChange={(variants) => setDraft((previous) => ({ ...previous, variants }))}
-            />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <Field label="Title EN *" error={validationErrors.title_en}><Input required value={draft.title.en} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, en: event.target.value }, short_link: shortLinkTouched ? previous.short_link : slugify(event.target.value) }))} /></Field>
+                        <Field label="Title FA *" error={validationErrors.title_fa}><Input required value={draft.title.fa} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, fa: event.target.value } }))} /></Field>
+                        <Field label="Short link *" error={validationErrors.short_link}><Input required value={draft.short_link} onChange={(event) => { setShortLinkTouched(true); setDraft((previous) => ({ ...previous, short_link: event.target.value })); }} /></Field>
+                        <Field label="Base price *" error={validationErrors.base_price}><Input required type="number" min="0" step="0.01" value={draft.base_price} onChange={(event) => setDraft((previous) => ({ ...previous, base_price: event.target.value }))} /></Field>
+                        <Field label="Subtitle EN"><Input value={draft.subtitle.en} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, en: event.target.value } }))} /></Field>
+                        <Field label="Subtitle FA"><Input value={draft.subtitle.fa} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, fa: event.target.value } }))} /></Field>
+                    </div>
 
-            <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
-                <div>
-                    <div className="text-base font-semibold">Media</div>
-                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Upload media after the product exists. New products can upload files right after the first save.</div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <Field label="Description EN"><Textarea rows={5} value={draft.description.en} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, en: event.target.value } }))} /></Field>
+                        <Field label="Description FA"><Textarea rows={5} value={draft.description.fa} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, fa: event.target.value } }))} /></Field>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {categories.map((category) => {
+                            const selected = (draft.category_ids ?? []).includes(category.id);
+
+                            return (
+                                <button
+                                    key={category.id}
+                                    type="button"
+                                    className={`rounded-full border px-3 py-1.5 text-xs transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
+                                    onClick={() => setDraft((previous) => ({
+                                        ...previous,
+                                        category_ids: selected
+                                            ? (previous.category_ids ?? []).filter((id) => id !== category.id)
+                                            : [...(previous.category_ids ?? []), category.id],
+                                    }))}
+                                >
+                                    {category?.title?.fa || category?.title?.en || category?.name || `#${category.id}`}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {validationErrors.category_ids ? <div className="text-xs text-red-400">{validationErrors.category_ids}</div> : null}
+
+                    <label className="inline-flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={Boolean(draft.is_active)} onChange={(event) => setDraft((previous) => ({ ...previous, is_active: event.target.checked }))} />
+                        Product is active
+                    </label>
+                </section>
+            ) : null}
+
+            {activeStep === 1 ? (
+                <>
+                    <ProductAttributeSelector
+                        attributeCatalog={attributeCatalog}
+                        attributes={draft.attributes ?? []}
+                        onAttachAttribute={attachExistingAttribute}
+                        onRemoveAttribute={removeAttribute}
+                        onToggleCatalogValue={toggleCatalogValue}
+                    />
+                    {validationErrors.attributes ? <div className="text-xs text-red-400">{validationErrors.attributes}</div> : null}
+                </>
+            ) : null}
+
+            {activeStep === 2 ? (
+                <>
+                    <ProductVariantBuilder
+                        attributes={configuredAttributes}
+                        variants={draft.variants ?? []}
+                        onChange={(variants) => setDraft((previous) => ({ ...previous, variants }))}
+                    />
+                    {validationErrors.variants ? <div className="text-xs text-red-400">{validationErrors.variants}</div> : null}
+                    {validationErrors.variant_default ? <div className="text-xs text-red-400">{validationErrors.variant_default}</div> : null}
+                    {validationErrors.variant_sku ? <div className="text-xs text-red-400">{validationErrors.variant_sku}</div> : null}
+                </>
+            ) : null}
+
+            {activeStep === 3 ? (
+                <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
+                    <div>
+                        <div className="text-base font-semibold">Media</div>
+                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Upload media after the product exists. New products can upload files right after the first save.</div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <select className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-sm" value={uploadField} onChange={(event) => setUploadField(event.target.value)}>
+                            <option value="cover_image">Cover image</option>
+                            <option value="gallery">Gallery</option>
+                            <option value="intro_video">Intro video</option>
+                        </select>
+                        <input ref={fileInputRef} type="file" className="hidden" onChange={(event) => uploadMedia(event.target.files?.[0])} />
+                        <Button type="button" variant="subtle" disabled={!productId} onClick={() => fileInputRef.current?.click()}>Upload media</Button>
+                        {!productId ? <span className="text-xs text-[color:var(--dash-muted)]">Save the product once to enable uploads.</span> : null}
+                    </div>
+                </section>
+            ) : null}
+
+            <section className="flex items-center justify-between rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-4">
+                <div className="text-sm text-[color:var(--dash-muted)]">
+                    Step {activeStep + 1} of {editorSteps.length}: {editorSteps[activeStep].label}
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <select className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-sm" value={uploadField} onChange={(event) => setUploadField(event.target.value)}>
-                        <option value="cover_image">Cover image</option>
-                        <option value="gallery">Gallery</option>
-                        <option value="intro_video">Intro video</option>
-                    </select>
-                    <input ref={fileInputRef} type="file" className="hidden" onChange={(event) => uploadMedia(event.target.files?.[0])} />
-                    <Button type="button" variant="subtle" disabled={!productId} onClick={() => fileInputRef.current?.click()}>Upload media</Button>
-                    {!productId ? <span className="text-xs text-[color:var(--dash-muted)]">Save the product once to enable uploads.</span> : null}
+                <div className="flex items-center gap-2">
+                    <Button type="button" variant="ghost" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
+                    <Button type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
+                    <Button type="button" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save product'}</Button>
                 </div>
             </section>
         </div>
