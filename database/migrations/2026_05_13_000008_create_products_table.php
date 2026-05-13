@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('intro_video')->nullable();
             $table->json('gallery')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
