@@ -2,9 +2,9 @@ import React from 'react';
 import { Input } from '../../../../shared/ui/input.jsx';
 
 const SKU_TYPES = [
-    { value: 'numeric', label: 'عددی' },
-    { value: 'infinite', label: 'بینهایت' },
-    { value: 'contact', label: 'تماس بگیرید' },
+    { value: 'numeric', label: 'Numeric' },
+    { value: 'infinite', label: 'Infinite' },
+    { value: 'contact', label: 'Contact' },
 ];
 
 function parseNumber(value, fallback = 0) {
@@ -18,6 +18,7 @@ function formatPrice(value) {
 
 export function ProductVariantBuilder({ attributes, variants, onChange }) {
     const configuredAttributes = (attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0);
+    const attributeByKey = new Map(configuredAttributes.map((attribute) => [String(attribute?.key ?? ''), attribute]));
 
     const updateVariant = (variantIndex, patch) => {
         onChange((variants ?? []).map((variant, currentIndex) => (
@@ -55,7 +56,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
 
             {(variants?.length ?? 0) > 0 ? (
                 <div className="overflow-hidden rounded-2xl border border-[color:var(--dash-border)]">
-                    <div className="grid grid-cols-[minmax(0,2fr)_160px_160px_120px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
+                    <div className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
                         <div className="px-4 py-3">Variant</div>
                         <div className="px-4 py-3">SKU</div>
                         <div className="px-4 py-3">Price</div>
@@ -63,20 +64,37 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                     </div>
                     <div className="divide-y divide-[color:var(--dash-border)]">
                         {(variants ?? []).map((variant, index) => (
-                            <div key={(variant?.options ?? []).map((option) => `${option.attribute_key}:${option.value}`).join('|') || index} className="grid grid-cols-[minmax(0,2fr)_160px_160px_120px] gap-0 items-center bg-[color:var(--dash-surface)]">
+                            <div key={(variant?.options ?? []).map((option) => `${option.attribute_key}:${option.value}`).join('|') || index} className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 items-center bg-[color:var(--dash-surface)]">
                                 <div className="px-4 py-3 min-w-0">
                                     <div className="flex flex-wrap gap-2">
                                         {(variant?.options ?? []).map((option) => (
-                                            <span key={`${option.attribute_key}-${option.value}`} className="rounded-full border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-2.5 py-1 text-xs">
-                                                {option?.attribute_key}: {option?.value}
-                                            </span>
+                                            (() => {
+                                                const attribute = attributeByKey.get(String(option?.attribute_key ?? ''));
+                                                const isColor = String(attribute?.value_type ?? '') === 'color';
+                                                const matchedValue = (attribute?.values ?? []).find((entry) => String(entry?.value ?? '') === String(option?.value ?? ''));
+                                                const colorHex = isColor ? String(matchedValue?.meta?.hex ?? '').trim() : '';
+
+                                                return (
+                                                    <span key={`${option.attribute_key}-${option.value}`} className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-2.5 py-1 text-xs">
+                                                        {isColor && colorHex ? (
+                                                            <span
+                                                                className="h-3 w-3 rounded-full border border-black/20"
+                                                                style={{ backgroundColor: colorHex }}
+                                                                title={colorHex}
+                                                                aria-hidden="true"
+                                                            />
+                                                        ) : null}
+                                                        <span>{option?.attribute_key}: {option?.value}</span>
+                                                    </span>
+                                                );
+                                            })()
                                         ))}
                                     </div>
                                 </div>
                                 <div className="px-4 py-3">
-                                    <div className="space-y-2">
+                                    <div className="flex items-center gap-2 rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] p-1.5">
                                         <select
-                                            className="w-full rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-sm"
+                                            className="h-9 w-[120px] rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] px-2 text-sm"
                                             value={variant?.sku_type ?? 'numeric'}
                                             onChange={(event) => {
                                                 const nextType = event.target.value;
@@ -92,16 +110,15 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                         </select>
                                         {(variant?.sku_type ?? 'numeric') === 'numeric' ? (
                                             <Input
+                                                className="h-9 flex-1"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
-                                                placeholder="مثال: 100245"
+                                                placeholder="SKU number"
                                                 value={variant?.sku ?? ''}
                                                 onChange={(event) => updateVariant(index, { sku: event.target.value.replace(/[^0-9]/g, '') })}
                                             />
                                         ) : (
-                                            <div className="rounded-xl border border-dashed border-[color:var(--dash-border)] px-3 py-2 text-xs text-[color:var(--dash-muted)]">
-                                                برای این نوع، فقط SKU Type ذخیره می شود.
-                                            </div>
+                                            <div className="h-9 flex-1" aria-hidden="true" />
                                         )}
                                     </div>
                                 </div>
