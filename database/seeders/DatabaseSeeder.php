@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             SettingSeeder::class,
             CategorySeeder::class,
+            ProductAttributeSeeder::class,
             ReviewSeeder::class,
         ]);
     }

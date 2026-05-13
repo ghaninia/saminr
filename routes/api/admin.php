@@ -5,6 +5,8 @@ use App\Modules\Auth\Http\Middleware\AdminJwtMiddleware;
 use App\Modules\Categories\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Modules\Newsletter\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Modules\Newsletter\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
+use App\Modules\Products\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
+use App\Modules\Products\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Modules\Reviews\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
@@ -40,4 +42,12 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::patch('/reviews/{review}', [AdminReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
     Route::post('/reviews/{review}/upload', [AdminReviewController::class, 'upload']);
+
+    Route::get('/products', [AdminProductController::class, 'index']);
+    Route::get('/products/{product}', [AdminProductController::class, 'show']);
+    Route::post('/products', [AdminProductController::class, 'store']);
+    Route::patch('/products/{product}', [AdminProductController::class, 'update']);
+    Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+    Route::post('/products/{product}/upload', [AdminProductController::class, 'upload']);
+    Route::get('/product-attributes', [AdminProductAttributeController::class, 'index']);
 });

@@ -60,9 +60,19 @@ function IconStar(props) {
     );
 }
 
+function IconBox(props) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...props}>
+            <path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z" />
+            <path d="M3 7.5V16.5L12 21" />
+            <path d="M21 7.5V16.5L12 21" />
+        </svg>
+    );
+}
+
 function NavItem({ to, label, icon: Icon }) {
     const location = useLocation();
-    const active = location.pathname === to;
+    const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
 
     return (
         <Link
@@ -139,6 +149,7 @@ export function DashboardLayout() {
                                 <NavItem to="/subscribers" label="Subscribers" icon={IconUsers} />
                                 <NavItem to="/newsletters" label="Newsletters" icon={IconMail} />
                                 <NavItem to="/reviews" label="Reviews" icon={IconStar} />
+                                <NavItem to="/products" label="Products" icon={IconBox} />
                             </nav>
                         </Card>
                     </aside>

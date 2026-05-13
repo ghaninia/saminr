@@ -7,7 +7,7 @@ return [
         'max' => 'Maximum file size is 4MB.',
     ],
     'field' => [
-        'in' => 'Field must be either image or icon.',
+        'in' => 'The selected field is invalid.',
     ],
     'setting_id' => [
         'required' => 'A setting_id is required.',

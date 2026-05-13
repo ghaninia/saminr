@@ -12,6 +12,8 @@ import { CategoriesPage } from './pages/categories/categoriesPage.jsx';
 import { SubscribersPage } from './pages/newsletter/subscribersPage.jsx';
 import { NewslettersPage } from './pages/newsletter/newslettersPage.jsx';
 import { ReviewsPage } from './pages/reviews/reviewsPage.jsx';
+import { ProductsPage } from './pages/products/productsPage.jsx';
+import { ProductEditorPage } from './pages/products/productEditorPage.jsx';
 
 export default function DashboardApp() {
     return (
@@ -35,6 +37,9 @@ export default function DashboardApp() {
                             <Route path="/newsletters" element={<NewslettersPage />} />
                             <Route path="/newsletter" element={<Navigate to="/newsletters" replace />} />
                             <Route path="/reviews" element={<ReviewsPage />} />
+                            <Route path="/products" element={<ProductsPage />} />
+                            <Route path="/products/new" element={<ProductEditorPage />} />
+                            <Route path="/products/:productId/edit" element={<ProductEditorPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

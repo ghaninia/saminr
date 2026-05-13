@@ -8,6 +8,10 @@ use App\Modules\Newsletter\Services\Contracts\NewsletterServiceInterface;
 use App\Modules\Newsletter\Services\Contracts\SubscriberServiceInterface;
 use App\Modules\Newsletter\Services\NewsletterService;
 use App\Modules\Newsletter\Services\SubscriberService;
+use App\Modules\Products\Repositories\Contracts\ProductRepositoryInterface;
+use App\Modules\Products\Repositories\EloquentProductRepository;
+use App\Modules\Products\Services\Contracts\ProductServiceInterface;
+use App\Modules\Products\Services\ProductService;
 use App\Modules\Reviews\Repositories\Contracts\ReviewRepositoryInterface;
 use App\Modules\Reviews\Repositories\EloquentReviewRepository;
 use App\Modules\Reviews\Services\Contracts\ReviewServiceInterface;
@@ -35,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(NewsletterServiceInterface::class, NewsletterService::class);
         $this->app->bind(ReviewRepositoryInterface::class, EloquentReviewRepository::class);
         $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
+        $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
+        $this->app->bind(ProductServiceInterface::class, ProductService::class);
     }
 
     /**
