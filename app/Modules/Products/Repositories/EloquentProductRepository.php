@@ -90,6 +90,47 @@ class EloquentProductRepository implements ProductRepositoryInterface
         return $product->fresh(['categories', 'attributes', 'selectedAttributeValues', 'variants.options.attribute', 'variants.options.value']) ?? $product;
     }
 
+    public function deleteMedia(Product $product, string $field, ?int $index): Product
+    {
+        $collection = match ($field) {
+            'intro_video' => 'intro_video',
+            'gallery' => 'gallery',
+            default => 'cover_image',
+        };
+
+        if ($field === 'gallery' && $index !== null) {
+            $media = $product->getMedia($collection);
+            if (isset($media[$index])) {
+                $media[$index]->delete();
+            }
+
+            $gallery = is_array($product->gallery) ? $product->gallery : [];
+            if (isset($gallery[$index])) {
+                unset($gallery[$index]);
+                $product->update(['gallery' => array_values($gallery)]);
+            }
+        } else {
+            $product->clearMediaCollection($collection);
+            $product->update([$field => null]);
+        }
+
+        return $product->fresh(['categories', 'attributes', 'selectedAttributeValues', 'variants.options.attribute', 'variants.options.value']) ?? $product;
+    }
+
+    public function resolveMediaUrl(Product $product, string $field): ?string
+    {
+        if ($field === 'gallery') {
+            $gallery = is_array($product->gallery) ? $product->gallery : [];
+
+            return $gallery ? (string) $gallery[array_key_last($gallery)] : null;
+        }
+
+        return match ($field) {
+            'intro_video' => $product->intro_video,
+            default => $product->cover_image,
+        };
+    }
+
     /** @param array<string, mixed> $data */
     private function syncRelations(Product $product, array $data): void
     {

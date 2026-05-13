@@ -6,6 +6,7 @@ use App\Modules\Products\Models\Product;
 use App\Modules\Products\Repositories\Contracts\ProductRepositoryInterface;
 use App\Modules\Products\Services\Contracts\ProductServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 
 class ProductService implements ProductServiceInterface
 {
@@ -46,9 +47,21 @@ class ProductService implements ProductServiceInterface
         $this->productRepository->delete($product);
     }
 
-    /** @param \Illuminate\Http\UploadedFile $file */
-    public function upload(Product $product, \Illuminate\Http\UploadedFile $file, string $field): Product
+    /**
+     * @return array{url: string|null, product: Product}
+     */
+    public function uploadMedia(Product $product, UploadedFile $file, string $field): array
     {
-        return $this->productRepository->upload($product, $file, $field);
+        $updated = $this->productRepository->upload($product, $file, $field);
+
+        return [
+            'url' => $this->productRepository->resolveMediaUrl($updated, $field),
+            'product' => $updated,
+        ];
+    }
+
+    public function deleteMedia(Product $product, string $field, ?int $index): Product
+    {
+        return $this->productRepository->deleteMedia($product, $field, $index);
     }
 }

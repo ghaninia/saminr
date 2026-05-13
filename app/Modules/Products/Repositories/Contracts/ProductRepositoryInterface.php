@@ -4,6 +4,7 @@ namespace App\Modules\Products\Repositories\Contracts;
 
 use App\Modules\Products\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 
 interface ProductRepositoryInterface
 {
@@ -24,4 +25,8 @@ interface ProductRepositoryInterface
 
     /** @param \Illuminate\Http\UploadedFile $file */
     public function upload(Product $product, \Illuminate\Http\UploadedFile $file, string $field): Product;
+
+    public function deleteMedia(Product $product, string $field, ?int $index): Product;
+
+    public function resolveMediaUrl(Product $product, string $field): ?string;
 }

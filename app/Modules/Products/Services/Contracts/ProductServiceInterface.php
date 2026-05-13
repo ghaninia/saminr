@@ -4,6 +4,7 @@ namespace App\Modules\Products\Services\Contracts;
 
 use App\Modules\Products\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 
 interface ProductServiceInterface
 {
@@ -22,6 +23,10 @@ interface ProductServiceInterface
 
     public function delete(Product $product): void;
 
-    /** @param \Illuminate\Http\UploadedFile $file */
-    public function upload(Product $product, \Illuminate\Http\UploadedFile $file, string $field): Product;
+    /**
+     * @return array{url: string|null, product: Product}
+     */
+    public function uploadMedia(Product $product, UploadedFile $file, string $field): array;
+
+    public function deleteMedia(Product $product, string $field, ?int $index): Product;
 }

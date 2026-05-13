@@ -2,6 +2,7 @@
 
 namespace App\Modules\Products\Http\Requests\Admin;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -33,5 +34,18 @@ class ProductUploadRequest extends FormRequest
             'file.max' => __('validation_messages.file.max'),
             'field.in' => __('validation_messages.field.in'),
         ];
+    }
+
+    public function field(): string
+    {
+        return (string) $this->validated('field', 'cover_image');
+    }
+
+    public function uploadedFile(): UploadedFile
+    {
+        /** @var UploadedFile $file */
+        $file = $this->file('file');
+
+        return $file;
     }
 }

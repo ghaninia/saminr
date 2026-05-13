@@ -3,12 +3,13 @@
 namespace App\Modules\Products\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Products\Http\Requests\Admin\ProductDeleteMediaRequest;
+use App\Modules\Products\Http\Requests\Admin\ProductSetStatusRequest;
 use App\Modules\Products\Http\Requests\Admin\ProductUploadRequest;
 use App\Modules\Products\Http\Requests\Admin\ProductUpsertRequest;
 use App\Modules\Products\Http\Resources\ProductResource;
 use App\Modules\Products\Models\Product;
 use App\Modules\Products\Services\Contracts\ProductServiceInterface;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -44,13 +45,9 @@ class ProductController extends Controller
         return new ProductResource($updated);
     }
 
-    public function setStatus(Request $request, Product $product): ProductResource
+    public function setStatus(ProductSetStatusRequest $request, Product $product): ProductResource
     {
-        $validated = $request->validate([
-            'is_active' => ['required', 'boolean'],
-        ]);
-
-        $updated = $this->productService->setStatus($product, (bool) $validated['is_active']);
+        $updated = $this->productService->setStatus($product, $request->isActive());
 
         return new ProductResource($updated);
     }
@@ -66,67 +63,17 @@ class ProductController extends Controller
 
     public function upload(ProductUploadRequest $request, Product $product): JsonResponse
     {
-        $validated = $request->validated();
-        $file = $request->file('file');
-        if (! $file instanceof \Illuminate\Http\UploadedFile) {
-            return response()->json([
-                'message' => __('validation_messages.file.required'),
-            ], 422);
-        }
-
-        $field = (string) ($validated['field'] ?? 'cover_image');
-
-        $updated = $this->productService->upload($product, $file, $field);
-
-        $gallery = is_array($updated->gallery) ? $updated->gallery : [];
-
-        $url = match ($field) {
-            'intro_video' => $updated->intro_video,
-            'gallery' => $gallery ? $gallery[array_key_last($gallery)] : null,
-            default => $updated->cover_image,
-        };
+        $result = $this->productService->uploadMedia($product, $request->uploadedFile(), $request->field());
 
         return response()->json([
-            'url' => $url,
-            'product' => (new ProductResource($updated))->resolve(),
+            'url' => $result['url'],
+            'product' => (new ProductResource($result['product']))->resolve(),
         ]);
     }
 
-    public function deleteMedia(Request $request, Product $product): JsonResponse
+    public function deleteMedia(ProductDeleteMediaRequest $request, Product $product): JsonResponse
     {
-        $validated = $request->validate([
-            'field' => ['required', 'string', 'in:cover_image,intro_video,gallery'],
-            'index' => ['nullable', 'integer', 'min:0'],
-        ]);
-
-        $field = $validated['field'];
-        $index = $validated['index'];
-
-        $collection = match ($field) {
-            'intro_video' => 'intro_video',
-            'gallery' => 'gallery',
-            default => 'cover_image',
-        };
-
-        if ($field === 'gallery' && $index !== null) {
-            // Delete specific gallery image
-            $media = $product->getMedia($collection);
-            if (isset($media[$index])) {
-                $media[$index]->delete();
-            }
-            // Update gallery array to remove the deleted item
-            $gallery = is_array($product->gallery) ? $product->gallery : [];
-            if (isset($gallery[$index])) {
-                unset($gallery[$index]);
-                $product->update(['gallery' => array_values($gallery)]);
-            }
-        } else {
-            // Delete all media in the collection
-            $product->clearMediaCollection($collection);
-            $product->update([$field => null]);
-        }
-
-        $updated = $product->fresh(['categories', 'attributes', 'selectedAttributeValues', 'variants.options.attribute', 'variants.options.value']) ?? $product;
+        $updated = $this->productService->deleteMedia($product, $request->field(), $request->mediaIndex());
 
         return response()->json([
             'product' => (new ProductResource($updated))->resolve(),
