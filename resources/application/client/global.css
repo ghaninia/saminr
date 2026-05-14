@@ -871,19 +871,15 @@ html[data-theme='light'] .background {
     align-items: center;
     margin-left: 10px;
 }
-.products .item .title .details .detail-attr-icon {
+.products .item .title .details svg {
     display: inline-flex;
     width: 16px;
     height: 16px;
     margin-left: 5px;
     margin-right: 5px;
-    color: #f5b754;
+    fill: var(--body);
 }
-.products .item .title .details .detail-attr-icon svg {
-    width: 16px;
-    height: 16px;
-    display: block;
-}
+
 .products .item .title .details span i {
     color: #f5b754;
     margin-left: 2px;
