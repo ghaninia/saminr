@@ -81,7 +81,7 @@ export function LoginPage() {
                         <Link className="underline hover:text-[color:var(--dash-fg)]" to="/forgot-password">
                             {t('auth.forgotPassword')}
                         </Link>
-                        <div className="text-xs text-[color:var(--dash-muted-2)]">v1</div>
+                        <div className="text-xs text-[color:var(--dash-muted-2)]">1.0</div>
                     </div>
                 </form>
             </Card>

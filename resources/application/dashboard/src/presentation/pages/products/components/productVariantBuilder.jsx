@@ -52,7 +52,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                 <div className="overflow-hidden rounded-2xl border border-[color:var(--dash-border)]">
                     <div className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
                         <div className="px-4 py-3">{t('products.editor.variant')}</div>
-                        <div className="px-4 py-3">SKU</div>
+                        <div className="px-4 py-3">{t('products.editor.sku')}</div>
                         <div className="px-4 py-3">{t('products.editor.price')}</div>
                         <div className="px-4 py-3">{t('products.editor.default')}</div>
                     </div>

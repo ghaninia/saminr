@@ -134,7 +134,7 @@ export function NewslettersPage() {
                         <Field label={t('newsletter.newsletters.html')}>
                             <Textarea
                                 rows={12}
-                                placeholder="<h1>Hi</h1>…"
+                                placeholder={t('newsletter.newsletters.htmlPlaceholder')}
                                 value={html}
                                 onChange={(e) => setHtml(e.target.value)}
                             />

@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { useI18n } from '../../application/i18n/i18nContext.jsx';
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 const DEFAULT_ACCEPTED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const DEFAULT_MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
-function ImageModal({ media, isOpen, onClose, type = 'image' }) {
+function ImageModal({ media, isOpen, onClose, type = 'image', t }) {
     if (!isOpen || !media) return null;
 
     return (
@@ -14,7 +15,7 @@ function ImageModal({ media, isOpen, onClose, type = 'image' }) {
                     type="button"
                     className="absolute right-4 top-4 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
                     onClick={onClose}
-                    aria-label="Close modal"
+                    aria-label={t('common.closeModal')}
                 >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -29,7 +30,7 @@ function ImageModal({ media, isOpen, onClose, type = 'image' }) {
                         </video>
                     </div>
                 ) : (
-                    <img src={media.original_url} alt="Full view" className="h-auto w-full" />
+                    <img src={media.original_url} alt={t('mediaUploader.fullView')} className="h-auto w-full" />
                 )}
 
                 <div className="border-t border-[color:var(--dash-border)] px-6 py-4">
@@ -40,7 +41,7 @@ function ImageModal({ media, isOpen, onClose, type = 'image' }) {
     );
 }
 
-function UploadZone({ onFileSelect, accept, isLoading, title, description, multiple = false }) {
+function UploadZone({ onFileSelect, accept, isLoading, title, description, multiple = false, t }) {
     const fileInputRef = useRef(null);
     const [isDragActive, setIsDragActive] = useState(false);
 
@@ -101,13 +102,13 @@ function UploadZone({ onFileSelect, accept, isLoading, title, description, multi
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading}
             >
-                {isLoading ? 'Uploading...' : 'Select file'}
+                {isLoading ? t('common.uploading') : t('common.selectFile')}
             </button>
         </div>
     );
 }
 
-function MediaItem({ media, onDelete, isLoading, type = 'image', onView }) {
+function MediaItem({ media, onDelete, isLoading, type = 'image', onView, t }) {
     const [imageError, setImageError] = useState(false);
 
     if (!media) return null;
@@ -133,7 +134,7 @@ function MediaItem({ media, onDelete, isLoading, type = 'image', onView }) {
                 ) : (
                     <img
                         src={media.original_url}
-                        alt="media"
+                        alt={t('mediaUploader.media')}
                         className="h-full w-full object-cover"
                         onError={() => setImageError(true)}
                     />
@@ -142,7 +143,7 @@ function MediaItem({ media, onDelete, isLoading, type = 'image', onView }) {
 
             <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium text-[color:var(--dash-fg)]">{media.file_name}</div>
-                <div className="mt-1 text-xs text-[color:var(--dash-muted)]">ID: {media.id}</div>
+                <div className="mt-1 text-xs text-[color:var(--dash-muted)]">{t('mediaUploader.id')}: {media.id}</div>
             </div>
 
             <div className="flex flex-shrink-0 items-center gap-2">
@@ -151,7 +152,7 @@ function MediaItem({ media, onDelete, isLoading, type = 'image', onView }) {
                     className="rounded-lg p-2 text-[color:var(--dash-muted)] transition hover:bg-[color:var(--dash-surface)] hover:text-blue-300 disabled:opacity-50"
                     onClick={() => onView()}
                     disabled={isLoading}
-                    title="View full image"
+                    title={t('mediaUploader.viewFullImage')}
                 >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -163,7 +164,7 @@ function MediaItem({ media, onDelete, isLoading, type = 'image', onView }) {
                     className="rounded-lg p-2 text-[color:var(--dash-muted)] transition hover:bg-red-500/10 hover:text-red-300 disabled:opacity-50"
                     onClick={() => onDelete()}
                     disabled={isLoading}
-                    title="Delete this media"
+                    title={t('mediaUploader.deleteThisMedia')}
                 >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
                         <polyline points="3 6 5 6 21 6" />
@@ -197,6 +198,7 @@ export function MediaBundleUploader({
     emptyStateMessage = 'Save first to upload media.',
     labels,
 }) {
+    const { t } = useI18n();
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState('');
     const [uploadProgress, setUploadProgress] = useState({});
@@ -205,21 +207,21 @@ export function MediaBundleUploader({
     const [modalType, setModalType] = useState('image');
 
     const mergedLabels = {
-        coverTitle: 'Main Image',
-        coverDescription: 'This image will be displayed as the main thumbnail.',
-        coverUploadTitle: 'Upload main image',
-        coverUploadDescription: 'Drag and drop your image here, or click to select',
-        coverReplace: 'Replace image',
-        galleryTitle: 'Gallery',
-        galleryDescription: 'Add multiple images to showcase this item from different angles.',
-        galleryCountSuffix: 'uploaded',
-        galleryAdd: 'Add gallery images',
-        galleryAddMore: 'Add more gallery images',
-        videoTitle: 'Introduction Video',
-        videoDescription: 'Upload a promotional or introduction video.',
-        videoUploadTitle: 'Upload introduction video',
-        videoUploadDescription: 'Drag and drop your video here, or click to select',
-        videoReplace: 'Replace video',
+        coverTitle: t('mediaUploader.coverTitle'),
+        coverDescription: t('mediaUploader.coverDescription'),
+        coverUploadTitle: t('mediaUploader.coverUploadTitle'),
+        coverUploadDescription: t('mediaUploader.coverUploadDescription'),
+        coverReplace: t('mediaUploader.coverReplace'),
+        galleryTitle: t('mediaUploader.galleryTitle'),
+        galleryDescription: t('mediaUploader.galleryDescription'),
+        galleryCountSuffix: t('mediaUploader.galleryCountSuffix'),
+        galleryAdd: t('mediaUploader.galleryAdd'),
+        galleryAddMore: t('mediaUploader.galleryAddMore'),
+        videoTitle: t('mediaUploader.videoTitle'),
+        videoDescription: t('mediaUploader.videoDescription'),
+        videoUploadTitle: t('mediaUploader.videoUploadTitle'),
+        videoUploadDescription: t('mediaUploader.videoUploadDescription'),
+        videoReplace: t('mediaUploader.videoReplace'),
         ...labels,
     };
 
@@ -244,12 +246,14 @@ export function MediaBundleUploader({
         const isVideo = field === 'intro_video' && acceptedVideoTypes.includes(file.type);
 
         if (!isImage && !isVideo) {
-            setUploadError(`Invalid file type. ${field === 'intro_video' ? 'Please upload a video.' : 'Please upload an image.'}`);
+            setUploadError(
+                `${t('mediaUploader.invalidFileType')} ${field === 'intro_video' ? t('mediaUploader.pleaseUploadVideo') : t('mediaUploader.pleaseUploadImage')}`,
+            );
             return;
         }
 
         if (file.size > maxFileSize) {
-            setUploadError(`File size exceeds ${Math.floor(maxFileSize / (1024 * 1024))}MB limit.`);
+            setUploadError(t('mediaUploader.fileSizeExceeds', { size: Math.floor(maxFileSize / (1024 * 1024)) }));
             return;
         }
 
@@ -279,7 +283,7 @@ export function MediaBundleUploader({
                 return nextProgress;
             });
         } catch (error) {
-            setUploadError(error?.message ?? 'Upload failed. Please try again.');
+            setUploadError(error?.message ?? t('mediaUploader.uploadFailedTryAgain'));
         } finally {
             setUploading(false);
         }
@@ -306,7 +310,7 @@ export function MediaBundleUploader({
                 updateValue(nextMediaValue);
             }
         } catch (error) {
-            setUploadError(error?.message ?? 'Delete failed. Please try again.');
+            setUploadError(error?.message ?? t('mediaUploader.deleteFailedTryAgain'));
         } finally {
             setUploading(false);
         }
@@ -318,7 +322,7 @@ export function MediaBundleUploader({
 
     return (
         <div className="space-y-8">
-            <ImageModal media={modalMedia} isOpen={modalOpen} onClose={() => setModalOpen(false)} type={modalType} />
+            <ImageModal media={modalMedia} isOpen={modalOpen} onClose={() => setModalOpen(false)} type={modalType} t={t} />
 
             {uploadError && (
                 <div className="flex items-center gap-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
@@ -344,6 +348,7 @@ export function MediaBundleUploader({
                                 onDelete={() => handleDeleteMedia('cover_image')}
                                 isLoading={Boolean(uploading && uploadProgress.cover_image)}
                                 type="image"
+                                t={t}
                                 onView={() => {
                                     setModalMedia(coverImage);
                                     setModalType('image');
@@ -356,6 +361,7 @@ export function MediaBundleUploader({
                                 isLoading={Boolean(uploading && uploadProgress.cover_image)}
                                 title={mergedLabels.coverReplace}
                                 description={mergedLabels.coverUploadDescription}
+                                t={t}
                             />
                         </div>
                     ) : (
@@ -365,13 +371,14 @@ export function MediaBundleUploader({
                             isLoading={Boolean(uploading && uploadProgress.cover_image)}
                             title={mergedLabels.coverUploadTitle}
                             description={mergedLabels.coverUploadDescription}
+                            t={t}
                         />
                     )}
 
                     {uploadProgress.cover_image && (
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted)]">
-                                <span>Uploading...</span>
+                                <span>{t('common.uploading')}</span>
                                 <span className="font-medium">{uploadProgress.cover_image}%</span>
                             </div>
                             <div className="h-2 overflow-hidden rounded-full bg-[color:var(--dash-surface-2)]">
@@ -395,7 +402,7 @@ export function MediaBundleUploader({
                     {galleryImages.length > 0 && (
                         <div className="space-y-2">
                             <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--dash-muted)]">
-                                {galleryImages.length} image{galleryImages.length !== 1 ? 's' : ''} {mergedLabels.galleryCountSuffix}
+                                {t('mediaUploader.galleryUploadedCount', { count: galleryImages.length, suffix: mergedLabels.galleryCountSuffix })}
                             </div>
                             <div className="space-y-2">
                                 {galleryImages.map((image, index) => (
@@ -405,6 +412,7 @@ export function MediaBundleUploader({
                                         onDelete={() => handleDeleteMedia('gallery', index)}
                                         isLoading={Boolean(uploading && uploadProgress.gallery)}
                                         type="image"
+                                        t={t}
                                         onView={() => {
                                             setModalMedia(image);
                                             setModalType('image');
@@ -421,14 +429,19 @@ export function MediaBundleUploader({
                         accept={acceptedImageTypes.join(',')}
                         isLoading={Boolean(uploading && uploadProgress.gallery)}
                         title={galleryImages.length > 0 ? mergedLabels.galleryAddMore : mergedLabels.galleryAdd}
-                        description={`Drag and drop images here${galleryImages.length > 0 ? ', or click to add more (multi-select enabled)' : ' (multi-select enabled)'}`}
+                        description={
+                            galleryImages.length > 0
+                                ? t('mediaUploader.galleryDropWithMore')
+                                : t('mediaUploader.galleryDrop')
+                        }
+                        t={t}
                         multiple
                     />
 
                     {uploadProgress.gallery && (
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted)]">
-                                <span>Uploading...</span>
+                                <span>{t('common.uploading')}</span>
                                 <span className="font-medium">{uploadProgress.gallery}%</span>
                             </div>
                             <div className="h-2 overflow-hidden rounded-full bg-[color:var(--dash-surface-2)]">
@@ -456,6 +469,7 @@ export function MediaBundleUploader({
                                 onDelete={() => handleDeleteMedia('intro_video')}
                                 isLoading={Boolean(uploading && uploadProgress.intro_video)}
                                 type="video"
+                                t={t}
                                 onView={() => {
                                     setModalMedia(introVideo);
                                     setModalType('video');
@@ -468,6 +482,7 @@ export function MediaBundleUploader({
                                 isLoading={Boolean(uploading && uploadProgress.intro_video)}
                                 title={mergedLabels.videoReplace}
                                 description={mergedLabels.videoUploadDescription}
+                                t={t}
                             />
                         </div>
                     ) : (
@@ -477,13 +492,14 @@ export function MediaBundleUploader({
                             isLoading={Boolean(uploading && uploadProgress.intro_video)}
                             title={mergedLabels.videoUploadTitle}
                             description={mergedLabels.videoUploadDescription}
+                            t={t}
                         />
                     )}
 
                     {uploadProgress.intro_video && (
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted)]">
-                                <span>Uploading...</span>
+                                <span>{t('common.uploading')}</span>
                                 <span className="font-medium">{uploadProgress.intro_video}%</span>
                             </div>
                             <div className="h-2 overflow-hidden rounded-full bg-[color:var(--dash-surface-2)]">

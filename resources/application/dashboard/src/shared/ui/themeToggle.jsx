@@ -1,15 +1,17 @@
 import React from 'react';
 import { useTheme } from '../../application/theme/themeContext.jsx';
+import { useI18n } from '../../application/i18n/i18nContext.jsx';
 import { cx } from '../utils/cx.js';
 
 export function ThemeToggle({ className = '' }) {
     const { theme, toggleTheme } = useTheme();
+    const { t } = useI18n();
 
     return (
         <button
             type="button"
             onClick={toggleTheme}
-            aria-label="Toggle theme"
+            aria-label={t('common.toggleTheme')}
             className={cx(
                 'dash-btn inline-flex items-center justify-center',
                 'h-10 w-10 rounded-xl border',

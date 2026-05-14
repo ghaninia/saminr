@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
+import { useI18n } from '../../application/i18n/i18nContext.jsx';
 
 export function Modal({ open, title, children, onClose }) {
+    const { t } = useI18n();
     useEffect(() => {
         if (!open) return;
         const onKeyDown = (e) => {
@@ -16,7 +18,7 @@ export function Modal({ open, title, children, onClose }) {
         <div className="fixed inset-0 z-50">
             <button
                 type="button"
-                aria-label="Close"
+                aria-label={t('common.close')}
                 className="absolute inset-0 bg-[color:var(--dash-overlay)]"
                 onClick={() => onClose?.()}
             />

@@ -84,7 +84,7 @@ export function ProductsPage() {
             })
             .catch((requestError) => {
                 if (!mounted) return;
-                setError(getApiErrorMessage(requestError, 'Unable to load products.'));
+                setError(getApiErrorMessage(requestError, t('products.unableToLoad')));
             })
             .finally(() => {
                 if (!mounted) return;
@@ -123,14 +123,16 @@ export function ProductsPage() {
             const updated = await productService.setProductStatus(item.id, nextStatus);
             setItems((previous) => previous.map((entry) => (entry.id === item.id ? { ...entry, ...updated } : entry)));
         } catch (requestError) {
-            setError(getApiErrorMessage(requestError, 'Unable to update product status.'));
+            setError(getApiErrorMessage(requestError, t('products.unableToUpdateStatus')));
         } finally {
             setBusyItemId(null);
         }
     };
 
     const deleteProduct = async (item) => {
-        const confirmed = window.confirm(`Delete product "${item?.title?.fa || item?.title?.en || item?.id}"?`);
+        const confirmed = window.confirm(
+            t('products.deleteConfirm', { name: item?.title?.fa || item?.title?.en || item?.id }),
+        );
         if (!confirmed) return;
 
         setBusyItemId(item.id);
@@ -140,7 +142,7 @@ export function ProductsPage() {
             await productService.deleteProduct(item.id);
             setItems((previous) => previous.filter((entry) => entry.id !== item.id));
         } catch (requestError) {
-            setError(getApiErrorMessage(requestError, 'Unable to delete product.'));
+            setError(getApiErrorMessage(requestError, t('products.unableToDelete')));
         } finally {
             setBusyItemId(null);
         }
@@ -161,7 +163,7 @@ export function ProductsPage() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-end">
                     <div className="w-full md:w-64">
                         <Field label={t('common.search')}>
-                            <Input value={query} onChange={(event) => setQuery(event.target.value)} />
+                            <Input placeholder={t('products.searchPlaceholder')} value={query} onChange={(event) => setQuery(event.target.value)} />
                         </Field>
                     </div>
                     <Button onClick={() => navigate('/products/new')}>{t('products.create')}</Button>
@@ -180,8 +182,8 @@ export function ProductsPage() {
                         {pagedItems.map((item) => (
                             <div key={item.id} className="grid grid-cols-[minmax(280px,2fr)_170px_140px_270px] gap-0 items-center bg-[color:var(--dash-surface)]">
                             <div className="min-w-0 px-4 py-3">
-                                <div className="truncate text-sm font-medium">{item?.title?.fa || item?.title?.en || 'Untitled'}</div>
-                                <div className="mt-1 truncate text-xs text-[color:var(--dash-muted)]">{item?.short_link || 'no-short-link'}</div>
+                                <div className="truncate text-sm font-medium">{item?.title?.fa || item?.title?.en || t('products.untitled')}</div>
+                                <div className="mt-1 truncate text-xs text-[color:var(--dash-muted)]">{item?.short_link || t('products.noShortLink')}</div>
                             </div>
                             <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">
                                 {(() => {
@@ -221,7 +223,7 @@ export function ProductsPage() {
                                         className="px-3 py-1.5 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)]"
                                         onClick={() => navigate(`/products/${item.id}/edit`)}
                                     >
-                                        Edit
+                                        {t('common.edit')}
                                     </button>
                                     <button
                                         type="button"
