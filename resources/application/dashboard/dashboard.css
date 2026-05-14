@@ -1,10 +1,95 @@
 /* Dashboard-only custom styles (scoped via #dashboard mount) */
+@font-face {
+    font-family: 'iranbakhbold';
+    src: url('/fonts/yekanbakh/YekanBakh-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'iranbakhblack';
+    src: url('/fonts/yekanbakh/YekanBakh-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'iranbakhregular';
+    src: url('/fonts/yekanbakh/YekanBakh-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'vazirmatnbold';
+    src: url('/fonts/vazirmatn/Vazirmatn-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'vazirmatnblack';
+    src: url('/fonts/vazirmatn/Vazirmatn-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'vazirmatnregular';
+    src: url('/fonts/vazirmatn/Vazirmatn-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+h2 {
+    font-size: 1.25rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+h3 {
+    font-size: 1.125rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+h4 {
+    font-size: 1rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+h5 {
+    font-size: 0.875rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+h6 {
+    font-size: 0.75rem;
+    font-family: 'iranbakhblack', sans-serif;
+}
+p {
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-family: 'vazirmatnregular', sans-serif;
+}
+a {
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    font-family: 'vazirmatnregular', sans-serif;
+}
+
 
 html,
 body {
     height: auto;
     min-height: 100%;
     background: var(--dash-page-bg, rgb(5, 5, 5));
+    font-family: 'vazirmatnregular', sans-serif;
+
 }
 
 #dashboard {
