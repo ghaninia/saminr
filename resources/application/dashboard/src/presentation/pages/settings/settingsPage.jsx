@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { adminApi, getApiErrorMessage } from '../../../infrastructure/http/adminApi.js';
 import { Button } from '../../../shared/ui/button.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
@@ -6,9 +6,9 @@ import { Input } from '../../../shared/ui/input.jsx';
 import { Modal } from '../../../shared/ui/modal.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
+import { EntitySingleMediaUploader } from '../../../shared/ui/entitySingleMediaUploader.jsx';
 import { updateDashboardPerPageCache, useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 import { deepClone } from '../../../shared/utils/common.js';
-import { isLikelyImageUrl } from '../../../shared/utils/media.js';
 
 function isPlainObject(value) {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -68,9 +68,6 @@ export function SettingsPage() {
     const [useDefault, setUseDefault] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [selectedPreviewUrl, setSelectedPreviewUrl] = useState('');
-    const fileInputRef = useRef(null);
 
     useEffect(() => {
         let mounted = true;
@@ -152,9 +149,6 @@ export function SettingsPage() {
         setDraftValue('');
         setUseDefault(false);
         setSaveError('');
-        setUploadProgress(0);
-        if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
-        setSelectedPreviewUrl('');
     };
 
     const save = async () => {
@@ -183,7 +177,7 @@ export function SettingsPage() {
         }
     };
 
-    const uploadFile = async (settingId, file) => {
+    const uploadFile = async (settingId, file, onProgress) => {
         const form = new FormData();
         form.append('file', file);
         form.append('setting_id', String(settingId));
@@ -194,7 +188,7 @@ export function SettingsPage() {
             onUploadProgress: (evt) => {
                 if (!evt.total) return;
                 const percent = Math.min(100, Math.max(0, Math.round((evt.loaded / evt.total) * 100)));
-                setUploadProgress(percent);
+                onProgress?.({ loaded: evt.loaded, total: evt.total, percent });
             },
         });
         return res.data ?? {};
@@ -296,96 +290,32 @@ export function SettingsPage() {
                                     <Textarea value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} rows={10} />
                                 </Field>
                             ) : editing.type === 'file' || editing.type === 'image' || editing.type === 'link' ? (
-                                <div className="space-y-3">
-                                    <Field label="Value" hint="This value is updated automatically after upload.">
-                                        <Input value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} readOnly />
-                                    </Field>
-                                    <div className="flex items-center justify-between gap-3">
-                                        <div className="text-xs text-[color:var(--dash-muted-2)]">
-                                            Upload an image. Stored on the `public` disk under `uploads/`.
-                                        </div>
-                                        <div className="inline-flex items-center gap-2">
-                                            <input
-                                                ref={fileInputRef}
-                                                type="file"
-                                                accept=".png,.jpg,.jpeg,.webp,.svg,.ico,image/*"
-                                                className="hidden"
-                                                onChange={async (e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (!file) return;
-                                                    setSaveError('');
-                                                    try {
-                                                        setSaving(true);
-                                                        setUploadProgress(0);
-                                                        if (selectedPreviewUrl) URL.revokeObjectURL(selectedPreviewUrl);
-                                                        setSelectedPreviewUrl(URL.createObjectURL(file));
-
-                                                        const payload = await uploadFile(editing.id, file);
-                                                        const url = payload?.url ?? '';
-                                                        const updatedSetting = payload?.setting ?? null;
-                                                        if (url) setDraftValue(url);
-                                                        if (updatedSetting?.id) {
-                                                            setItems((prev) =>
-                                                                prev.map((x) => (x.id === updatedSetting.id ? { ...x, ...updatedSetting } : x)),
-                                                            );
-                                                            setEditing((prev) => (prev?.id === updatedSetting.id ? { ...prev, ...updatedSetting } : prev));
-                                                            setNotice('Uploaded and saved.');
-                                                        }
-                                                    } catch (err) {
-                                                        setSaveError(getApiErrorMessage(err, 'Upload failed.'));
-                                                    } finally {
-                                                        setSaving(false);
-                                                        setUploadProgress(0);
-                                                        e.target.value = '';
-                                                    }
-                                                }}
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="subtle"
-                                                size="sm"
-                                                disabled={saving}
-                                                onClick={() => fileInputRef.current?.click()}
-                                            >
-                                                {saving ? 'Uploading…' : 'Choose file'}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                    {saving && uploadProgress > 0 ? (
-                                        <div className="space-y-1">
-                                            <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted-2)]">
-                                                <div>Uploading</div>
-                                                <div>{uploadProgress}%</div>
-                                            </div>
-                                            <div className="h-2 rounded-full bg-[color:var(--dash-surface-3)] border border-[color:var(--dash-border)] overflow-hidden">
-                                                <div
-                                                    className="h-full bg-indigo-500/70"
-                                                    style={{ width: `${uploadProgress}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : null}
-                                    {selectedPreviewUrl ? (
-                                        <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
-                                            <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Selected file preview</div>
-                                            <img
-                                                src={selectedPreviewUrl}
-                                                alt="Selected preview"
-                                                className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
-                                            />
-                                        </div>
-                                    ) : null}
-                                    {draftValue && isLikelyImageUrl(String(draftValue)) ? (
-                                        <div className="rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)] p-3">
-                                            <div className="text-xs text-[color:var(--dash-muted-2)] mb-2">Stored file preview</div>
-                                            <img
-                                                src={String(draftValue)}
-                                                alt="Preview"
-                                                className="max-h-36 object-contain rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-input-bg)]"
-                                            />
-                                        </div>
-                                    ) : null}
-                                </div>
+                                <EntitySingleMediaUploader
+                                    entityId={editing?.id}
+                                    value={draftValue}
+                                    onValueChange={setDraftValue}
+                                    label="Value"
+                                    hint="This value is updated automatically after upload."
+                                    uploadTitle={editing?.id ? 'Choose file' : 'Save first'}
+                                    previewKind="image"
+                                    selectedPreviewLabel="Selected file preview"
+                                    storedPreviewLabel="Stored file preview"
+                                    previewSourceLabel="Setting file preview"
+                                    showValueField={false}
+                                    onUpload={async ({ entityId, file, onProgress }) => {
+                                        const payload = await uploadFile(entityId, file, onProgress);
+                                        const url = payload?.url ?? '';
+                                        const updatedSetting = payload?.setting ?? null;
+                                        if (updatedSetting?.id) {
+                                            setItems((prev) =>
+                                                prev.map((x) => (x.id === updatedSetting.id ? { ...x, ...updatedSetting } : x)),
+                                            );
+                                            setEditing((prev) => (prev?.id === updatedSetting.id ? { ...prev, ...updatedSetting } : prev));
+                                            setNotice('Uploaded and saved.');
+                                        }
+                                        return url;
+                                    }}
+                                />
                             ) : editing.type === 'email' ? (
                                 <Field label="Email">
                                     <Input type="email" autoComplete="email" value={draftValue ?? ''} onChange={(e) => setDraftValue(e.target.value)} />
