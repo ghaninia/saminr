@@ -7,11 +7,13 @@ import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { getApiErrorMessage } from '../../../infrastructure/http/adminApi.js';
 import { ThemeToggle } from '../../../shared/ui/themeToggle.jsx';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 export function LoginPage() {
     const { user, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useI18n();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -31,8 +33,8 @@ export function LoginPage() {
                             ADM
                         </div>
                         <div>
-                            <div className="text-lg font-semibold">Sign in</div>
-                            <div className="mt-0.5 text-sm text-[color:var(--dash-muted)]">Admin access only.</div>
+                            <div className="text-lg font-semibold">{t('auth.signIn')}</div>
+                            <div className="mt-0.5 text-sm text-[color:var(--dash-muted)]">{t('auth.adminAccessOnly')}</div>
                         </div>
                     </div>
                     <ThemeToggle />
@@ -56,10 +58,10 @@ export function LoginPage() {
                         }
                     }}
                 >
-                    <Field label="Email">
+                    <Field label={t('auth.email')}>
                         <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </Field>
-                    <Field label="Password">
+                    <Field label={t('auth.password')}>
                         <Input
                             type="password"
                             autoComplete="current-password"
@@ -72,12 +74,12 @@ export function LoginPage() {
                     {error ? <div className="text-sm text-red-400">{error}</div> : null}
 
                     <Button type="submit" disabled={submitting} className="w-full">
-                        {submitting ? 'Signing in…' : 'Sign in'}
+                        {submitting ? t('auth.signingIn') : t('auth.signIn')}
                     </Button>
 
                     <div className="text-sm text-[color:var(--dash-muted)] flex items-center justify-between">
                         <Link className="underline hover:text-[color:var(--dash-fg)]" to="/forgot-password">
-                            Forgot password?
+                            {t('auth.forgotPassword')}
                         </Link>
                         <div className="text-xs text-[color:var(--dash-muted-2)]">v1</div>
                     </div>

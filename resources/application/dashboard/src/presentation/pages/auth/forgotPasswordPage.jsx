@@ -7,9 +7,11 @@ import { Card } from '../../../shared/ui/card.jsx';
 import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { ThemeToggle } from '../../../shared/ui/themeToggle.jsx';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 export function ForgotPasswordPage() {
     const navigate = useNavigate();
+    const { t } = useI18n();
     const [email, setEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState('');
@@ -20,8 +22,8 @@ export function ForgotPasswordPage() {
             <Card className="w-full max-w-md p-6">
                 <div className="flex items-start justify-between gap-3">
                     <div>
-                        <div className="text-lg font-semibold">Reset password</div>
-                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">We will email you a reset link.</div>
+                        <div className="text-lg font-semibold">{t('auth.resetPassword')}</div>
+                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('auth.resetPasswordHint')}</div>
                     </div>
                     <ThemeToggle />
                 </div>
@@ -44,7 +46,7 @@ export function ForgotPasswordPage() {
                         }
                     }}
                 >
-                    <Field label="Email">
+                    <Field label={t('auth.email')}>
                         <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </Field>
 
@@ -52,7 +54,7 @@ export function ForgotPasswordPage() {
                     {error ? <div className="text-sm text-red-400">{error}</div> : null}
 
                     <Button type="submit" disabled={submitting} className="w-full">
-                        {submitting ? 'Sending…' : 'Send reset link'}
+                        {submitting ? t('auth.sending') : t('auth.sendResetLink')}
                     </Button>
 
                     <div className="text-sm text-[color:var(--dash-muted)]">
@@ -61,7 +63,7 @@ export function ForgotPasswordPage() {
                             className="underline hover:text-[color:var(--dash-fg)]"
                             onClick={() => navigate('/login')}
                         >
-                            Back to sign in
+                            {t('auth.backToSignIn')}
                         </button>
                     </div>
                 </form>

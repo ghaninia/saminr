@@ -3,7 +3,9 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../application/auth/authContext.jsx';
 import { Button } from '../../shared/ui/button.jsx';
 import { Card } from '../../shared/ui/card.jsx';
+import { LanguageToggle } from '../../shared/ui/languageToggle.jsx';
 import { ThemeToggle } from '../../shared/ui/themeToggle.jsx';
+import { useI18n } from '../../application/i18n/i18nContext.jsx';
 import { cx } from '../../shared/utils/cx.js';
 
 function IconHome(props) {
@@ -101,6 +103,7 @@ function NavItem({ to, label, icon: Icon }) {
 export function DashboardLayout() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const { t } = useI18n();
 
     return (
         <div className="dash-bg min-h-screen">
@@ -113,12 +116,13 @@ export function DashboardLayout() {
                                     ADM
                                 </div>
                                 <div className="leading-tight min-w-0">
-                                    <div className="text-sm font-semibold truncate">Admin Dashboard</div>
+                                    <div className="text-sm font-semibold truncate">{t('layout.brand')}</div>
                                     <div className="text-xs text-[color:var(--dash-muted)] truncate">{user?.email}</div>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-2">
+                                <LanguageToggle />
                                 <ThemeToggle />
                                 <Button
                                     variant="subtle"
@@ -127,7 +131,7 @@ export function DashboardLayout() {
                                         navigate('/login', { replace: true });
                                     }}
                                 >
-                                    Logout
+                                    {t('layout.logout')}
                                 </Button>
                             </div>
                         </div>
@@ -140,16 +144,16 @@ export function DashboardLayout() {
                     <aside className="col-span-12 md:col-span-4 lg:col-span-3">
                         <Card className="p-3">
                             <div className="px-2 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--dash-muted-2)]">
-                                Navigation
+                                {t('layout.navigation')}
                             </div>
                             <nav className="space-y-1">
-                                <NavItem to="/" label="Overview" icon={IconHome} />
-                                <NavItem to="/settings" label="Settings" icon={IconSettings} />
-                                <NavItem to="/categories" label="Categories" icon={IconTag} />
-                                <NavItem to="/subscribers" label="Subscribers" icon={IconUsers} />
-                                <NavItem to="/newsletters" label="Newsletters" icon={IconMail} />
-                                <NavItem to="/reviews" label="Reviews" icon={IconStar} />
-                                <NavItem to="/products" label="Products" icon={IconBox} />
+                                <NavItem to="/" label={t('layout.overview')} icon={IconHome} />
+                                <NavItem to="/settings" label={t('layout.settings')} icon={IconSettings} />
+                                <NavItem to="/categories" label={t('layout.categories')} icon={IconTag} />
+                                <NavItem to="/subscribers" label={t('layout.subscribers')} icon={IconUsers} />
+                                <NavItem to="/newsletters" label={t('layout.newsletters')} icon={IconMail} />
+                                <NavItem to="/reviews" label={t('layout.reviews')} icon={IconStar} />
+                                <NavItem to="/products" label={t('layout.products')} icon={IconBox} />
                             </nav>
                         </Card>
                     </aside>

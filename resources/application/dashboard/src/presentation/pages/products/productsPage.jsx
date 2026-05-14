@@ -8,6 +8,7 @@ import { Input } from '../../../shared/ui/input.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
 import { formatPrice, parseNumber } from '../../../shared/utils/common.js';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 function getPriceSummary(item) {
     const variants = Array.isArray(item?.variants) ? item.variants : [];
@@ -64,6 +65,7 @@ function TrendIcon({ type }) {
 
 export function ProductsPage() {
     const navigate = useNavigate();
+    const { t } = useI18n();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [items, setItems] = useState([]);
@@ -144,35 +146,35 @@ export function ProductsPage() {
         }
     };
 
-    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading products…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">{t('products.loading')}</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
         <div className="space-y-4">
             <div className="flex flex-col gap-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5 md:flex-row md:items-end md:justify-between">
                 <div>
-                    <div className="text-xl font-semibold">Products</div>
+                    <div className="text-xl font-semibold">{t('products.title')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">
-                        Browse products here and open the full-page editor for attributes, variants, and media.
+                        {t('products.description')}
                     </div>
                 </div>
                 <div className="flex flex-col gap-3 md:flex-row md:items-end">
                     <div className="w-full md:w-64">
-                        <Field label="Search">
+                        <Field label={t('common.search')}>
                             <Input value={query} onChange={(event) => setQuery(event.target.value)} />
                         </Field>
                     </div>
-                    <Button onClick={() => navigate('/products/new')}>Create product</Button>
+                    <Button onClick={() => navigate('/products/new')}>{t('products.create')}</Button>
                 </div>
             </div>
 
             <div className="overflow-x-auto rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
                 <div className="min-w-[860px]">
                     <div className="grid grid-cols-[minmax(280px,2fr)_170px_140px_270px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
-                        <div className="px-4 py-3">Product</div>
-                        <div className="px-4 py-3">Price (Min-Max)</div>
-                        <div className="px-4 py-3">Status</div>
-                        <div className="px-4 py-3">Actions</div>
+                        <div className="px-4 py-3">{t('products.product')}</div>
+                        <div className="px-4 py-3">{t('products.priceRange')}</div>
+                        <div className="px-4 py-3">{t('products.status')}</div>
+                        <div className="px-4 py-3">{t('products.actions')}</div>
                     </div>
                     <div className="divide-y divide-[color:var(--dash-border)]">
                         {pagedItems.map((item) => (
@@ -209,7 +211,7 @@ export function ProductsPage() {
                             </div>
                             <div className="px-4 py-3">
                                 <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs ${item?.is_active ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/40 bg-amber-500/10 text-amber-300'}`}>
-                                    {item?.is_active ? 'Active' : 'Inactive'}
+                                    {item?.is_active ? t('products.active') : t('products.inactive')}
                                 </span>
                             </div>
                             <div className="px-4 py-3">
@@ -227,7 +229,7 @@ export function ProductsPage() {
                                         disabled={busyItemId === item.id}
                                         onClick={() => toggleProductStatus(item)}
                                     >
-                                        {item?.is_active ? 'Disable' : 'Enable'}
+                                        {item?.is_active ? t('products.disable') : t('products.enable')}
                                     </button>
                                     <button
                                         type="button"
@@ -235,14 +237,14 @@ export function ProductsPage() {
                                         disabled={busyItemId === item.id}
                                         onClick={() => deleteProduct(item)}
                                     >
-                                        Delete
+                                        {t('common.delete')}
                                     </button>
                                 </div>
                             </div>
                             </div>
                         ))}
                         {!pagedItems.length ? (
-                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">No products found.</div>
+                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">{t('products.noProducts')}</div>
                         ) : null}
                     </div>
                 </div>

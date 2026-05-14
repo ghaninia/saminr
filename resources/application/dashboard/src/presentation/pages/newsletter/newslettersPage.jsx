@@ -7,12 +7,14 @@ import { Modal } from '../../../shared/ui/modal.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 function safeText(value) {
     return String(value ?? '').trim();
 }
 
 export function NewslettersPage() {
+    const { t } = useI18n();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [notice, setNotice] = useState('');
@@ -56,7 +58,7 @@ export function NewslettersPage() {
             try {
                 await load(currentPage);
             } catch (err) {
-                setError(getApiErrorMessage(err, 'Unable to load newsletters.'));
+                setError(getApiErrorMessage(err, t('newsletter.newsletters.unableToLoad')));
             } finally {
                 setLoading(false);
             }
@@ -82,9 +84,9 @@ export function NewslettersPage() {
             setSelectedNewsletterId(created?.id ?? null);
             setSubject('');
             setHtml('');
-            setNotice('Newsletter saved.');
+            setNotice(t('newsletter.newsletters.saved'));
         } catch (err) {
-            setCreateError(getApiErrorMessage(err, 'Unable to save newsletter.'));
+            setCreateError(getApiErrorMessage(err, t('newsletter.newsletters.saveError')));
         } finally {
             setCreating(false);
         }
@@ -92,7 +94,7 @@ export function NewslettersPage() {
 
     const sendNewsletter = async () => {
         if (!selectedNewsletter?.id) return;
-        if (!window.confirm(`Send "${selectedNewsletter.subject}" to all subscribers?`)) return;
+        if (!window.confirm(t('newsletter.newsletters.sendConfirm', { subject: selectedNewsletter.subject }))) return;
         setSending(true);
         setSendError('');
         setNotice('');
@@ -100,36 +102,36 @@ export function NewslettersPage() {
             const res = await adminApi.post(`/newsletters/${selectedNewsletter.id}/send`);
             const updated = res.data?.data ?? res.data;
             setNewsletters((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
-            setNotice('Newsletter queued.');
+            setNotice(t('newsletter.newsletters.queued'));
         } catch (err) {
-            setSendError(getApiErrorMessage(err, 'Unable to send newsletter.'));
+            setSendError(getApiErrorMessage(err, t('newsletter.newsletters.sendError')));
         } finally {
             setSending(false);
         }
     };
 
-    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading newsletters…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">{t('newsletter.newsletters.loading')}</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
         <div>
-            <div className="text-lg font-semibold">Newsletters</div>
-            <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Create and send newsletters (API: `/api/admin/newsletters`).</div>
+            <div className="text-lg font-semibold">{t('newsletter.newsletters.title')}</div>
+            <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('newsletter.newsletters.description')}</div>
             {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
             {sendError ? <div className="mt-2 text-sm text-red-400">{sendError}</div> : null}
 
             <div className="mt-6 grid grid-cols-12 gap-6">
                 <div className="col-span-12 lg:col-span-6">
-                    <div className="text-sm font-medium">Create newsletter</div>
+                    <div className="text-sm font-medium">{t('newsletter.newsletters.createTitle')}</div>
                     <div className="mt-3 space-y-3">
-                        <Field label="Subject">
+                        <Field label={t('newsletter.newsletters.subject')}>
                             <Input
-                                placeholder="Subject…"
+                                placeholder={t('newsletter.newsletters.subject')}
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
                             />
                         </Field>
-                        <Field label="HTML">
+                        <Field label={t('newsletter.newsletters.html')}>
                             <Textarea
                                 rows={12}
                                 placeholder="<h1>Hi</h1>…"
@@ -143,10 +145,10 @@ export function NewslettersPage() {
                                 onClick={createNewsletter}
                                 disabled={creating || !safeText(subject) || !safeText(html)}
                             >
-                                {creating ? 'Saving…' : 'Save'}
+                                {creating ? t('common.saving') : t('common.save')}
                             </Button>
                             <Button variant="subtle" onClick={() => setPreviewOpen(true)} disabled={!safeText(html)}>
-                                Preview
+                                {t('newsletter.newsletters.preview')}
                             </Button>
                         </div>
                     </div>
@@ -155,18 +157,20 @@ export function NewslettersPage() {
                 <div className="col-span-12 lg:col-span-6">
                     <div className="flex items-center justify-between gap-3">
                         <div>
-                            <div className="text-sm font-medium">History</div>
-                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">Showing {newsletters.length} of {total}</div>
+                            <div className="text-sm font-medium">{t('newsletter.newsletters.history')}</div>
+                            <div className="mt-1 text-xs text-[color:var(--dash-muted)]">
+                                {t('newsletter.newsletters.showing', { current: newsletters.length, total })}
+                            </div>
                         </div>
                         <Button variant="subtle" onClick={sendNewsletter} disabled={!selectedNewsletter || sending}>
-                            {sending ? 'Queuing…' : 'Send to all'}
+                            {sending ? t('newsletter.newsletters.queue') : t('newsletter.newsletters.send')}
                         </Button>
                     </div>
 
                     <div className="mt-4 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
                         <div className="divide-y divide-[color:var(--dash-border)]">
                             {newsletters.length === 0 ? (
-                                <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">No newsletters.</div>
+                                <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">{t('newsletter.newsletters.noItems')}</div>
                             ) : (
                                 newsletters.map((item) => (
                                     <label
@@ -185,9 +189,9 @@ export function NewslettersPage() {
                                                 {safeText(item.subject)}
                                             </div>
                                             <div className="mt-1 text-xs text-[color:var(--dash-muted)]">
-                                                Status: {safeText(item.status) || 'draft'}
-                                                {item.sent_count ? ` • Sent: ${item.sent_count}` : ''}
-                                                {item.last_error ? ` • Error: ${safeText(item.last_error)}` : ''}
+                                                {t('newsletter.newsletters.status')}: {safeText(item.status) || t('newsletter.newsletters.draft')}
+                                                {item.sent_count ? ` • ${t('newsletter.newsletters.sent')}: ${item.sent_count}` : ''}
+                                                {item.last_error ? ` • ${t('newsletter.newsletters.lastError')}: ${safeText(item.last_error)}` : ''}
                                             </div>
                                         </div>
                                     </label>
@@ -206,9 +210,9 @@ export function NewslettersPage() {
                 </div>
             </div>
 
-            <Modal open={previewOpen} onClose={() => setPreviewOpen(false)} title="HTML Preview">
+            <Modal open={previewOpen} onClose={() => setPreviewOpen(false)} title={t('newsletter.newsletters.preview')}>
                 <div className="space-y-3">
-                    <div className="text-xs text-[color:var(--dash-muted)]">Preview uses your current draft HTML.</div>
+                    <div className="text-xs text-[color:var(--dash-muted)]">{t('newsletter.newsletters.previewHint')}</div>
                     <div className="rounded-xl border border-[color:var(--dash-border)] bg-white text-neutral-900 p-4 overflow-auto max-h-[60vh]">
                         {/* eslint-disable-next-line react/no-danger */}
                         <div dangerouslySetInnerHTML={{ __html: String(html ?? '') }} />

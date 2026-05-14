@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Button } from '../../../../shared/ui/button.jsx';
 import { Input } from '../../../../shared/ui/input.jsx';
+import { useI18n } from '../../../../application/i18n/i18nContext.jsx';
 
 function resolveColorValue(value, meta) {
     const dbHex = String(meta?.hex ?? '').trim();
@@ -23,6 +24,7 @@ export function ProductAttributeSelector({
     onRemoveAttribute,
     onToggleCatalogValue,
 }) {
+    const { t } = useI18n();
     const [attributeQuery, setAttributeQuery] = useState('');
     const [valueQueries, setValueQueries] = useState({});
     const [expandedMap, setExpandedMap] = useState({});
@@ -75,14 +77,14 @@ export function ProductAttributeSelector({
         <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <div className="text-base font-semibold">Attributes for this product</div>
+                    <div className="text-base font-semibold">{t('products.editor.attributesForProduct')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">
-                        Pick only the values that belong to this product. Variants will be generated from these selections automatically.
+                        {t('products.editor.attributesForProductDescription')}
                     </div>
                 </div>
                 <div className="w-full max-w-md space-y-2">
                     <Input
-                        placeholder="Search global attributes..."
+                        placeholder={t('products.editor.searchGlobalAttributes')}
                         value={attributeQuery}
                         onChange={(event) => setAttributeQuery(event.target.value)}
                     />
@@ -101,7 +103,7 @@ export function ProductAttributeSelector({
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-xs text-[color:var(--dash-muted)]">No more global attributes found.</div>
+                            <div className="text-xs text-[color:var(--dash-muted)]">{t('products.editor.noMoreGlobalAttributes')}</div>
                         )}
                     </div>
                 </div>
@@ -109,7 +111,7 @@ export function ProductAttributeSelector({
 
             {!(attributes ?? []).length ? (
                 <div className="rounded-2xl border border-dashed border-[color:var(--dash-border)] px-4 py-5 text-sm text-[color:var(--dash-muted)]">
-                    Start with attributes like color, scent, wick, or candle type.
+                    {t('products.editor.attributesEmptyHint')}
                 </div>
             ) : null}
 
@@ -133,13 +135,13 @@ export function ProductAttributeSelector({
                                 <div className="min-w-0 flex-1">
                                     <>
                                         <div className="text-sm font-semibold">{attribute?.label?.fa || attribute?.label?.en || attribute?.key}</div>
-                                        <div className="mt-1 text-xs text-[color:var(--dash-muted)]">Select which values are available for this product.</div>
+                                        <div className="mt-1 text-xs text-[color:var(--dash-muted)]">{t('products.editor.selectAvailableValues')}</div>
                                     </>
-                                    <div className="mt-2 text-xs text-[color:var(--dash-muted)]">Selected: {selectedValues.length}</div>
+                                    <div className="mt-2 text-xs text-[color:var(--dash-muted)]">{t('products.editor.selectedCount', { count: selectedValues.length })}</div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Button type="button" size="sm" variant="subtle" onClick={() => toggleExpanded(uiKey)}>{isExpanded ? 'Collapse' : 'Manage values'}</Button>
-                                    <Button type="button" size="sm" variant="ghost" onClick={() => onRemoveAttribute(index)}>Remove</Button>
+                                    <Button type="button" size="sm" variant="subtle" onClick={() => toggleExpanded(uiKey)}>{isExpanded ? t('products.editor.collapse') : t('products.editor.manageValues')}</Button>
+                                    <Button type="button" size="sm" variant="ghost" onClick={() => onRemoveAttribute(index)}>{t('common.remove')}</Button>
                                 </div>
                             </div>
 
@@ -148,14 +150,14 @@ export function ProductAttributeSelector({
                                     <div className="space-y-3">
                                         {(catalogAttribute?.values ?? []).length > 12 ? (
                                             <div className="flex items-center gap-2">
-                                                <Button type="button" size="sm" variant="ghost" onClick={() => selectAllCatalogValues(index, filteredCatalogValues)}>Select visible</Button>
-                                                <Button type="button" size="sm" variant="ghost" onClick={() => clearCatalogValues(index, filteredCatalogValues, selectedValues)}>Clear visible</Button>
+                                                <Button type="button" size="sm" variant="ghost" onClick={() => selectAllCatalogValues(index, filteredCatalogValues)}>{t('products.editor.selectVisible')}</Button>
+                                                <Button type="button" size="sm" variant="ghost" onClick={() => clearCatalogValues(index, filteredCatalogValues, selectedValues)}>{t('products.editor.clearVisible')}</Button>
                                             </div>
                                         ) : null}
                                         {(catalogAttribute?.values ?? []).length > 10 ? (
                                             <Input
                                                 value={valueQueries[uiKey] ?? ''}
-                                                placeholder="Search values..."
+                                                placeholder={t('products.editor.searchValues')}
                                                 onChange={(event) => setValueQuery(uiKey, event.target.value)}
                                             />
                                         ) : null}
@@ -193,13 +195,13 @@ export function ProductAttributeSelector({
                                                 {valueEntry?.value ?? ''}
                                             </span>
                                         ))}
-                                        {selectedValues.length > 6 ? <span className="text-xs text-[color:var(--dash-muted)]">+{selectedValues.length - 6} more</span> : null}
+                                        {selectedValues.length > 6 ? <span className="text-xs text-[color:var(--dash-muted)]">{t('products.editor.moreCount', { count: selectedValues.length - 6 })}</span> : null}
                                     </div>
                                 )}
                                 <div className="text-xs text-[color:var(--dash-muted)]">
                                     {selectedValues.length
-                                        ? `Selected values: ${selectedValues.map((entry) => entry?.value).filter(Boolean).join('، ')}`
-                                        : 'No value selected yet.'}
+                                        ? t('products.editor.selectedValues', { values: selectedValues.map((entry) => entry?.value).filter(Boolean).join('، ') })
+                                        : t('products.editor.noValueSelected')}
                                 </div>
                             </>
                         </div>

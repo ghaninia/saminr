@@ -1,14 +1,16 @@
 import React from 'react';
 import { Input } from '../../../../shared/ui/input.jsx';
 import { formatPrice, parseNumber } from '../../../../shared/utils/common.js';
+import { useI18n } from '../../../../application/i18n/i18nContext.jsx';
 
 const SKU_TYPES = [
-    { value: 'numeric', label: 'Numeric' },
-    { value: 'infinite', label: 'Infinite' },
-    { value: 'contact', label: 'Contact' },
+    { value: 'numeric', key: 'numeric' },
+    { value: 'infinite', key: 'infinite' },
+    { value: 'contact', key: 'contact' },
 ];
 
 export function ProductVariantBuilder({ attributes, variants, onChange }) {
+    const { t } = useI18n();
     const configuredAttributes = (attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0);
     const attributeByKey = new Map(configuredAttributes.map((attribute) => [String(attribute?.key ?? ''), attribute]));
 
@@ -29,30 +31,30 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
         <section className="space-y-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5">
             <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <div className="text-base font-semibold">Variant pricing</div>
+                    <div className="text-base font-semibold">{t('products.editor.variantPricing')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">
-                        Variants are generated automatically from the selected attribute values. You only set SKU, price, and the default variant.
+                        {t('products.editor.variantPricingDescription')}
                     </div>
                 </div>
                 <div className="rounded-2xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-3 py-2 text-right">
-                    <div className="text-[11px] uppercase tracking-wider text-[color:var(--dash-muted)]">Combinations</div>
+                    <div className="text-[11px] uppercase tracking-wider text-[color:var(--dash-muted)]">{t('products.editor.combinations')}</div>
                     <div className="text-lg font-semibold">{variants?.length ?? 0}</div>
                 </div>
             </div>
 
             {!configuredAttributes.length ? (
                 <div className="rounded-2xl border border-dashed border-[color:var(--dash-border)] px-4 py-5 text-sm text-[color:var(--dash-muted)]">
-                    Select at least one attribute value to generate variants automatically.
+                    {t('products.editor.selectAttributeValueForVariants')}
                 </div>
             ) : null}
 
             {(variants?.length ?? 0) > 0 ? (
                 <div className="overflow-hidden rounded-2xl border border-[color:var(--dash-border)]">
                     <div className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
-                        <div className="px-4 py-3">Variant</div>
+                        <div className="px-4 py-3">{t('products.editor.variant')}</div>
                         <div className="px-4 py-3">SKU</div>
-                        <div className="px-4 py-3">Price</div>
-                        <div className="px-4 py-3">Default</div>
+                        <div className="px-4 py-3">{t('products.editor.price')}</div>
+                        <div className="px-4 py-3">{t('products.editor.default')}</div>
                     </div>
                     <div className="divide-y divide-[color:var(--dash-border)]">
                         {(variants ?? []).map((variant, index) => (
@@ -97,7 +99,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                             }}
                                         >
                                             {SKU_TYPES.map((type) => (
-                                                <option key={type.value} value={type.value}>{type.label}</option>
+                                                <option key={type.value} value={type.value}>{t(`products.editor.skuTypes.${type.key}`)}</option>
                                             ))}
                                         </select>
                                         {(variant?.sku_type ?? 'numeric') === 'numeric' ? (
@@ -105,7 +107,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                                 className="h-9 flex-1"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
-                                                placeholder="SKU number"
+                                                placeholder={t('products.editor.skuNumber')}
                                                 value={variant?.sku ?? ''}
                                                 onChange={(event) => updateVariant(index, { sku: event.target.value.replace(/[^0-9]/g, '') })}
                                             />
@@ -120,7 +122,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                 <div className="px-4 py-3">
                                     <label className="inline-flex items-center gap-2 text-sm">
                                         <input type="radio" checked={Boolean(variant?.is_default)} onChange={() => setDefaultVariant(index)} />
-                                        Default
+                                        {t('products.editor.default')}
                                     </label>
                                 </div>
                             </div>
@@ -131,7 +133,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
 
             {(variants?.length ?? 0) > 0 ? (
                 <div className="text-xs text-[color:var(--dash-muted)]">
-                    Price range: {formatPrice(Math.min(...variants.map((variant) => parseNumber(variant?.price, 0))))} - {formatPrice(Math.max(...variants.map((variant) => parseNumber(variant?.price, 0))))}
+                    {t('products.priceRange')}: {formatPrice(Math.min(...variants.map((variant) => parseNumber(variant?.price, 0))))} - {formatPrice(Math.max(...variants.map((variant) => parseNumber(variant?.price, 0))))}
                 </div>
             ) : null}
         </section>

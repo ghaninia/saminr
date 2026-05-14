@@ -8,10 +8,11 @@ import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { EntitySingleMediaUploader } from '../../../shared/ui/entitySingleMediaUploader.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 const USER_TYPES = [
-    { value: 'customer', label: 'Customer' },
-    { value: 'admin', label: 'Admin' },
-    { value: 'founder', label: 'Founder' },
+    { value: 'customer', label: '' },
+    { value: 'admin', label: '' },
+    { value: 'founder', label: '' },
 ];
 
 function StarPicker({ value, onChange }) {
@@ -43,6 +44,7 @@ function emptyReviewDraft() {
 }
 
 export function ReviewsPage() {
+    const { t } = useI18n();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [items, setItems] = useState([]);
@@ -56,6 +58,11 @@ export function ReviewsPage() {
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
 
+    const userTypes = useMemo(() => USER_TYPES.map((type) => ({
+        ...type,
+        label: t(`reviews.userTypes.${type.value}`),
+    })), [t]);
+
     useEffect(() => {
         let mounted = true;
         adminApi
@@ -66,7 +73,7 @@ export function ReviewsPage() {
             })
             .catch((err) => {
                 if (!mounted) return;
-                setError(getApiErrorMessage(err, 'Unable to load reviews.'));
+                setError(getApiErrorMessage(err, t('reviews.unableToLoad')));
             })
             .finally(() => {
                 if (!mounted) return;
@@ -156,9 +163,9 @@ export function ReviewsPage() {
                 return prev.map((x) => (x.id === updated.id ? updated : x));
             });
             setEditing(null);
-            setNotice('Saved.');
+            setNotice(t('reviews.saved'));
         } catch (err) {
-            setSaveError(getApiErrorMessage(err, 'Unable to save review.'));
+            setSaveError(getApiErrorMessage(err, t('reviews.saveError')));
         } finally {
             setSaving(false);
         }
@@ -167,15 +174,15 @@ export function ReviewsPage() {
     const remove = async (item) => {
         if (!item?.id) return;
         const name = item?.fullname?.en ?? item?.fullname?.fa ?? `#${item.id}`;
-        if (!window.confirm(`Delete review by "${name}"?`)) return;
+        if (!window.confirm(t('reviews.deleteConfirm', { name }))) return;
         setNotice('');
         setError('');
         try {
             await adminApi.delete(`/reviews/${item.id}`);
             setItems((prev) => prev.filter((x) => x.id !== item.id));
-            setNotice('Deleted.');
+            setNotice(t('reviews.deleted'));
         } catch (err) {
-            setError(getApiErrorMessage(err, 'Unable to delete review.'));
+            setError(getApiErrorMessage(err, t('reviews.deleteError')));
         }
     };
 
@@ -192,29 +199,29 @@ export function ReviewsPage() {
         });
         return res.data ?? {};
     };
-    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading reviews…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">{t('reviews.loading')}</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     return (
         <div>
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <div className="text-lg font-semibold">Reviews</div>
-                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Manage customer reviews.</div>
-                    <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">Showing {pagedItems.length} of {filtered.length}</div>
+                    <div className="text-lg font-semibold">{t('reviews.title')}</div>
+                    <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('reviews.description')}</div>
+                    <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">{t('reviews.showing', { current: pagedItems.length, total: filtered.length })}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
                 <div className="flex items-end gap-3">
                     <div className="w-60">
-                        <Field label="Search">
+                        <Field label={t('common.search')}>
                             <Input
-                                placeholder="Name or review text…"
+                                placeholder={t('reviews.searchPlaceholder')}
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                             />
                         </Field>
                     </div>
-                    <Button onClick={openCreate}>New</Button>
+                    <Button onClick={openCreate}>{t('reviews.create')}</Button>
                 </div>
             </div>
 
@@ -227,7 +234,7 @@ export function ReviewsPage() {
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium truncate">
-                                    {item?.fullname?.en || item?.fullname?.fa || 'Unknown'}
+                                    {item?.fullname?.en || item?.fullname?.fa || t('reviews.unknown')}
                                 </span>
                                 <span className="text-xs text-[color:var(--dash-muted)] shrink-0">
                                     {'★'.repeat(item.star ?? 0)}{'☆'.repeat(5 - (item.star ?? 0))}
@@ -242,16 +249,16 @@ export function ReviewsPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                             <Button type="button" size="sm" variant="ghost" onClick={() => openEdit(item)}>
-                                Edit
+                                {t('common.edit')}
                             </Button>
                             <Button type="button" size="sm" variant="ghost" onClick={() => remove(item)}>
-                                Delete
+                                {t('common.delete')}
                             </Button>
                         </div>
                     </div>
                 ))}
                 {!filtered.length ? (
-                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">No reviews found.</div>
+                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">{t('reviews.noItems')}</div>
                 ) : null}
             </div>
 
@@ -265,7 +272,7 @@ export function ReviewsPage() {
 
             <Modal
                 open={Boolean(editing)}
-                title={editing?.id ? `Edit review #${editing.id}` : 'New review'}
+                title={editing?.id ? `${t('common.edit')} ${t('reviews.review')} #${editing.id}` : `${t('reviews.create')} ${t('reviews.review')}`}
                 onClose={closeEditor}
             >
                 {editing ? (
@@ -274,7 +281,7 @@ export function ReviewsPage() {
 
                         {/* Fullname */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <Field label="Full Name (EN)">
+                            <Field label={t('reviews.fullNameEn')}>
                                 <Input
                                     value={draft.fullname.en}
                                     onChange={(e) =>
@@ -282,7 +289,7 @@ export function ReviewsPage() {
                                     }
                                 />
                             </Field>
-                            <Field label="Full Name (FA)">
+                            <Field label={t('reviews.fullNameFa')}>
                                 <Input
                                     dir="rtl"
                                     value={draft.fullname.fa}
@@ -294,7 +301,7 @@ export function ReviewsPage() {
                         </div>
 
                         {/* Review text */}
-                        <Field label="Review (EN)">
+                        <Field label={t('reviews.reviewEn')}>
                             <Textarea
                                 rows={3}
                                 value={draft.review.en}
@@ -303,7 +310,7 @@ export function ReviewsPage() {
                                 }
                             />
                         </Field>
-                        <Field label="Review (FA)">
+                        <Field label={t('reviews.reviewFa')}>
                             <Textarea
                                 dir="rtl"
                                 rows={3}
@@ -316,21 +323,21 @@ export function ReviewsPage() {
 
                         {/* Star + user_type */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end">
-                            <Field label="Star rating">
+                            <Field label={t('reviews.starRating')}>
                                 <StarPicker
                                     value={draft.star}
                                     onChange={(v) => setDraft((p) => ({ ...p, star: v }))}
                                 />
                             </Field>
-                            <Field label="User type">
+                            <Field label={t('reviews.userType')}>
                                 <select
                                     className="w-full rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] px-3 py-2 text-sm text-[color:var(--dash-fg)] focus:outline-none focus:ring-2 focus:ring-[color:var(--dash-accent)]"
                                     value={draft.user_type}
                                     onChange={(e) => setDraft((p) => ({ ...p, user_type: e.target.value }))}
                                 >
-                                    {USER_TYPES.map((t) => (
-                                        <option key={t.value} value={t.value}>
-                                            {t.label}
+                                    {userTypes.map((type) => (
+                                        <option key={type.value} value={type.value}>
+                                            {type.label}
                                         </option>
                                     ))}
                                 </select>
@@ -342,13 +349,13 @@ export function ReviewsPage() {
                             entityId={editing?.id}
                             value={draft.avatar}
                             onValueChange={(value) => setDraft((p) => ({ ...p, avatar: value }))}
-                            label="Avatar URL"
-                            hint="Upload an avatar image for this reviewer."
+                            label={t('reviews.avatarUrl')}
+                            hint={t('reviews.avatarHint')}
                             previewKind="avatar"
-                            uploadTitle={editing?.id ? 'Choose file' : 'Save first'}
-                            selectedPreviewLabel="Selected file preview"
-                            storedPreviewLabel="Stored avatar preview"
-                            previewSourceLabel="Reviewer avatar"
+                            uploadTitle={editing?.id ? t('reviews.chooseFile') : t('reviews.saveFirst')}
+                            selectedPreviewLabel={t('reviews.selectedPreview')}
+                            storedPreviewLabel={t('reviews.storedPreview')}
+                            previewSourceLabel={t('reviews.reviewerAvatar')}
                             showValueField={false}
                             onUpload={async ({ entityId, file, onProgress }) => {
                                 const payload = await uploadFile(entityId, file, onProgress);
@@ -357,7 +364,7 @@ export function ReviewsPage() {
                                 if (updatedReview?.id) {
                                     setItems((prev) => prev.map((x) => (x.id === updatedReview.id ? updatedReview : x)));
                                     setEditing((prev) => (prev?.id === updatedReview.id ? updatedReview : prev));
-                                    setNotice('Uploaded.');
+                                    setNotice(t('reviews.uploaded'));
                                 }
                                 return url;
                             }}
@@ -365,10 +372,10 @@ export function ReviewsPage() {
 
                         <div className="flex justify-end gap-2 pt-2">
                             <Button variant="ghost" onClick={closeEditor} disabled={saving}>
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button onClick={save} disabled={saving}>
-                                {saving ? 'Saving…' : 'Save'}
+                                {saving ? t('common.saving') : t('common.save')}
                             </Button>
                         </div>
                     </div>

@@ -17,6 +17,7 @@ import { ProductAttributeSelector } from './components/productAttributeSelector.
 import { ProductVariantBuilder } from './components/productVariantBuilder.jsx';
 import { ProductGalleryManager } from './components/productGalleryManager.jsx';
 import { parseNumber } from '../../../shared/utils/common.js';
+import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 function extractMediaUrl(media) {
     if (!media) return null;
@@ -65,6 +66,7 @@ function StepIcon({ stepKey }) {
 }
 
 export function ProductEditorPage() {
+    const { t } = useI18n();
     const navigate = useNavigate();
     const { productId } = useParams();
     const isEditing = Boolean(productId);
@@ -81,12 +83,15 @@ export function ProductEditorPage() {
     const [activeStep, setActiveStep] = useState(0);
     const [validationErrors, setValidationErrors] = useState({});
 
-    const editorSteps = [
-        { key: 'basics', label: 'Basics' },
-        { key: 'attributes', label: 'Attributes' },
-        { key: 'variants', label: 'Variants' },
-        { key: 'media', label: 'Media' },
-    ];
+    const editorSteps = useMemo(
+        () => [
+            { key: 'basics', label: t('products.editor.steps.basics') },
+            { key: 'attributes', label: t('products.editor.steps.attributes') },
+            { key: 'variants', label: t('products.editor.steps.variants') },
+            { key: 'media', label: t('products.editor.steps.media') },
+        ],
+        [t],
+    );
 
     useEffect(() => {
         let mounted = true;
@@ -105,7 +110,7 @@ export function ProductEditorPage() {
             })
             .catch((requestError) => {
                 if (!mounted) return;
-                setError(getApiErrorMessage(requestError, 'Unable to load product editor.'));
+                setError(getApiErrorMessage(requestError, t('products.editor.unableToLoad')));
             })
             .finally(() => {
                 if (!mounted) return;
@@ -115,7 +120,7 @@ export function ProductEditorPage() {
         return () => {
             mounted = false;
         };
-    }, [isEditing, productId]);
+    }, [isEditing, productId, t]);
 
     const attributeSelectionSignature = useMemo(() => JSON.stringify(
         (draft.attributes ?? []).map((attribute) => ({
@@ -147,37 +152,37 @@ export function ProductEditorPage() {
         const nextErrors = {};
 
         if (step === 0) {
-            if (!String(draft?.title?.en ?? '').trim()) nextErrors.title_en = 'Title EN is required.';
-            if (!String(draft?.title?.fa ?? '').trim()) nextErrors.title_fa = 'Title FA is required.';
-            if (!String(draft?.short_link ?? '').trim()) nextErrors.short_link = 'Short link is required.';
-            if (!Number.isFinite(Number(draft?.base_price)) || Number(draft?.base_price) < 0) nextErrors.base_price = 'Base price must be a valid number.';
-            if (!Array.isArray(draft?.category_ids) || draft.category_ids.length === 0) nextErrors.category_ids = 'Select at least one category.';
+            if (!String(draft?.title?.en ?? '').trim()) nextErrors.title_en = t('products.editor.validation.titleEnRequired');
+            if (!String(draft?.title?.fa ?? '').trim()) nextErrors.title_fa = t('products.editor.validation.titleFaRequired');
+            if (!String(draft?.short_link ?? '').trim()) nextErrors.short_link = t('products.editor.validation.shortLinkRequired');
+            if (!Number.isFinite(Number(draft?.base_price)) || Number(draft?.base_price) < 0) nextErrors.base_price = t('products.editor.validation.basePriceInvalid');
+            if (!Array.isArray(draft?.category_ids) || draft.category_ids.length === 0) nextErrors.category_ids = t('products.editor.validation.categoryRequired');
         }
 
         if (step === 1) {
             if (!Array.isArray(draft?.attributes) || draft.attributes.length === 0) {
-                nextErrors.attributes = 'Attach at least one attribute.';
+                nextErrors.attributes = t('products.editor.validation.attachAttribute');
             } else if (configuredAttributes.length === 0) {
-                nextErrors.attributes = 'Select at least one value for attached attributes.';
+                nextErrors.attributes = t('products.editor.validation.selectAttributeValue');
             }
         }
 
         if (step === 2) {
             if (!Array.isArray(draft?.variants) || draft.variants.length === 0) {
-                nextErrors.variants = 'At least one variant must be generated.';
+                nextErrors.variants = t('products.editor.validation.variantRequired');
             }
 
             const hasDefault = (draft?.variants ?? []).some((variant) => Boolean(variant?.is_default));
-            if (!hasDefault) nextErrors.variant_default = 'Select one default variant.';
+            if (!hasDefault) nextErrors.variant_default = t('products.editor.validation.defaultVariantRequired');
 
             const hasMissingSkuType = (draft?.variants ?? []).some((variant) => !String(variant?.sku_type ?? '').trim());
-            if (hasMissingSkuType) nextErrors.variant_sku_type = 'SKU type is required for all variants.';
+            if (hasMissingSkuType) nextErrors.variant_sku_type = t('products.editor.validation.skuTypeRequired');
 
             const hasMissingSku = (draft?.variants ?? []).some((variant) => {
                 if (String(variant?.sku_type ?? 'numeric') !== 'numeric') return false;
                 return !String(variant?.sku ?? '').trim();
             });
-            if (hasMissingSku) nextErrors.variant_sku = 'SKU is required when SKU type is numeric.';
+            if (hasMissingSku) nextErrors.variant_sku = t('products.editor.validation.skuRequiredWhenNumeric');
         }
 
         return nextErrors;
@@ -189,7 +194,7 @@ export function ProductEditorPage() {
         const currentErrors = validateStep(activeStep);
         setValidationErrors((previous) => ({ ...previous, ...currentErrors }));
         if (Object.keys(currentErrors).length > 0) {
-            setSaveError('Please complete required fields before continuing.');
+            setSaveError(t('products.editor.completeRequiredBeforeContinue'));
             return false;
         }
 
@@ -273,7 +278,7 @@ export function ProductEditorPage() {
 
         if (Object.keys(allErrors).length > 0) {
             setValidationErrors(allErrors);
-            setSaveError('Please complete all required fields before saving.');
+            setSaveError(t('products.editor.completeRequiredBeforeSave'));
 
             if (allErrors.title_en || allErrors.title_fa || allErrors.short_link || allErrors.base_price || allErrors.category_ids) setActiveStep(0);
             else if (allErrors.attributes) setActiveStep(1);
@@ -338,20 +343,20 @@ export function ProductEditorPage() {
                 : await productService.createProduct(payload);
 
             setDraft(normalizeProductDraft(updated));
-            setNotice('Saved successfully.');
+            setNotice(t('products.editor.savedSuccessfully'));
             setShortLinkTouched(true);
 
             if (!isEditing && updated?.id) {
                 navigate(`/products/${updated.id}/edit`, { replace: true });
             }
         } catch (requestError) {
-            setSaveError(getApiErrorMessage(requestError, 'Unable to save product.'));
+            setSaveError(getApiErrorMessage(requestError, t('products.editor.unableToSave')));
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">Loading product editor…</div>;
+    if (loading) return <div className="text-sm text-[color:var(--dash-muted)]">{t('products.editor.loading')}</div>;
     if (error) return <div className="text-sm text-red-400">{error}</div>;
 
     const isFirstStep = activeStep === 0;
@@ -362,16 +367,16 @@ export function ProductEditorPage() {
         <div className="space-y-5">
             <div className="flex flex-col gap-4 rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-5 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <Link to="/products" className="text-xs text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]">← Back to products</Link>
-                    <div className="mt-2 text-2xl font-semibold">{isEditing ? 'Edit product' : 'Create product'}</div>
+                    <Link to="/products" className="text-xs text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]">{t('products.editor.backToProducts')}</Link>
+                    <div className="mt-2 text-2xl font-semibold">{isEditing ? t('products.editor.editProduct') : t('products.editor.createProduct')}</div>
                     <div className="mt-1 max-w-2xl text-sm text-[color:var(--dash-muted)]">
-                        A full-page editor is easier for dense product data. Select attributes first, then price the generated variants.
+                        {t('products.editor.description')}
                     </div>
                     {notice ? <div className="mt-3 text-sm text-emerald-400">{notice}</div> : null}
                     {saveError ? <div className="mt-3 text-sm text-red-400">{saveError}</div> : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save product'}</Button>
+                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? t('common.saving') : t('products.editor.saveProduct')}</Button>
                 </div>
             </div>
 
@@ -419,23 +424,23 @@ export function ProductEditorPage() {
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-[color:var(--dash-accent)]" aria-hidden="true">
                                 <path d="M4 5h16M4 12h16M4 19h10" />
                             </svg>
-                            Product basics
+                            {t('products.editor.productBasics')}
                         </div>
-                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">Keep the basic information here. Pricing stays inside the variant section below.</div>
+                        <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('products.editor.productBasicsDescription')}</div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Title EN *" error={validationErrors.title_en}><Input required value={draft.title.en} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, en: event.target.value }, short_link: shortLinkTouched ? previous.short_link : slugify(event.target.value) }))} /></Field>
-                        <Field label="Title FA *" error={validationErrors.title_fa}><Input required value={draft.title.fa} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, fa: event.target.value } }))} /></Field>
-                        <Field label="Short link *" error={validationErrors.short_link}><Input required value={draft.short_link} onChange={(event) => { setShortLinkTouched(true); setDraft((previous) => ({ ...previous, short_link: event.target.value })); }} /></Field>
-                        <Field label="Base price *" error={validationErrors.base_price}><Input required type="number" min="0" step="0.01" value={draft.base_price} onChange={(event) => setDraft((previous) => ({ ...previous, base_price: event.target.value }))} /></Field>
-                        <Field label="Subtitle EN"><Input value={draft.subtitle.en} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, en: event.target.value } }))} /></Field>
-                        <Field label="Subtitle FA"><Input value={draft.subtitle.fa} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, fa: event.target.value } }))} /></Field>
+                        <Field label={t('products.editor.titleEnRequired')} error={validationErrors.title_en}><Input required value={draft.title.en} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, en: event.target.value }, short_link: shortLinkTouched ? previous.short_link : slugify(event.target.value) }))} /></Field>
+                        <Field label={t('products.editor.titleFaRequired')} error={validationErrors.title_fa}><Input required value={draft.title.fa} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, fa: event.target.value } }))} /></Field>
+                        <Field label={t('products.editor.shortLinkRequired')} error={validationErrors.short_link}><Input required value={draft.short_link} onChange={(event) => { setShortLinkTouched(true); setDraft((previous) => ({ ...previous, short_link: event.target.value })); }} /></Field>
+                        <Field label={t('products.editor.basePriceRequired')} error={validationErrors.base_price}><Input required type="number" min="0" step="0.01" value={draft.base_price} onChange={(event) => setDraft((previous) => ({ ...previous, base_price: event.target.value }))} /></Field>
+                        <Field label={t('products.editor.subtitleEn')}><Input value={draft.subtitle.en} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, en: event.target.value } }))} /></Field>
+                        <Field label={t('products.editor.subtitleFa')}><Input value={draft.subtitle.fa} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, fa: event.target.value } }))} /></Field>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Description EN"><Textarea rows={5} value={draft.description.en} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, en: event.target.value } }))} /></Field>
-                        <Field label="Description FA"><Textarea rows={5} value={draft.description.fa} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, fa: event.target.value } }))} /></Field>
+                        <Field label={t('products.editor.descriptionEn')}><Textarea rows={5} value={draft.description.en} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, en: event.target.value } }))} /></Field>
+                        <Field label={t('products.editor.descriptionFa')}><Textarea rows={5} value={draft.description.fa} onChange={(event) => setDraft((previous) => ({ ...previous, description: { ...previous.description, fa: event.target.value } }))} /></Field>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -463,7 +468,7 @@ export function ProductEditorPage() {
 
                     <label className="inline-flex items-center gap-2 text-sm">
                         <input type="checkbox" checked={Boolean(draft.is_active)} onChange={(event) => setDraft((previous) => ({ ...previous, is_active: event.target.checked }))} />
-                        Product is active
+                        {t('products.editor.productIsActive')}
                     </label>
                 </section>
             ) : null}
@@ -503,12 +508,12 @@ export function ProductEditorPage() {
 
             <section className="flex items-center justify-between rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-4">
                 <div className="text-sm text-[color:var(--dash-muted)]">
-                    Step {activeStep + 1} of {editorSteps.length}: {editorSteps[activeStep].label}
+                    {t('products.editor.stepOf', { step: activeStep + 1, total: editorSteps.length, label: editorSteps[activeStep].label })}
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="ghost" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>Previous</Button>
-                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>Next</Button>
-                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save product'}</Button>
+                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="ghost" onClick={() => goToStep(activeStep - 1)} disabled={isFirstStep}>{t('products.editor.previous')}</Button>
+                    <Button className="h-10 min-w-[110px] whitespace-nowrap" type="button" variant="subtle" onClick={() => goToStep(activeStep + 1)} disabled={isLastStep}>{t('products.editor.next')}</Button>
+                    <Button className="h-10 min-w-[130px] whitespace-nowrap" type="button" onClick={save} disabled={saving}>{saving ? t('common.saving') : t('products.editor.saveProduct')}</Button>
                 </div>
             </section>
         </div>
