@@ -28,4 +28,7 @@ export const productService = {
     uploadProductMedia(id, formData, onUploadProgress) {
         return productRepository.upload(id, formData, onUploadProgress);
     },
+    deleteProductMedia(id, payload) {
+        return productRepository.deleteMedia(id, payload);
+    },
 };

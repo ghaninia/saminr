@@ -43,4 +43,10 @@ export const productRepository = {
         });
         return res.data ?? {};
     },
+    async deleteMedia(id, payload) {
+        const res = await adminApi.delete(`/products/${id}/media`, {
+            data: payload,
+        });
+        return res.data ?? {};
+    },
 };
