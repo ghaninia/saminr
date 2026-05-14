@@ -1,48 +1,161 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../../../../contexts/LanguageContext'
-import { useTheme } from '../../../../contexts/ThemeContext'
+import { apiClient } from '../../../../apis'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation } from 'swiper/modules'
-import { ArrowUpRight, DoorOpen, Cog, User } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import './SectionComponents.css'
 
-function ProductsSection({ products = [] }) {
+const DEFAULT_PRODUCT_IMAGE = '/images/file-corrupted.svg'
+
+function normalizeProductsResponse(payload) {
+  if (Array.isArray(payload)) {
+    return payload
+  }
+
+  return Array.isArray(payload?.data) ? payload.data : []
+}
+
+function resolveLocalizedText(value, locale) {
+  if (!value) {
+    return ''
+  }
+
+  if (typeof value === 'string') {
+    return value
+  }
+
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return value?.[locale] ?? value?.fa ?? value?.en ?? ''
+  }
+
+  return ''
+}
+
+function resolveLocalizedValue(value, valueI18n, locale) {
+  if (valueI18n && typeof valueI18n === 'object' && !Array.isArray(valueI18n)) {
+    return String(valueI18n?.[locale] ?? valueI18n?.fa ?? valueI18n?.en ?? value ?? '')
+  }
+
+  return String(value ?? '')
+}
+
+function formatPrice(price, language) {
+  if (!Number.isFinite(Number(price))) {
+    return '--'
+  }
+
+  try {
+    return new Intl.NumberFormat(language === 'fa' ? 'fa-IR' : 'en-US').format(Number(price))
+  } catch {
+    return String(price)
+  }
+}
+
+function sanitizeSvg(svg) {
+  if (typeof svg !== 'string') {
+    return ''
+  }
+
+  const trimmed = svg.trim()
+  return trimmed.startsWith('<svg') ? trimmed : ''
+}
+
+function ProductsSection({ products }) {
   const { t, language } = useLanguage()
-  const { theme } = useTheme()
+  const [apiProducts, setApiProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(products === undefined)
+  const [selectedColorByProduct, setSelectedColorByProduct] = useState({})
 
-  const defaultProducts = [
-    {
-      number: '01.',
-      title: t('products.product1.title'),
-      description: t('products.product1.description'),
-      details: t('products.product1.details'),
-      price: '100',
-      unit: 'تومان',
-      image: '/images/candle1.jpg'
-    },
-    {
-      number: '02.',
-      title: t('products.product2.title'),
-      description: t('products.product2.description'),
-      details: t('products.product2.details'),
-      price: '200',
-      unit: 'تومان',
-      image: '/images/candle2.jpg'
-    },
-    {
-      number: '03.',
-      title: t('products.product3.title'),
-      description: t('products.product3.description'),
-      details: t('products.product3.details'),
-      price: '300',
-      unit: 'تومان',
-      image: '/images/candle3.jpg'
-    },
-  ]
+  const labels = language === 'fa'
+    ? {
+        priceUnit: 'تومان',
+        noVariant: 'واریانتی برای این رنگ پیدا نشد',
+        summaryTitle: 'ویژگی‌ها',
+        defaultValue: 'پیش‌فرض',
+      }
+    : {
+        priceUnit: 'Toman',
+        noVariant: 'No variants found for this color',
+        summaryTitle: 'Summary',
+        defaultValue: 'Default',
+      }
 
-  const productsList = products.length > 0 ? products : defaultProducts
+  useEffect(() => {
+    if (products !== undefined) {
+      return
+    }
+
+    let isMounted = true
+    setIsLoading(true)
+
+    apiClient
+      .getClientProducts()
+      .then((payload) => {
+        if (!isMounted) {
+          return
+        }
+
+        setApiProducts(normalizeProductsResponse(payload))
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return
+        }
+
+        setApiProducts([])
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return
+        }
+
+        setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [products])
+
+  const productsList = useMemo(() => {
+    const source = Array.isArray(products) ? products : apiProducts
+
+    return source.map((product) => {
+      const variants = Array.isArray(product?.variants) ? product.variants : []
+      const defaultVariant = product?.default_variant ?? variants.find((variant) => variant?.is_default) ?? variants[0] ?? null
+
+      const title = resolveLocalizedText(product?.title, language)
+      const subtitle = resolveLocalizedText(product?.subtitle, language)
+      const description = resolveLocalizedText(product?.description, language)
+
+      return {
+        id: product?.id,
+        title,
+        subtitle,
+        description,
+        image: typeof product?.image === 'string' && product.image.trim() !== '' ? product.image : DEFAULT_PRODUCT_IMAGE,
+        variants,
+        colors: Array.isArray(product?.colors) ? product.colors : [],
+        summaryAttributes: Array.isArray(product?.summary_attributes) ? product.summary_attributes : [],
+        defaultVariant,
+      }
+    }).filter((product) => product.title)
+  }, [apiProducts, language, products])
+
+  const handleColorClick = (productId, color) => {
+    setSelectedColorByProduct((previous) => ({
+      ...previous,
+      [productId]: color,
+    }))
+  }
+
+  if (isLoading || productsList.length === 0) {
+    return null
+  }
 
   return (
     <section className={`products section-padding`}>
@@ -70,25 +183,72 @@ function ProductsSection({ products = [] }) {
           }}
           className="products-swiper"
         >
-          {productsList.map((product, index) => (
-            <SwiperSlide key={index}>
+          {productsList.map((product) => {
+            const selectedColor = selectedColorByProduct[product.id] ?? product.defaultVariant?.color ?? null
+
+            const filteredVariants = selectedColor
+              ? product.variants.filter((variant) => (variant?.color ?? null) === selectedColor)
+              : product.variants
+
+            const activeVariant = filteredVariants.find((variant) => variant?.is_default)
+              ?? filteredVariants[0]
+              ?? product.defaultVariant
+
+            const detailAttributes = Array.isArray(activeVariant?.attributes)
+              ? activeVariant.attributes.filter((attribute) => attribute?.is_color !== true)
+              : []
+
+            return (
+            <SwiperSlide key={product.id ?? product.title}>
               <div className="item">
                 <div className="bottom-fade"></div>
                 <img src={product.image} alt={product.title} />
+                {product.colors.length > 0 ? (
+                  <div className={`product-color-rail ${language === 'fa' ? 'rtl' : 'ltr'}`}>
+                    <div className="product-color-list-vertical">
+                      {product.colors.map((colorItem) => (
+                        <button
+                          key={`${product.id}-${colorItem.name}`}
+                          type="button"
+                          className={`product-color-dot ${selectedColor === colorItem.name ? 'active' : ''}`}
+                          onClick={() => handleColorClick(product.id, colorItem.name)}
+                          title={resolveLocalizedValue(colorItem.name, colorItem.name_i18n, language)}
+                          aria-label={resolveLocalizedValue(colorItem.name, colorItem.name_i18n, language)}
+                          style={{
+                            backgroundColor: colorItem.swatch || '#E5E7EB',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
                 <div className="title">
                   <h4>{product.title}</h4>
-                  <div className="details">
-                    <span><DoorOpen size={16} style={{ marginLeft: '5px', marginRight: '5px' }} />{product.details.passengers}</span>
-                    <span><Cog size={16} style={{ marginLeft: '5px', marginRight: '5px' }} />{product.details.transmission}</span>
-                    <span><User size={16} style={{ marginLeft: '5px', marginRight: '5px' }} />{product.details.age}</span>
-                  </div>
+                  {product.subtitle ? <p className="product-subtitle">{product.subtitle}</p> : null}
+                  {detailAttributes.length > 0 ? (
+                    <div className="details">
+                      {detailAttributes.map((attribute) => (
+                        <span key={`${product.id}-${activeVariant?.id}-${attribute.key}`}>
+                          {sanitizeSvg(attribute?.icon_svg) ? (
+                            <i
+                              className="detail-attr-icon"
+                              aria-hidden="true"
+                              dangerouslySetInnerHTML={{ __html: sanitizeSvg(attribute.icon_svg) }}
+                            />
+                          ) : null}
+                          {resolveLocalizedValue(attribute.value, attribute.value_i18n, language)}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
                 </div>
                 <div className="curv-butn icon-bg">
                   <a href="#" className="vid">
                     <div className="icon">
                       <div className="icon-show">
-                        <span>{product.price}</span>
-                        <div className="unit">{product.unit}</div>
+                        <span>{activeVariant ? formatPrice(activeVariant.price, language) : '--'}</span>
+                        <div className="unit">{labels.priceUnit}</div>
                       </div>
                       <ArrowUpRight className="icon-hidden" />
                     </div>
@@ -106,7 +266,7 @@ function ProductsSection({ products = [] }) {
                 </div>
               </div>
             </SwiperSlide>
-          ))}
+          )})}
         </Swiper>
       </div>
     </section>

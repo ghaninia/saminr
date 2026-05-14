@@ -17,6 +17,7 @@ class ProductAttribute extends Model
     protected $fillable = [
         'key',
         'label',
+        'icon_svg',
         'value_type',
         'sort_order',
     ];

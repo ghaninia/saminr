@@ -42,14 +42,20 @@ class ProductResource extends JsonResource
                     'id' => $attribute->id,
                     'key' => $attribute->key,
                     'label' => $attribute->label,
+                    'icon_svg' => $attribute->icon_svg,
                     'value_type' => $attribute->value_type,
                     'sort_order' => $attribute->sort_order,
-                    'values' => ($selectedValues->get($attribute->id) ?? collect())->map(fn ($value): array => [
-                            'id' => $value->id,
-                            'value' => $value->value,
-                            'meta' => $value->meta,
-                            'sort_order' => $value->sort_order,
-                        ])->values()
+                    'values' => ($selectedValues->get($attribute->id) ?? collect())->map(function ($value): array {
+                            $valueI18n = $this->decodeLocalizedValue((string) $value->value);
+
+                            return [
+                                'id' => $value->id,
+                                'value' => $this->canonicalValueFromLocalized($valueI18n),
+                                'value_i18n' => $valueI18n,
+                                'meta' => $value->meta,
+                                'sort_order' => $value->sort_order,
+                            ];
+                        })->values()
                         ->all(),
                 ])->values();
             }, []),
@@ -66,8 +72,10 @@ class ProductResource extends JsonResource
                             'attribute_id' => $option->product_attribute_id,
                             'attribute_key' => $option->attribute?->key,
                             'attribute_label' => $option->attribute?->label,
+                            'attribute_icon_svg' => $option->attribute?->icon_svg,
                             'value_id' => $option->product_attribute_value_id,
-                            'value' => $option->value?->value,
+                            'value' => $option->value ? $this->canonicalValueFromLocalized($this->decodeLocalizedValue((string) $option->value->value)) : null,
+                            'value_i18n' => $option->value ? $this->decodeLocalizedValue((string) $option->value->value) : null,
                         ])->values()
                         : [],
                 ])->values();
@@ -102,5 +110,28 @@ class ProductResource extends JsonResource
             'file_name' => $first->file_name,
             'original_url' => $first->getUrl(),
         ];
+    }
+
+    /** @return array{fa: string, en: string} */
+    private function decodeLocalizedValue(string $raw): array
+    {
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded) && array_key_exists('fa', $decoded) && array_key_exists('en', $decoded)) {
+            return [
+                'fa' => (string) ($decoded['fa'] ?? ''),
+                'en' => (string) ($decoded['en'] ?? ''),
+            ];
+        }
+
+        return [
+            'fa' => $raw,
+            'en' => $raw,
+        ];
+    }
+
+    /** @param array{fa: string, en: string} $localized */
+    private function canonicalValueFromLocalized(array $localized): string
+    {
+        return trim((string) ($localized['en'] !== '' ? $localized['en'] : $localized['fa']));
     }
 }

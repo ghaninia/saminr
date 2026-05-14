@@ -33,6 +33,37 @@ class ProductAttributeValue extends Model
         ];
     }
 
+    /** @return array{fa: string, en: string} */
+    public function getValueI18nAttribute(): array
+    {
+        $raw = $this->attributes['value'] ?? '';
+        if (! is_string($raw)) {
+            return ['fa' => '', 'en' => ''];
+        }
+
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded) && array_key_exists('fa', $decoded) && array_key_exists('en', $decoded)) {
+            return [
+                'fa' => (string) ($decoded['fa'] ?? ''),
+                'en' => (string) ($decoded['en'] ?? ''),
+            ];
+        }
+
+        return [
+            'fa' => $raw,
+            'en' => $raw,
+        ];
+    }
+
+    public function getCanonicalValueAttribute(): string
+    {
+        $i18n = $this->value_i18n;
+
+        $canonical = trim((string) ($i18n['en'] !== '' ? $i18n['en'] : $i18n['fa']));
+
+        return $canonical;
+    }
+
     /** @return BelongsTo<ProductAttribute, $this> */
     public function attribute(): BelongsTo
     {

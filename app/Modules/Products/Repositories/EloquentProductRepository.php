@@ -187,7 +187,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
             foreach ($options as $optionData) {
                 $attributeKey = (string) Arr::get($optionData, 'attribute_key', '');
-                $valueText = (string) Arr::get($optionData, 'value', '');
+                $valueText = $this->canonicalValueFromMixed(Arr::get($optionData, 'value'));
 
                 if ($attributeKey === '' || $valueText === '') {
                     continue;
@@ -201,12 +201,15 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
                 $value = ProductAttributeValue::query()
                     ->where('product_attribute_id', $attribute->id)
-                    ->where('value', $valueText)
-                    ->first();
+                    ->get()
+                    ->first(fn (ProductAttributeValue $candidate): bool => $this->doesStoredValueMatchText((string) $candidate->value, $valueText));
 
                 if (! $value instanceof ProductAttributeValue) {
                     $value = $attribute->values()->create([
-                        'value' => $valueText,
+                        'value' => $this->serializeLocalizedValue([
+                            'fa' => $valueText,
+                            'en' => $valueText,
+                        ]),
                         'sort_order' => 0,
                     ]);
                 }
@@ -250,6 +253,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
             $created = ProductAttribute::query()->create([
                 'key' => $key,
                 'label' => (array) Arr::get($attributeData, 'label', ['fa' => '', 'en' => '']),
+                'icon_svg' => Arr::get($attributeData, 'icon_svg') !== null ? (string) Arr::get($attributeData, 'icon_svg') : null,
                 'value_type' => (string) Arr::get($attributeData, 'value_type', 'select'),
                 'sort_order' => (int) Arr::get($attributeData, 'sort_order', 0),
             ]);
@@ -259,6 +263,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
         $attribute->fill([
             'label' => (array) Arr::get($attributeData, 'label', $attribute->label),
+            'icon_svg' => Arr::get($attributeData, 'icon_svg', $attribute->icon_svg),
             'value_type' => (string) Arr::get($attributeData, 'value_type', $attribute->value_type),
             'sort_order' => (int) Arr::get($attributeData, 'sort_order', $attribute->sort_order),
         ])->save();
@@ -270,7 +275,11 @@ class EloquentProductRepository implements ProductRepositoryInterface
     private function resolveOrCreateAttributeValue(ProductAttribute $attribute, array $valueData): ProductAttributeValue
     {
         $valueId = Arr::get($valueData, 'id');
-        $valueText = (string) Arr::get($valueData, 'value', '');
+        $normalized = $this->normalizeLocalizedValue(
+            Arr::get($valueData, 'value'),
+            Arr::get($valueData, 'value_i18n'),
+        );
+        $valueText = $normalized['canonical'];
 
         $value = null;
 
@@ -281,14 +290,14 @@ class EloquentProductRepository implements ProductRepositoryInterface
         if (! $value instanceof ProductAttributeValue && $valueText !== '') {
             $value = ProductAttributeValue::query()
                 ->where('product_attribute_id', $attribute->id)
-                ->where('value', $valueText)
-                ->first();
+                ->get()
+                ->first(fn (ProductAttributeValue $candidate): bool => $this->doesStoredValueMatchText((string) $candidate->value, $valueText));
         }
 
         if (! $value instanceof ProductAttributeValue) {
             /** @var ProductAttributeValue $created */
             $created = $attribute->values()->create([
-                'value' => $valueText,
+                'value' => $normalized['serialized'],
                 'meta' => is_array(Arr::get($valueData, 'meta')) ? Arr::get($valueData, 'meta') : null,
                 'sort_order' => (int) Arr::get($valueData, 'sort_order', 0),
             ]);
@@ -297,11 +306,98 @@ class EloquentProductRepository implements ProductRepositoryInterface
         }
 
         $value->fill([
-            'value' => $valueText,
+            'value' => $normalized['serialized'],
             'meta' => is_array(Arr::get($valueData, 'meta')) ? Arr::get($valueData, 'meta') : $value->meta,
             'sort_order' => (int) Arr::get($valueData, 'sort_order', $value->sort_order),
         ])->save();
 
         return $value;
+    }
+
+    /**
+     * @param mixed $value
+     * @param mixed $valueI18n
+    * @return array{fa: string, en: string, canonical: string, serialized: string}
+     */
+    private function normalizeLocalizedValue(mixed $value, mixed $valueI18n): array
+    {
+        $fa = '';
+        $en = '';
+
+        if (is_array($value)) {
+            $fa = (string) Arr::get($value, 'fa', '');
+            $en = (string) Arr::get($value, 'en', '');
+        } elseif (is_string($value)) {
+            $decoded = $this->decodeLocalizedValue($value);
+            $fa = (string) ($decoded['fa'] ?? $value);
+            $en = (string) ($decoded['en'] ?? $value);
+        }
+
+        if (is_array($valueI18n)) {
+            $fa = (string) Arr::get($valueI18n, 'fa', $fa);
+            $en = (string) Arr::get($valueI18n, 'en', $en);
+        }
+
+        $canonical = trim($en !== '' ? $en : $fa);
+        if ($canonical === '') {
+            $canonical = trim((string) (is_string($value) ? $value : ''));
+        }
+
+        $serialized = $this->serializeLocalizedValue([
+            'fa' => $fa,
+            'en' => $en,
+        ]);
+
+        return [
+            'fa' => $fa,
+            'en' => $en,
+            'canonical' => $canonical,
+            'serialized' => $serialized,
+        ];
+    }
+
+    /** @return array{fa: string, en: string} */
+    private function decodeLocalizedValue(string $raw): array
+    {
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded) && array_key_exists('fa', $decoded) && array_key_exists('en', $decoded)) {
+            return [
+                'fa' => (string) ($decoded['fa'] ?? ''),
+                'en' => (string) ($decoded['en'] ?? ''),
+            ];
+        }
+
+        return [
+            'fa' => $raw,
+            'en' => $raw,
+        ];
+    }
+
+    /** @param array{fa: string, en: string} $localized */
+    private function serializeLocalizedValue(array $localized): string
+    {
+        $encoded = json_encode([
+            'fa' => (string) ($localized['fa'] ?? ''),
+            'en' => (string) ($localized['en'] ?? ''),
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return is_string($encoded) && $encoded !== '' ? $encoded : '{"fa":"","en":""}';
+    }
+
+    private function doesStoredValueMatchText(string $storedValue, string $text): bool
+    {
+        $localized = $this->decodeLocalizedValue($storedValue);
+        $canonical = trim((string) ($localized['en'] !== '' ? $localized['en'] : $localized['fa']));
+
+        return $canonical === $text || (string) $localized['fa'] === $text || (string) $localized['en'] === $text;
+    }
+
+    private function canonicalValueFromMixed(mixed $value): string
+    {
+        if (is_array($value)) {
+            return trim((string) (Arr::get($value, 'en') ?: Arr::get($value, 'fa') ?: ''));
+        }
+
+        return trim((string) $value);
     }
 }

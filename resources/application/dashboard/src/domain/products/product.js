@@ -32,6 +32,7 @@ export function emptyAttributeValueDraft(index = 0) {
     return {
         id: null,
         value: '',
+        value_i18n: { fa: '', en: '' },
         meta: null,
         sort_order: index,
     };
@@ -88,6 +89,11 @@ export function normalizeProductDraft(source) {
                       ? attribute.values.map((entry, valueIndex) => ({
                             ...emptyAttributeValueDraft(valueIndex),
                             ...entry,
+                            value: String(entry?.value ?? entry?.value_i18n?.en ?? entry?.value_i18n?.fa ?? ''),
+                            value_i18n: {
+                                fa: String(entry?.value_i18n?.fa ?? entry?.value ?? ''),
+                                en: String(entry?.value_i18n?.en ?? entry?.value ?? ''),
+                            },
                             sort_order: Number(entry?.sort_order ?? valueIndex),
                         }))
                       : [emptyAttributeValueDraft(0)],

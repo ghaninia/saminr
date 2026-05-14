@@ -47,11 +47,13 @@ class ProductUpsertRequest extends FormRequest
             'attributes.*.id' => ['nullable', 'integer', Rule::exists('product_attributes', 'id')],
             'attributes.*.key' => ['required_without:attributes.*.id', 'string', 'max:120'],
             'attributes.*.label' => ['required', 'array'],
+            'attributes.*.icon_svg' => ['nullable', 'string'],
             'attributes.*.value_type' => ['required', Rule::in(['text', 'number', 'select', 'color'])],
             'attributes.*.sort_order' => ['nullable', 'integer', 'min:0'],
             'attributes.*.values' => ['required', 'array', 'min:1'],
             'attributes.*.values.*.id' => ['nullable', 'integer', Rule::exists('product_attribute_values', 'id')],
-            'attributes.*.values.*.value' => ['required', 'string', 'max:255'],
+            'attributes.*.values.*.value' => ['required'],
+            'attributes.*.values.*.value_i18n' => ['nullable', 'array'],
             'attributes.*.values.*.meta' => ['nullable', 'array'],
             'attributes.*.values.*.meta.hex' => ['nullable', 'string', 'max:20'],
             'attributes.*.values.*.sort_order' => ['nullable', 'integer', 'min:0'],
@@ -64,7 +66,7 @@ class ProductUpsertRequest extends FormRequest
             'variants.*.sort_order' => ['nullable', 'integer', 'min:0'],
             'variants.*.options' => ['required', 'array', 'min:1'],
             'variants.*.options.*.attribute_key' => ['required', 'string', 'max:120'],
-            'variants.*.options.*.value' => ['required', 'string', 'max:255'],
+            'variants.*.options.*.value' => ['required'],
         ];
     }
 
@@ -102,6 +104,24 @@ class ProductUpsertRequest extends FormRequest
             foreach ($attributes as $index => $attribute) {
                 $label = Arr::get($attribute, 'label');
                 $this->validateLocalizedObject($validator, "attributes.{$index}.label", $label);
+
+                $values = Arr::get($attribute, 'values');
+                if (! is_array($values)) {
+                    continue;
+                }
+
+                foreach ($values as $valueIndex => $valueEntry) {
+                    $rawValue = Arr::get($valueEntry, 'value');
+                    $rawValueI18n = Arr::get($valueEntry, 'value_i18n');
+
+                    if (is_array($rawValue)) {
+                        $this->validateLocalizedObject($validator, "attributes.{$index}.values.{$valueIndex}.value", $rawValue);
+                    }
+
+                    if ($rawValueI18n !== null && is_array($rawValueI18n)) {
+                        $this->validateLocalizedObject($validator, "attributes.{$index}.values.{$valueIndex}.value_i18n", $rawValueI18n);
+                    }
+                }
             }
 
             $variants = $this->input('variants');
@@ -110,6 +130,16 @@ class ProductUpsertRequest extends FormRequest
             }
 
             foreach ($variants as $index => $variant) {
+                $options = Arr::get($variant, 'options');
+                if (is_array($options)) {
+                    foreach ($options as $optionIndex => $option) {
+                        $optionValue = Arr::get($option, 'value');
+                        if (is_array($optionValue)) {
+                            $this->validateLocalizedObject($validator, "variants.{$index}.options.{$optionIndex}.value", $optionValue);
+                        }
+                    }
+                }
+
                 $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
                 $sku = Arr::get($variant, 'sku');
 
@@ -168,21 +198,33 @@ class ProductUpsertRequest extends FormRequest
                     'fa' => (string) Arr::get($attribute, 'label.fa', ''),
                     'en' => (string) Arr::get($attribute, 'label.en', ''),
                 ],
+                'icon_svg' => Arr::get($attribute, 'icon_svg') !== null ? (string) Arr::get($attribute, 'icon_svg') : null,
                 'value_type' => (string) Arr::get($attribute, 'value_type', 'select'),
                 'sort_order' => (int) Arr::get($attribute, 'sort_order', 0),
-                'values' => array_map(static fn (array $value): array => [
-                    'id' => Arr::get($value, 'id') !== null ? (int) Arr::get($value, 'id') : null,
-                    'value' => (string) Arr::get($value, 'value', ''),
-                    'meta' => is_array(Arr::get($value, 'meta')) ? Arr::get($value, 'meta') : null,
-                    'sort_order' => (int) Arr::get($value, 'sort_order', 0),
-                ], $values),
+                'values' => array_map(function (array $value): array {
+                    $normalized = $this->normalizeLocalizedValue(
+                        Arr::get($value, 'value'),
+                        Arr::get($value, 'value_i18n'),
+                    );
+
+                    return [
+                        'id' => Arr::get($value, 'id') !== null ? (int) Arr::get($value, 'id') : null,
+                        'value' => $normalized['canonical'],
+                        'value_i18n' => [
+                            'fa' => $normalized['fa'],
+                            'en' => $normalized['en'],
+                        ],
+                        'meta' => is_array(Arr::get($value, 'meta')) ? Arr::get($value, 'meta') : null,
+                        'sort_order' => (int) Arr::get($value, 'sort_order', 0),
+                    ];
+                }, $values),
             ];
         }, $attributes);
 
         /** @var array<int, array<string, mixed>> $variants */
         $variants = is_array(Arr::get($validated, 'variants')) ? Arr::get($validated, 'variants') : [];
 
-        $validated['variants'] = array_map(static function (array $variant): array {
+        $validated['variants'] = array_map(function (array $variant): array {
             $options = is_array(Arr::get($variant, 'options')) ? Arr::get($variant, 'options') : [];
             $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
             $rawSku = Arr::get($variant, 'sku');
@@ -194,9 +236,9 @@ class ProductUpsertRequest extends FormRequest
                 'price' => (float) Arr::get($variant, 'price', 0),
                 'is_default' => (bool) Arr::get($variant, 'is_default', false),
                 'sort_order' => (int) Arr::get($variant, 'sort_order', 0),
-                'options' => array_map(static fn (array $option): array => [
+                'options' => array_map(fn (array $option): array => [
                     'attribute_key' => (string) Arr::get($option, 'attribute_key', ''),
-                    'value' => (string) Arr::get($option, 'value', ''),
+                    'value' => $this->canonicalValueFromMixed(Arr::get($option, 'value')),
                 ], $options),
             ];
         }, $variants);
@@ -229,5 +271,49 @@ class ProductUpsertRequest extends FormRequest
         if (! is_string($value['fa']) || ! is_string($value['en'])) {
             $validator->errors()->add($path, __('validation_messages.localized_object.strings'));
         }
+    }
+
+    /**
+     * @param mixed $value
+     * @param mixed $valueI18n
+     * @return array{fa: string, en: string, canonical: string}
+     */
+    private function normalizeLocalizedValue(mixed $value, mixed $valueI18n): array
+    {
+        $fa = '';
+        $en = '';
+
+        if (is_array($value)) {
+            $fa = (string) Arr::get($value, 'fa', '');
+            $en = (string) Arr::get($value, 'en', '');
+        } elseif (is_string($value)) {
+            $fa = $value;
+            $en = $value;
+        }
+
+        if (is_array($valueI18n)) {
+            $fa = (string) Arr::get($valueI18n, 'fa', $fa);
+            $en = (string) Arr::get($valueI18n, 'en', $en);
+        }
+
+        $canonical = trim($en !== '' ? $en : $fa);
+        if ($canonical === '') {
+            $canonical = trim((string) (is_string($value) ? $value : ''));
+        }
+
+        return [
+            'fa' => $fa,
+            'en' => $en,
+            'canonical' => $canonical,
+        ];
+    }
+
+    private function canonicalValueFromMixed(mixed $value): string
+    {
+        if (is_array($value)) {
+            return trim((string) (Arr::get($value, 'en') ?: Arr::get($value, 'fa') ?: ''));
+        }
+
+        return trim((string) $value);
     }
 }

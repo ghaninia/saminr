@@ -15,8 +15,12 @@ use App\Modules\Newsletter\Services\Contracts\SubscriberServiceInterface;
 use App\Modules\Newsletter\Services\NewsletterService;
 use App\Modules\Newsletter\Services\SubscriberService;
 use App\Modules\Products\Repositories\Contracts\ProductRepositoryInterface;
+use App\Modules\Products\Repositories\Contracts\GuestProductRepositoryInterface;
+use App\Modules\Products\Repositories\EloquentGuestProductRepository;
 use App\Modules\Products\Repositories\EloquentProductRepository;
+use App\Modules\Products\Services\Contracts\GuestProductServiceInterface;
 use App\Modules\Products\Services\Contracts\ProductServiceInterface;
+use App\Modules\Products\Services\GuestProductService;
 use App\Modules\Products\Services\ProductService;
 use App\Modules\Reviews\Repositories\Contracts\ReviewRepositoryInterface;
 use App\Modules\Reviews\Repositories\EloquentReviewRepository;
@@ -57,6 +61,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
         $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
+        $this->app->bind(GuestProductRepositoryInterface::class, EloquentGuestProductRepository::class);
+        $this->app->bind(GuestProductServiceInterface::class, GuestProductService::class);
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(UserServiceInterface::class, UserService::class);
     }

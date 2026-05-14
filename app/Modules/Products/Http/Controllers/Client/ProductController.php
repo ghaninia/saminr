@@ -3,20 +3,25 @@
 namespace App\Modules\Products\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Products\Http\Resources\ProductResource;
-use App\Modules\Products\Services\Contracts\ProductServiceInterface;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Modules\Products\DTOs\GuestProductDto;
+use App\Modules\Products\Services\Contracts\GuestProductServiceInterface;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
     public function __construct(
-        private readonly ProductServiceInterface $productService,
+        private readonly GuestProductServiceInterface $guestProductService,
     ) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
-        return ProductResource::collection(
-            $this->productService->listAll()
-        );
+        $products = $this->guestProductService->listForGuest();
+
+        return response()->json([
+            'data' => array_map(
+                static fn (GuestProductDto $product): array => $product->toArray(),
+                $products,
+            ),
+        ]);
     }
 }

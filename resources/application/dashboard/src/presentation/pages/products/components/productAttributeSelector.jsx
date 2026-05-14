@@ -24,7 +24,16 @@ export function ProductAttributeSelector({
     onRemoveAttribute,
     onToggleCatalogValue,
 }) {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
+    const resolveLocalizedValue = (entry) => {
+        if (!entry) return '';
+        const i18n = entry?.value_i18n;
+        if (i18n && typeof i18n === 'object') {
+            return String(i18n?.[locale] ?? i18n?.fa ?? i18n?.en ?? entry?.value ?? '');
+        }
+        return String(entry?.value ?? '');
+    };
+
     const [attributeQuery, setAttributeQuery] = useState('');
     const [valueQueries, setValueQueries] = useState({});
     const [expandedMap, setExpandedMap] = useState({});
@@ -126,7 +135,9 @@ export function ProductAttributeSelector({
 
                     const filteredCatalogValues = (catalogAttribute?.values ?? []).filter((valueEntry) => {
                         if (!valueQuery) return true;
-                        return String(valueEntry?.value ?? '').toLowerCase().includes(valueQuery);
+                        const localized = resolveLocalizedValue(valueEntry).toLowerCase();
+                        const canonical = String(valueEntry?.value ?? '').toLowerCase();
+                        return localized.includes(valueQuery) || canonical.includes(valueQuery);
                     });
 
                     return (
@@ -181,7 +192,7 @@ export function ProductAttributeSelector({
                                                                     aria-hidden="true"
                                                                 />
                                                             ) : null}
-                                                            {valueEntry?.value ?? ''}
+                                                            {resolveLocalizedValue(valueEntry)}
                                                         </button>
                                                     );
                                                 })}
@@ -192,7 +203,7 @@ export function ProductAttributeSelector({
                                     <div className="flex flex-wrap gap-2">
                                         {selectedValues.slice(0, 6).map((valueEntry) => (
                                             <span key={`${attribute?.id}-${valueEntry?.id ?? valueEntry?.value}`} className="rounded-full border border-[color:var(--dash-border)] px-2.5 py-1 text-xs">
-                                                {valueEntry?.value ?? ''}
+                                                {resolveLocalizedValue(valueEntry)}
                                             </span>
                                         ))}
                                         {selectedValues.length > 6 ? <span className="text-xs text-[color:var(--dash-muted)]">{t('products.editor.moreCount', { count: selectedValues.length - 6 })}</span> : null}
@@ -200,7 +211,7 @@ export function ProductAttributeSelector({
                                 )}
                                 <div className="text-xs text-[color:var(--dash-muted)]">
                                     {selectedValues.length
-                                        ? t('products.editor.selectedValues', { values: selectedValues.map((entry) => entry?.value).filter(Boolean).join('، ') })
+                                        ? t('products.editor.selectedValues', { values: selectedValues.map((entry) => resolveLocalizedValue(entry)).filter(Boolean).join('، ') })
                                         : t('products.editor.noValueSelected')}
                                 </div>
                             </>

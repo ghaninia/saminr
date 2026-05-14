@@ -10,7 +10,7 @@ const SKU_TYPES = [
 ];
 
 export function ProductVariantBuilder({ attributes, variants, onChange }) {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const configuredAttributes = (attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0);
     const attributeByKey = new Map(configuredAttributes.map((attribute) => [String(attribute?.key ?? ''), attribute]));
 
@@ -67,6 +67,10 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                                 const isColor = String(attribute?.value_type ?? '') === 'color';
                                                 const matchedValue = (attribute?.values ?? []).find((entry) => String(entry?.value ?? '') === String(option?.value ?? ''));
                                                 const colorHex = isColor ? String(matchedValue?.meta?.hex ?? '').trim() : '';
+                                                const localizedValue = matchedValue?.value_i18n?.[locale]
+                                                    ?? matchedValue?.value_i18n?.fa
+                                                    ?? matchedValue?.value_i18n?.en
+                                                    ?? option?.value;
 
                                                 return (
                                                     <span key={`${option.attribute_key}-${option.value}`} className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] px-2.5 py-1 text-xs">
@@ -78,7 +82,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                                                 aria-hidden="true"
                                                             />
                                                         ) : null}
-                                                        <span>{option?.attribute_key}: {option?.value}</span>
+                                                        <span>{option?.attribute_key}: {localizedValue}</span>
                                                     </span>
                                                 );
                                             })()

@@ -1,5 +1,6 @@
 const CLIENT_SETTINGS_ENDPOINT = '/api/client/settings'
 const CLIENT_CATEGORIES_ENDPOINT = '/api/client/categories'
+const CLIENT_PRODUCTS_ENDPOINT = '/api/client/products'
 const CLIENT_REVIEWS_ENDPOINT = '/api/client/reviews'
 const CLIENT_SUBSCRIBE_ENDPOINT = '/api/client/subscribe'
 
@@ -35,6 +36,7 @@ export const apiEndpoints = {
   client: {
     settings: CLIENT_SETTINGS_ENDPOINT,
     categories: CLIENT_CATEGORIES_ENDPOINT,
+    products: CLIENT_PRODUCTS_ENDPOINT,
     reviews: CLIENT_REVIEWS_ENDPOINT,
     subscribe: CLIENT_SUBSCRIBE_ENDPOINT
   }
@@ -46,6 +48,9 @@ export const apiClient = {
   },
   getClientCategories() {
     return requestJson(apiEndpoints.client.categories)
+  },
+  getClientProducts() {
+    return requestJson(apiEndpoints.client.products)
   },
   getClientReviews({ lang } = {}) {
     const query = lang ? `?lang=${encodeURIComponent(lang)}` : ''

@@ -319,6 +319,10 @@ export function ProductEditorPage() {
                     values: (attribute?.values ?? []).map((entry, entryIndex) => ({
                         id: entry?.id ?? null,
                         value: String(entry?.value ?? ''),
+                        value_i18n: {
+                            fa: String(entry?.value_i18n?.fa ?? entry?.value ?? ''),
+                            en: String(entry?.value_i18n?.en ?? entry?.value ?? ''),
+                        },
                         meta: entry?.meta ?? null,
                         sort_order: parseNumber(entry?.sort_order, entryIndex),
                     })),
