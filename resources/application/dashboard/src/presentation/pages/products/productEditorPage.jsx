@@ -252,9 +252,14 @@ export function ProductEditorPage() {
             if (existingIndex >= 0) {
                 nextValues.splice(existingIndex, 1);
             } else {
+                const fallbackValue = String(valueEntry?.value ?? '');
                 nextValues.push({
                     id: valueEntry?.id ?? null,
-                    value: String(valueEntry?.value ?? ''),
+                    value: fallbackValue,
+                    value_i18n: {
+                        fa: String(valueEntry?.value_i18n?.fa ?? fallbackValue),
+                        en: String(valueEntry?.value_i18n?.en ?? fallbackValue),
+                    },
                     meta: valueEntry?.meta ?? null,
                     sort_order: parseNumber(valueEntry?.sort_order, nextValues.length),
                 });
