@@ -127,6 +127,7 @@ function ProductsSection({ products }) {
     return source.map((product) => {
       const variants = Array.isArray(product?.variants) ? product.variants : []
       const defaultVariant = product?.default_variant ?? variants.find((variant) => variant?.is_default) ?? variants[0] ?? null
+      const rawImage = typeof product?.image === 'string' ? product.image.trim() : ''
 
       const title = resolveLocalizedText(product?.title, language)
       const subtitle = resolveLocalizedText(product?.subtitle, language)
@@ -137,7 +138,8 @@ function ProductsSection({ products }) {
         title,
         subtitle,
         description,
-        image: typeof product?.image === 'string' && product.image.trim() !== '' ? product.image : DEFAULT_PRODUCT_IMAGE,
+        image: rawImage ? rawImage : DEFAULT_PRODUCT_IMAGE,
+        isFallbackImage: !rawImage,
         variants,
         colors: Array.isArray(product?.colors) ? product.colors : [],
         summaryAttributes: Array.isArray(product?.summary_attributes) ? product.summary_attributes : [],
@@ -170,15 +172,18 @@ function ProductsSection({ products }) {
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}
+          slidesPerGroup={1}
           loop={true}
           pagination={{ clickable: true }}
           navigation={false}
           breakpoints={{
             768: {
               slidesPerView: 2,
+              slidesPerGroup: 2,
             },
             1024: {
               slidesPerView: 3,
+              slidesPerGroup: 3,
             },
           }}
           className="products-swiper"
@@ -202,7 +207,21 @@ function ProductsSection({ products }) {
             <SwiperSlide key={product.id ?? product.title}>
               <div className="item">
                 <div className="bottom-fade"></div>
-                <img src={product.image} alt={product.title} />
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  loading="lazy"
+                  data-fallback={product.isFallbackImage ? '1' : undefined}
+                  onError={(event) => {
+                    if (event.currentTarget.dataset.fallbackApplied) {
+                      return
+                    }
+
+                    event.currentTarget.dataset.fallbackApplied = '1'
+                    event.currentTarget.dataset.fallback = '1'
+                    event.currentTarget.src = DEFAULT_PRODUCT_IMAGE
+                  }}
+                />
                 {product.colors.length > 0 ? (
                   <div className={`product-color-rail ${language === 'fa' ? 'rtl' : 'ltr'}`}>
                     <div className="product-color-list-vertical">
@@ -225,9 +244,9 @@ function ProductsSection({ products }) {
                 <div className="title">
                   <h4>{product.title}</h4>
                   {product.subtitle ? <p className="product-subtitle">{product.subtitle}</p> : null}
-                  {detailAttributes.length > 0 ? (
+                  {detailAttributes.slice(0, 2).length > 0 ? (
                     <div className="details">
-                      {detailAttributes.map((attribute) => (
+                      {detailAttributes.slice(0, 2).map((attribute) => (
                         <span key={`${product.id}-${activeVariant?.id}-${attribute.key}`}>
                           {sanitizeSvg(attribute?.icon_svg) ? (
                             <i

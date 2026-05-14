@@ -117,15 +117,18 @@ function CategoriesSection({ categories }) {
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}
+          slidesPerGroup={1}
           loop={categoriesList.length > 3}
           pagination={{ clickable: true }}
           navigation={false}
           breakpoints={{
             768: {
               slidesPerView: 2,
+              slidesPerGroup: 2,
             },
             1024: {
               slidesPerView: 3,
+              slidesPerGroup: 3,
             },
           }}
           className="categories-swiper"

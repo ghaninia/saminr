@@ -54,7 +54,7 @@ class GuestProductService implements GuestProductServiceInterface
 
             $colors = $this->buildColors($variants);
 
-            $summaryAttributes = $this->buildSummaryAttributes($variants, $defaultVariant);
+            $summaryAttributes = array_slice($this->buildSummaryAttributes($variants, $defaultVariant), 0, 2);
 
             return new GuestProductDto(
                 id: (int) $product->id,
