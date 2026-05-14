@@ -79,9 +79,8 @@ class UserController extends Controller
 
         $url = $this->userService->uploadAvatar($user, $file);
 
-        return response()->json([
-            'url' => $url,
-            'user' => (new UserResource($user->fresh()))->resolve(),
-        ]);
+        return (new UserResource($user->fresh()))
+            ->additional(['url' => $url])
+            ->response();
     }
 }

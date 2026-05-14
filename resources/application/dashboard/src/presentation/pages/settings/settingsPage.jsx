@@ -306,8 +306,9 @@ export function SettingsPage() {
                                     showValueField={false}
                                     onUpload={async ({ entityId, file, onProgress }) => {
                                         const payload = await uploadFile(entityId, file, onProgress);
-                                        const url = payload?.url ?? '';
-                                        const updatedSetting = payload?.setting ?? null;
+                                        const result = payload?.data ?? payload;
+                                        const url = result?.url ?? '';
+                                        const updatedSetting = result?.setting ?? null;
                                         if (updatedSetting?.id) {
                                             setItems((prev) =>
                                                 prev.map((x) => (x.id === updatedSetting.id ? { ...x, ...updatedSetting } : x)),

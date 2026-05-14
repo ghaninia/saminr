@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Auth\Http\Requests\Admin\ForgotPasswordRequest;
 use App\Modules\Auth\Http\Requests\Admin\LoginRequest;
+use App\Modules\Auth\Http\Resources\AuthUserResource;
 use App\Modules\Auth\Services\Contracts\JwtServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -45,20 +46,9 @@ class AuthController extends Controller
 
         $token = $this->jwt->issueForUser($user);
 
-        return response()
-            ->json([
-                'message' => __('responses.auth.logged_in'),
-                'user' => [
-                    'id' => $user->getKey(),
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role?->value ?? null,
-                    'is_active' => (bool) $user->is_active,
-                    'phone' => $user->phone,
-                    'avatar' => $user->avatar,
-                    'last_login_at' => $user->last_login_at,
-                ],
-            ])
+        return (new AuthUserResource($user))
+            ->additional(['message' => __('responses.auth.logged_in')])
+            ->response()
             ->withCookie($this->makeCookie($token));
     }
 
@@ -67,18 +57,11 @@ class AuthController extends Controller
         /** @var User|null $user */
         $user = $request->user();
 
-        return response()->json([
-            'user' => $user ? [
-                'id' => $user->getKey(),
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role?->value ?? null,
-                'is_active' => (bool) $user->is_active,
-                'phone' => $user->phone,
-                'avatar' => $user->avatar,
-                'last_login_at' => $user->last_login_at,
-            ] : null,
-        ]);
+        if (! $user) {
+            return response()->json(['user' => null]);
+        }
+
+        return (new AuthUserResource($user))->response();
     }
 
     public function logout(): JsonResponse
@@ -121,3 +104,4 @@ class AuthController extends Controller
         return cookie()->forget($this->jwt->cookieName(), '/', null);
     }
 }
+

@@ -2,8 +2,9 @@
 
 namespace App\Modules\Dashboard\Services\Contracts;
 
+use App\Modules\Dashboard\DTOs\DashboardStatsDto;
+
 interface DashboardServiceInterface
 {
-    /** @return array<string, array<string, int>> */
-    public function getStats(): array;
+    public function getStats(): DashboardStatsDto;
 }

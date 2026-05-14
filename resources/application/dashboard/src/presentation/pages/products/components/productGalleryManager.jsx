@@ -4,7 +4,7 @@ import { getApiErrorMessage } from '../../../../infrastructure/http/adminApi.js'
 import { MediaBundleUploader } from '../../../../shared/ui/mediaBundleUploader.jsx';
 
 function extractProductMediaBundle(payload) {
-    const fullProduct = payload?.product ?? payload ?? {};
+    const fullProduct = payload?.data ?? payload?.product ?? payload ?? {};
 
     return {
         cover_image: fullProduct.cover_image ?? null,

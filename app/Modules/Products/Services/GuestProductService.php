@@ -4,6 +4,9 @@ namespace App\Modules\Products\Services;
 
 use App\Modules\Products\DTOs\GuestProductDto;
 use App\Modules\Products\DTOs\GuestProductVariantDto;
+use App\Modules\Products\DTOs\ProductColorDto;
+use App\Modules\Products\DTOs\SummaryAttributeDto;
+use App\Modules\Products\DTOs\VariantAttributeDto;
 use App\Modules\Products\Models\Product;
 use App\Modules\Products\Models\ProductAttribute;
 use App\Modules\Products\Models\ProductVariant;
@@ -25,13 +28,13 @@ class GuestProductService implements GuestProductServiceInterface
         return $products->map(function (Product $product): GuestProductDto {
             $variants = $product->variants->map(function (ProductVariant $variant): GuestProductVariantDto {
                 $attributes = $variant->options
-                    ->map(fn (ProductVariantOption $option): ?array => $this->mapVariantAttribute($option))
-                    ->filter(static fn (?array $item): bool => $item !== null)
+                    ->map(fn (ProductVariantOption $option): ?VariantAttributeDto => $this->mapVariantAttribute($option))
+                    ->filter()
                     ->values()
                     ->all();
 
                 $colorAttribute = collect($attributes)
-                    ->first(static fn (array $attribute): bool => $attribute['is_color']);
+                    ->first(static fn (VariantAttributeDto $attr): bool => $attr->isColor);
 
                 return new GuestProductVariantDto(
                     id: (int) $variant->id,
@@ -39,7 +42,7 @@ class GuestProductService implements GuestProductServiceInterface
                     unit: $variant->unit,
                     unitType: (string) $variant->unit_type,
                     isDefault: (bool) $variant->is_default,
-                    color: $colorAttribute['value'] ?? null,
+                    color: $colorAttribute?->value,
                     colorSwatch: $this->extractColorSwatch($variant, $colorAttribute),
                     attributes: $attributes,
                 );
@@ -49,33 +52,7 @@ class GuestProductService implements GuestProductServiceInterface
                 static fn (GuestProductVariantDto $variant): bool => $variant->isDefault,
             ) ?? ($variants[0] ?? null);
 
-            $colorMap = [];
-            foreach ($variants as $variant) {
-                if ($variant->color === null) {
-                    continue;
-                }
-
-                $colorAttr = collect($variant->attributes)
-                    ->first(static fn (array $attribute): bool => ($attribute['is_color'] ?? false) === true && (string) ($attribute['value'] ?? '') === $variant->color);
-
-                $colorI18n = is_array($colorAttr['value_i18n'] ?? null)
-                    ? [
-                        'fa' => (string) ($colorAttr['value_i18n']['fa'] ?? $variant->color),
-                        'en' => (string) ($colorAttr['value_i18n']['en'] ?? $variant->color),
-                    ]
-                    : [
-                        'fa' => $variant->color,
-                        'en' => $variant->color,
-                    ];
-
-                $colorMap[$variant->color] = [
-                    'name' => $variant->color,
-                    'name_i18n' => $colorI18n,
-                    'swatch' => $variant->colorSwatch,
-                ];
-            }
-
-            $colors = array_values($colorMap);
+            $colors = $this->buildColors($variants);
 
             $summaryAttributes = $this->buildSummaryAttributes($variants, $defaultVariant);
 
@@ -105,7 +82,7 @@ class GuestProductService implements GuestProductServiceInterface
         return $product->cover_image;
     }
 
-    private function extractColorSwatch(ProductVariant $variant, ?array $colorAttribute): ?string
+    private function extractColorSwatch(ProductVariant $variant, ?VariantAttributeDto $colorAttribute): ?string
     {
         if ($colorAttribute === null) {
             return null;
@@ -133,7 +110,7 @@ class GuestProductService implements GuestProductServiceInterface
             }
         }
 
-        return $this->normalizeHexColor($colorAttribute['value']);
+        return $this->normalizeHexColor($colorAttribute->value);
     }
 
     private function normalizeHexColor(mixed $value): ?string
@@ -159,8 +136,7 @@ class GuestProductService implements GuestProductServiceInterface
         return strtoupper($candidate);
     }
 
-    /** @return array{key: string, label: array|string, value: string, value_i18n: array|null, is_color: bool, icon_svg: string|null}|null */
-    private function mapVariantAttribute(ProductVariantOption $option): ?array
+    private function mapVariantAttribute(ProductVariantOption $option): ?VariantAttributeDto
     {
         $attribute = $option->attribute;
         $valueI18n = $this->decodeLocalizedValue((string) ($option->value?->value ?? ''));
@@ -170,91 +146,111 @@ class GuestProductService implements GuestProductServiceInterface
             return null;
         }
 
-        return [
-            'key' => (string) $attribute->key,
-            'label' => $attribute->label,
-            'value' => $value,
-            'value_i18n' => $valueI18n,
-            'is_color' => $this->isColorAttribute($attribute),
-            'icon_svg' => $attribute->icon_svg,
-        ];
+        return new VariantAttributeDto(
+            key: (string) $attribute->key,
+            label: $attribute->label,
+            value: $value,
+            valueI18n: $valueI18n,
+            isColor: $this->isColorAttribute($attribute),
+            iconSvg: $attribute->icon_svg,
+        );
     }
 
-    private function resolveAttributeLabel(ProductAttribute $attribute): string
+    /**
+     * @param  list<GuestProductVariantDto> $variants
+     * @return list<ProductColorDto>
+     */
+    private function buildColors(array $variants): array
     {
-        $fa = trim((string) ($attribute->label['fa'] ?? ''));
-        $en = trim((string) ($attribute->label['en'] ?? ''));
+        /** @var array<string, ProductColorDto> $colorMap */
+        $colorMap = [];
 
-        return $fa !== '' ? $fa : ($en !== '' ? $en : (string) $attribute->key);
+        foreach ($variants as $variant) {
+            if ($variant->color === null || isset($colorMap[$variant->color])) {
+                continue;
+            }
+
+            // The color attribute DTO is already on the variant — no need to re-search.
+            $colorAttr = null;
+            foreach ($variant->attributes as $attr) {
+                if ($attr->isColor && $attr->value === $variant->color) {
+                    $colorAttr = $attr;
+                    break;
+                }
+            }
+
+            $nameI18n = $colorAttr !== null
+                ? ['fa' => $colorAttr->valueI18n['fa'], 'en' => $colorAttr->valueI18n['en']]
+                : ['fa' => $variant->color, 'en' => $variant->color];
+
+            $colorMap[$variant->color] = new ProductColorDto(
+                name: $variant->color,
+                nameI18n: $nameI18n,
+                swatch: $variant->colorSwatch,
+            );
+        }
+
+        return array_values($colorMap);
     }
 
-    /** @param list<GuestProductVariantDto> $variants
-     *  @return list<array{key: string, label: string, icon_svg: string|null, values: list<string>, default_value: string|null}>
+    /**
+     * @param  list<GuestProductVariantDto>  $variants
+     * @return list<SummaryAttributeDto>
      */
     private function buildSummaryAttributes(array $variants, ?GuestProductVariantDto $defaultVariant): array
     {
-        $summary = [];
+        // Mutable accumulator — convert to DTOs at the end.
+        $acc = [];
 
         foreach ($variants as $variant) {
-            foreach ($variant->attributes as $attribute) {
-                if (($attribute['is_color'] ?? false) === true) {
+            foreach ($variant->attributes as $attr) {
+                if ($attr->isColor || $attr->key === '' || $attr->value === '') {
                     continue;
                 }
 
-                $key = (string) ($attribute['key'] ?? '');
-                $label = is_array($attribute['label'] ?? null) ? $attribute['label'] : ['fa' => (string) ($attribute['label'] ?? $key), 'en' => (string) ($attribute['label'] ?? $key)];
-                $value = (string) ($attribute['value'] ?? '');
-                $valueI18n = is_array($attribute['value_i18n'] ?? null) ? $attribute['value_i18n'] : ['fa' => $value, 'en' => $value];
-
-                if ($key === '' || $value === '') {
-                    continue;
-                }
-
-                if (! isset($summary[$key])) {
-                    $summary[$key] = [
-                        'key' => $key,
-                        'label' => $label,
-                        'icon_svg' => (string) ($attribute['icon_svg'] ?? '') !== '' ? (string) $attribute['icon_svg'] : null,
-                        'values' => [],
-                        'values_i18n' => [],
-                        'default_value' => null,
+                if (! isset($acc[$attr->key])) {
+                    $acc[$attr->key] = [
+                        'label'              => $attr->label,
+                        'icon_svg'           => $attr->iconSvg,
+                        'values'             => [],
+                        'values_i18n'        => [],
+                        'default_value'      => null,
                         'default_value_i18n' => null,
                     ];
                 }
 
-                if (! in_array($value, $summary[$key]['values'], true)) {
-                    $summary[$key]['values'][] = $value;
-                    $summary[$key]['values_i18n'][] = [
-                        'fa' => (string) ($valueI18n['fa'] ?? $value),
-                        'en' => (string) ($valueI18n['en'] ?? $value),
-                    ];
+                if (! in_array($attr->value, $acc[$attr->key]['values'], true)) {
+                    $acc[$attr->key]['values'][]      = $attr->value;
+                    $acc[$attr->key]['values_i18n'][] = $attr->valueI18n;
                 }
             }
         }
 
         if ($defaultVariant !== null) {
-            foreach ($defaultVariant->attributes as $attribute) {
-                if (($attribute['is_color'] ?? false) === true) {
+            foreach ($defaultVariant->attributes as $attr) {
+                if ($attr->isColor || $attr->key === '' || $attr->value === '' || ! isset($acc[$attr->key])) {
                     continue;
                 }
 
-                $key = (string) ($attribute['key'] ?? '');
-                $value = (string) ($attribute['value'] ?? '');
-                $valueI18n = is_array($attribute['value_i18n'] ?? null) ? $attribute['value_i18n'] : ['fa' => $value, 'en' => $value];
-
-                if ($key === '' || $value === '' || ! isset($summary[$key])) {
-                    continue;
-                }
-
-                $summary[$key]['default_value'] = $value;
-                $summary[$key]['default_value_i18n'] = [
-                    'fa' => (string) ($valueI18n['fa'] ?? $value),
-                    'en' => (string) ($valueI18n['en'] ?? $value),
-                ];
+                $acc[$attr->key]['default_value']      = $attr->value;
+                $acc[$attr->key]['default_value_i18n'] = $attr->valueI18n;
             }
         }
 
-        return array_values($summary);
+        $result = [];
+        foreach ($acc as $key => $data) {
+            $result[] = new SummaryAttributeDto(
+                key:                $key,
+                label:              $data['label'],
+                iconSvg:            $data['icon_svg'],
+                values:             $data['values'],
+                valuesI18n:         $data['values_i18n'],
+                defaultValue:       $data['default_value'],
+                defaultValueI18n:   $data['default_value_i18n'],
+            );
+        }
+
+        return $result;
     }
 
     private function isColorAttribute(ProductAttribute $attribute): bool

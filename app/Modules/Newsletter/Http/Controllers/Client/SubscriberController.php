@@ -4,6 +4,7 @@ namespace App\Modules\Newsletter\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Newsletter\Http\Requests\Client\SubscriberStoreRequest;
+use App\Modules\Newsletter\Http\Resources\SubscriberResource;
 use App\Modules\Newsletter\Services\Contracts\SubscriberServiceInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -22,13 +23,9 @@ class SubscriberController extends Controller
             (string) $validated['email']
         );
 
-        return response()->json([
-            'message' => __('responses.newsletter.subscribed'),
-            'data' => [
-                'id' => $subscriber->getKey(),
-                'fullname' => $subscriber->fullname,
-                'email' => $subscriber->email,
-            ],
-        ], $subscriber->wasRecentlyCreated ? 201 : 200);
+        return (new SubscriberResource($subscriber))
+            ->additional(['message' => __('responses.newsletter.subscribed')])
+            ->response()
+            ->setStatusCode($subscriber->wasRecentlyCreated ? 201 : 200);
     }
 }

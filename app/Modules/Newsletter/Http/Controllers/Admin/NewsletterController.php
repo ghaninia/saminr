@@ -61,9 +61,8 @@ class NewsletterController extends Controller
 
         SendNewsletterToSubscribersJob::dispatch((int) $newsletter->getKey());
 
-        return response()->json([
-            'message' => __('responses.newsletter.queued'),
-            'data' => (new NewsletterResource($newsletter->fresh()))->resolve(),
-        ]);
+        return (new NewsletterResource($newsletter->fresh()))
+            ->additional(['message' => __('responses.newsletter.queued')])
+            ->response();
     }
 }

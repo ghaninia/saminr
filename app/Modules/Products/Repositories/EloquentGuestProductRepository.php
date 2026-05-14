@@ -13,8 +13,13 @@ class EloquentGuestProductRepository implements GuestProductRepositoryInterface
     {
         return Product::query()
             ->where('is_active', true)
-            ->with(['variants.options.attribute', 'variants.options.value'])
+            ->with([
+                'variants.options.attribute',
+                'variants.options.value',
+                'media',
+            ])
             ->orderByDesc('id')
+            ->limit(9)
             ->get();
     }
 }

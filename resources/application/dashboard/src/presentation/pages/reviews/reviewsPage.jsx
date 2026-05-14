@@ -360,7 +360,7 @@ export function ReviewsPage() {
                             onUpload={async ({ entityId, file, onProgress }) => {
                                 const payload = await uploadFile(entityId, file, onProgress);
                                 const url = payload?.url ?? '';
-                                const updatedReview = payload?.review ?? null;
+                                const updatedReview = payload?.data ?? payload?.review ?? null;
                                 if (updatedReview?.id) {
                                     setItems((prev) => prev.map((x) => (x.id === updatedReview.id ? updatedReview : x)));
                                     setEditing((prev) => (prev?.id === updatedReview.id ? updatedReview : prev));

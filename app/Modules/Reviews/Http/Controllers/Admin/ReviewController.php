@@ -53,9 +53,8 @@ class ReviewController extends Controller
 
         $url = $this->reviewService->uploadAvatar($review, $file);
 
-        return response()->json([
-            'url'    => $url,
-            'review' => (new ReviewResource($review->fresh()))->resolve(),
-        ]);
+        return (new ReviewResource($review->fresh()))
+            ->additional(['url' => $url])
+            ->response();
     }
 }

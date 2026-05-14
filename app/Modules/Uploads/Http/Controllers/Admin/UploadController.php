@@ -5,6 +5,7 @@ namespace App\Modules\Uploads\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Modules\Uploads\Exceptions\SettingUploadNotAllowedException;
 use App\Modules\Uploads\Http\Requests\Admin\UploadStoreRequest;
+use App\Modules\Uploads\Http\Resources\UploadResultResource;
 use App\Modules\Uploads\Services\Contracts\UploadServiceInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -27,6 +28,6 @@ class UploadController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json($result);
+        return (new UploadResultResource($result))->response();
     }
 }

@@ -53,9 +53,8 @@ class CategoryController extends Controller
 
         $result = $this->categoryService->upload($category, $request->file('file'), $field);
 
-        return response()->json([
-            'url'      => $result['url'],
-            'category' => (new CategoryResource($result['category']))->resolve(),
-        ]);
+        return (new CategoryResource($result['category']))
+            ->additional(['url' => $result['url']])
+            ->response();
     }
 }

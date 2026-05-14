@@ -345,7 +345,7 @@ export function CategoriesPage() {
                                 onUpload={async ({ entityId, file, onProgress }) => {
                                     const payload = await uploadFile(entityId, file, onProgress);
                                     const url = payload?.url ?? '';
-                                    const updatedCategory = payload?.category ?? null;
+                                    const updatedCategory = payload?.data ?? payload?.category ?? null;
                                     if (updatedCategory?.id) {
                                         setItems((prev) => prev.map((x) => (x.id === updatedCategory.id ? updatedCategory : x)));
                                         setEditing((prev) => (prev?.id === updatedCategory.id ? updatedCategory : prev));

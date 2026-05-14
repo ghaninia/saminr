@@ -65,18 +65,15 @@ class ProductController extends Controller
     {
         $result = $this->productService->uploadMedia($product, $request->uploadedFile(), $request->field());
 
-        return response()->json([
-            'url' => $result['url'],
-            'product' => (new ProductResource($result['product']))->resolve(),
-        ]);
+        return (new ProductResource($result['product']))
+            ->additional(['url' => $result['url']])
+            ->response();
     }
 
     public function deleteMedia(ProductDeleteMediaRequest $request, Product $product): JsonResponse
     {
         $updated = $this->productService->deleteMedia($product, $request->field(), $request->mediaIndex());
 
-        return response()->json([
-            'product' => (new ProductResource($updated))->resolve(),
-        ]);
+        return (new ProductResource($updated))->response();
     }
 }
