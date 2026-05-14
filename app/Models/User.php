@@ -3,15 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +26,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
+        'phone',
+        'avatar',
+        'last_login_at',
     ];
 
     /**
@@ -44,6 +53,15 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'is_active' => 'boolean',
+            'last_login_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')->singleFile();
     }
 }

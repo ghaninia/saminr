@@ -20,6 +20,10 @@ use App\Modules\Settings\Repositories\Contracts\SettingRepositoryInterface;
 use App\Modules\Settings\Repositories\EloquentSettingRepository;
 use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
 use App\Modules\Settings\Services\SettingService;
+use App\Modules\Users\Repositories\Contracts\UserRepositoryInterface;
+use App\Modules\Users\Repositories\EloquentUserRepository;
+use App\Modules\Users\Services\Contracts\UserServiceInterface;
+use App\Modules\Users\Services\UserService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -41,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
         $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
+        $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
+        $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
     /**

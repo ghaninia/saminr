@@ -19,6 +19,8 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => $name,
                 'password' => $password,
+                'role' => 'admin',
+                'is_active' => true,
                 'email_verified_at' => Carbon::now(),
             ],
         );

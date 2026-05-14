@@ -8,4 +8,5 @@ Route::get('/', HomeController::class);
 
 Route::get('/admin/{any?}', DashboardController::class)->where('any', '.*');
 
-Route::fallback(HomeController::class);
+// Keep client-side pages working, but never swallow API routes.
+Route::get('/{any}', HomeController::class)->where('any', '^(?!api(?:/|$)).*');

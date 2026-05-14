@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Http\Middleware;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\Auth\Services\Contracts\JwtServiceInterface;
 use Closure;
@@ -40,6 +41,14 @@ class AdminJwtMiddleware
 
         if (! $user) {
             return $this->unauthorized('User not found.');
+        }
+
+        if (! $user->is_active) {
+            return $this->unauthorized('User is inactive.');
+        }
+
+        if ($user->role !== UserRole::ADMIN) {
+            return $this->unauthorized('Forbidden.');
         }
 
         Auth::guard()->setUser($user);

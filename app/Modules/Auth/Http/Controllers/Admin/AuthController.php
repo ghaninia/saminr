@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Auth\Http\Requests\Admin\ForgotPasswordRequest;
@@ -32,6 +33,16 @@ class AuthController extends Controller
             ], 422);
         }
 
+        if (! $user->is_active || $user->role !== UserRole::ADMIN) {
+            return response()->json([
+                'message' => __('responses.auth.invalid_credentials'),
+            ], 422);
+        }
+
+        $user->forceFill([
+            'last_login_at' => now(),
+        ])->save();
+
         $token = $this->jwt->issueForUser($user);
 
         return response()
@@ -41,6 +52,11 @@ class AuthController extends Controller
                     'id' => $user->getKey(),
                     'name' => $user->name,
                     'email' => $user->email,
+                    'role' => $user->role?->value ?? null,
+                    'is_active' => (bool) $user->is_active,
+                    'phone' => $user->phone,
+                    'avatar' => $user->avatar,
+                    'last_login_at' => $user->last_login_at,
                 ],
             ])
             ->withCookie($this->makeCookie($token));
@@ -56,6 +72,11 @@ class AuthController extends Controller
                 'id' => $user->getKey(),
                 'name' => $user->name,
                 'email' => $user->email,
+                'role' => $user->role?->value ?? null,
+                'is_active' => (bool) $user->is_active,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar,
+                'last_login_at' => $user->last_login_at,
             ] : null,
         ]);
     }

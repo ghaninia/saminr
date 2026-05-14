@@ -149,6 +149,7 @@ export function DashboardLayout() {
                             <nav className="space-y-1">
                                 <NavItem to="/" label={t('layout.overview')} icon={IconHome} />
                                 <NavItem to="/settings" label={t('layout.settings')} icon={IconSettings} />
+                                <NavItem to="/users" label={t('layout.users')} icon={IconUsers} />
                                 <NavItem to="/categories" label={t('layout.categories')} icon={IconTag} />
                                 <NavItem to="/subscribers" label={t('layout.subscribers')} icon={IconUsers} />
                                 <NavItem to="/newsletters" label={t('layout.newsletters')} icon={IconMail} />

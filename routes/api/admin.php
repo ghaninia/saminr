@@ -10,6 +10,7 @@ use App\Modules\Products\Http\Controllers\Admin\ProductController as AdminProduc
 use App\Modules\Reviews\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
+use App\Modules\Users\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function (): void {
@@ -36,6 +37,13 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::get('/newsletters', [AdminNewsletterController::class, 'index']);
     Route::post('/newsletters', [AdminNewsletterController::class, 'store']);
     Route::post('/newsletters/{newsletter}/send', [AdminNewsletterController::class, 'send']);
+
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::post('/users', [AdminUserController::class, 'store']);
+    Route::patch('/users/{user}', [AdminUserController::class, 'update']);
+    Route::patch('/users/{user}/status', [AdminUserController::class, 'setStatus']);
+    Route::post('/users/{user}/upload', [AdminUserController::class, 'upload']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
 
     Route::get('/reviews', [AdminReviewController::class, 'index']);
     Route::post('/reviews', [AdminReviewController::class, 'store']);
