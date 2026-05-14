@@ -91,6 +91,44 @@ function syncVariantsWithAttributes(existingVariants, attributes, basePrice) {
     }));
 }
 
+function StepIcon({ stepKey }) {
+    if (stepKey === 'basics') {
+        return (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4" aria-hidden="true">
+                <path d="M4 5h16M4 12h16M4 19h10" />
+            </svg>
+        );
+    }
+
+    if (stepKey === 'attributes') {
+        return (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4" aria-hidden="true">
+                <path d="M12 3 3 7.5 12 12l9-4.5L12 3Z" />
+                <path d="M3 12.5 12 17l9-4.5" />
+                <path d="M3 17.5 12 22l9-4.5" />
+            </svg>
+        );
+    }
+
+    if (stepKey === 'variants') {
+        return (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="5" rx="1" />
+                <rect x="3" y="10" width="18" height="5" rx="1" />
+                <rect x="3" y="16" width="18" height="5" rx="1" />
+            </svg>
+        );
+    }
+
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="m21 15-5-5L5 21" />
+        </svg>
+    );
+}
+
 export function ProductEditorPage() {
     const navigate = useNavigate();
     const { productId } = useParams();
@@ -383,6 +421,7 @@ export function ProductEditorPage() {
 
     const isFirstStep = activeStep === 0;
     const isLastStep = activeStep === editorSteps.length - 1;
+    const progressPercent = ((activeStep + 1) / editorSteps.length) * 100;
 
     return (
         <div className="space-y-5">
@@ -402,7 +441,14 @@ export function ProductEditorPage() {
             </div>
 
             <section className="rounded-3xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] p-3">
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-[color:var(--dash-surface-2)]">
+                    <div
+                        className="h-full rounded-full bg-[color:var(--dash-accent)] transition-all duration-300"
+                        style={{ width: `${progressPercent}%` }}
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
                     {editorSteps.map((step, index) => {
                         const selected = index === activeStep;
                         const completed = index < activeStep;
@@ -411,10 +457,20 @@ export function ProductEditorPage() {
                             <button
                                 key={step.key}
                                 type="button"
-                                className={`inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-2xl border px-3 text-sm transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)]' : completed ? 'border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:text-[color:var(--dash-fg)]'}`}
+                                className={`group inline-flex h-12 w-full items-center gap-2 rounded-2xl border px-3 text-sm transition ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/15 text-[color:var(--dash-fg)] shadow-[0_0_0_1px_var(--dash-accent)]/20' : completed ? 'border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)]' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)] hover:bg-[color:var(--dash-surface-2)] hover:text-[color:var(--dash-fg)]'}`}
                                 onClick={() => goToStep(index)}
                             >
-                                {index + 1}. {step.label}
+                                <span className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold ${selected ? 'border-[color:var(--dash-accent)] bg-[color:var(--dash-accent)]/20 text-[color:var(--dash-fg)]' : completed ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300' : 'border-[color:var(--dash-border)] text-[color:var(--dash-muted)]'}`}>
+                                    {completed ? (
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5" aria-hidden="true">
+                                            <path d="m5 12 4 4 10-10" />
+                                        </svg>
+                                    ) : index + 1}
+                                </span>
+                                <span className="inline-flex shrink-0 items-center text-[color:var(--dash-muted)] group-hover:text-[color:var(--dash-fg)]">
+                                    <StepIcon stepKey={step.key} />
+                                </span>
+                                <span className="truncate font-medium">{step.label}</span>
                             </button>
                         );
                     })}
