@@ -14,5 +14,7 @@ interface SettingRepositoryInterface
 
     public function findByKey(string $key): ?Setting;
 
+    public function findById(int $id): Setting;
+
     public function save(Setting $setting): Setting;
 }

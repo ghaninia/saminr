@@ -3,6 +3,7 @@
 namespace App\Modules\Products\Services\Contracts;
 
 use App\Modules\Products\Models\Product;
+use App\Modules\Products\Models\ProductAttribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 
@@ -29,4 +30,7 @@ interface ProductServiceInterface
     public function uploadMedia(Product $product, UploadedFile $file, string $field): array;
 
     public function deleteMedia(Product $product, string $field, ?int $index): Product;
+
+    /** @return Collection<int, ProductAttribute> */
+    public function listAttributes(): Collection;
 }

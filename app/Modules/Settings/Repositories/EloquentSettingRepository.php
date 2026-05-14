@@ -25,6 +25,14 @@ class EloquentSettingRepository implements SettingRepositoryInterface
             ->first();
     }
 
+    public function findById(int $id): Setting
+    {
+        /** @var Setting $setting */
+        $setting = Setting::query()->findOrFail($id);
+
+        return $setting;
+    }
+
     public function save(Setting $setting): Setting
     {
         $setting->save();

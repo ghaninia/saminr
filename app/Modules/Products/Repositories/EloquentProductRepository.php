@@ -219,6 +219,16 @@ class EloquentProductRepository implements ProductRepositoryInterface
         }
     }
 
+    /** @return \Illuminate\Database\Eloquent\Collection<int, ProductAttribute> */
+    public function listAttributes(): \Illuminate\Database\Eloquent\Collection
+    {
+        return ProductAttribute::query()
+            ->with('values')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+    }
+
     /** @param array<string, mixed> $attributeData */
     private function resolveOrCreateAttribute(array $attributeData): ProductAttribute
     {

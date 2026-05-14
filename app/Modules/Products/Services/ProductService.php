@@ -3,6 +3,7 @@
 namespace App\Modules\Products\Services;
 
 use App\Modules\Products\Models\Product;
+use App\Modules\Products\Models\ProductAttribute;
 use App\Modules\Products\Repositories\Contracts\ProductRepositoryInterface;
 use App\Modules\Products\Services\Contracts\ProductServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -63,5 +64,11 @@ class ProductService implements ProductServiceInterface
     public function deleteMedia(Product $product, string $field, ?int $index): Product
     {
         return $this->productRepository->deleteMedia($product, $field, $index);
+    }
+
+    /** @return Collection<int, ProductAttribute> */
+    public function listAttributes(): Collection
+    {
+        return $this->productRepository->listAttributes();
     }
 }
