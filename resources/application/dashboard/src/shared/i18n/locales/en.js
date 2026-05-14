@@ -127,6 +127,7 @@ export const en = {
         passwordLength: 'Length',
         includeSymbols: 'Include symbols',
         passwordStrength: 'Strength',
+        passwordStrengthNone: 'Not set',
         passwordStrengthWeak: 'Weak',
         passwordStrengthMedium: 'Medium',
         passwordStrengthStrong: 'Strong',

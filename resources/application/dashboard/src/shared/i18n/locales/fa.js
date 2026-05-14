@@ -127,6 +127,7 @@ export const fa = {
         passwordLength: 'طول',
         includeSymbols: 'استفاده از نمادها',
         passwordStrength: 'قدرت رمز',
+        passwordStrengthNone: 'تنظیم نشده',
         passwordStrengthWeak: 'ضعیف',
         passwordStrengthMedium: 'متوسط',
         passwordStrengthStrong: 'قوی',

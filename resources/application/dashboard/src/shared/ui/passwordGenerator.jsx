@@ -1,137 +1,161 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from './button.jsx';
-import { Field } from './field.jsx';
 import { Input } from './input.jsx';
+import { IconKey, IconEye, IconEyeOff, IconClipboard, IconCheck, IconLock } from './passwordIcons.jsx';
 
 const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const LOWER = 'abcdefghijkmnopqrstuvwxyz';
 const DIGITS = '23456789';
-const SYMBOLS = '!@#$%^&*()-_=+[]{}';
+const SYMBOLS = '!@#$%^&*()-_=+[]{}|;:,.<>?/`~';
 
 function randomChar(pool) {
     return pool[Math.floor(Math.random() * pool.length)] ?? '';
 }
 
-function shuffle(value) {
-    const arr = value.split('');
-    for (let i = arr.length - 1; i > 0; i -= 1) {
+function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-    return arr.join('');
+    return copy;
 }
 
 function generatePassword(length = 14, includeSymbols = true) {
-    const safeLength = Math.max(8, Math.min(64, Number(length) || 14));
+    const len = Math.max(8, Math.min(64, Number(length) || 14));
     const pools = includeSymbols ? [UPPER, LOWER, DIGITS, SYMBOLS] : [UPPER, LOWER, DIGITS];
     const all = pools.join('');
 
-    let value = pools.map((pool) => randomChar(pool)).join('');
-    while (value.length < safeLength) {
-        value += randomChar(all);
+    const chars = pools.map((pool) => randomChar(pool));
+    while (chars.length < len) {
+        chars.push(randomChar(all));
     }
 
-    return shuffle(value);
+    return shuffle(chars).join('');
+}
+
+function getPasswordStrength(password) {
+    const pwd = String(password ?? '');
+    if (!pwd) return { score: 0, label: 'none', color: 'bg-gray-500/50' };
+
+    let score = 0;
+    if (pwd.length >= 12) score += 1;
+    if (pwd.length >= 16) score += 1;
+    if (/[a-z]/.test(pwd)) score += 1;
+    if (/[A-Z]/.test(pwd)) score += 1;
+    if (/[0-9]/.test(pwd)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
+
+    if (score <= 2) return { score, label: 'weak', color: 'bg-red-500/60' };
+    if (score <= 4) return { score, label: 'medium', color: 'bg-amber-500/60' };
+    return { score, label: 'strong', color: 'bg-emerald-500/60' };
 }
 
 export function PasswordGenerator({ value, onChange, t, hint }) {
-    const [showPassword, setShowPassword] = useState(false);
+    const [show, setShow] = useState(false);
     const [copied, setCopied] = useState(false);
     const [length, setLength] = useState(14);
-    const [useSymbols, setUseSymbols] = useState(true);
-    const generated = useMemo(() => generatePassword(14, true), []);
+    const [withSymbols, setWithSymbols] = useState(true);
 
-    const score = useMemo(() => {
-        const current = String(value ?? '');
-        let points = 0;
-        if (current.length >= 8) points += 1;
-        if (/[A-Z]/.test(current)) points += 1;
-        if (/[a-z]/.test(current)) points += 1;
-        if (/[0-9]/.test(current)) points += 1;
-        if (/[^A-Za-z0-9]/.test(current)) points += 1;
-        return points;
-    }, [value]);
+    const strength = getPasswordStrength(value);
+    const pwd = String(value ?? '');
 
-    const fill = () => {
-        onChange?.(generatePassword(length, useSymbols));
+    const onGenerate = () => {
+        onChange?.(generatePassword(length, withSymbols));
         setCopied(false);
     };
 
-    const copy = async () => {
-        const target = String(value || generated);
-        if (!target) return;
-
+    const onCopy = async () => {
+        if (!pwd) return;
         try {
-            await navigator.clipboard.writeText(target);
+            await navigator.clipboard.writeText(pwd);
             setCopied(true);
-            setTimeout(() => setCopied(false), 1200);
+            setTimeout(() => setCopied(false), 2000);
         } catch {
-            setCopied(false);
+            // silent
         }
     };
 
-    const strengthLabel = score >= 5 ? t('users.passwordStrengthStrong') : score >= 3 ? t('users.passwordStrengthMedium') : t('users.passwordStrengthWeak');
-    const strengthColor = score >= 5 ? 'bg-emerald-500/80' : score >= 3 ? 'bg-amber-500/80' : 'bg-red-500/80';
-
     return (
-        <div className="space-y-3 rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] p-3">
-            <Field label={t('users.password')} hint={hint || t('users.passwordHintEdit')}>
-                <div className="flex items-center gap-2">
-                    <Input
-                        type={showPassword ? 'text' : 'password'}
-                        autoComplete="new-password"
-                        value={value ?? ''}
-                        onChange={(event) => onChange?.(event.target.value)}
-                    />
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setShowPassword((prev) => !prev)}>
-                        {showPassword ? t('users.hidePassword') : t('users.showPassword')}
-                    </Button>
+        <div className="space-y-3">
+            <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-sm font-medium text-[color:var(--dash-fg)]">{t('users.password')}</label>
+                    {pwd && (
+                        <span className="text-xs text-[color:var(--dash-muted)]">
+                            {t(`users.passwordStrength${strength.label.charAt(0).toUpperCase()}${strength.label.slice(1)}`)}
+                        </span>
+                    )}
                 </div>
-            </Field>
+                <div className="flex gap-2">
+                    <Input
+                        type={show ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        placeholder={hint || t('users.passwordHintEdit')}
+                        value={pwd}
+                        onChange={(e) => onChange?.(e.target.value)}
+                    />
+                    {pwd && (
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShow(!show)}
+                            title={show ? t('users.hidePassword') : t('users.showPassword')}
+                        >
+                            {show ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
+                        </Button>
+                    )}
+                </div>
+                {pwd && (
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--dash-surface-2)]">
+                        <div className={`h-full transition-all ${strength.color}`} style={{ width: `${Math.round((strength.score / 6) * 100)}%` }} />
+                    </div>
+                )}
+            </div>
 
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <Field label={t('users.passwordLength')}>
-                    <div className="flex items-center gap-2">
+            <div className="flex gap-2">
+                <Button type="button" size="sm" variant="subtle" onClick={onGenerate} title="Generate password">
+                    <IconKey className="h-4 w-4" />
+                    {t('users.generatePassword')}
+                </Button>
+                {pwd && (
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={onCopy}
+                        title={copied ? t('users.copied') : 'Copy to clipboard'}
+                    >
+                        {copied ? <IconCheck className="h-4 w-4" /> : <IconClipboard className="h-4 w-4" />}
+                        {copied ? t('users.copied') : t('users.copyPassword')}
+                    </Button>
+                )}
+            </div>
+
+            {pwd && (
+                <div className="flex flex-wrap gap-3 rounded-lg bg-[color:var(--dash-surface-2)] p-2.5 text-xs text-[color:var(--dash-muted)]">
+                    <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-[color:var(--dash-fg)]">
                         <input
                             type="range"
                             min="8"
                             max="32"
                             value={length}
-                            onChange={(event) => setLength(Number(event.target.value))}
-                            className="w-full"
+                            onChange={(e) => setLength(Number(e.target.value))}
+                            className="w-20"
                         />
-                        <span className="w-8 text-right text-xs text-[color:var(--dash-muted)]">{length}</span>
-                    </div>
-                </Field>
-
-                <label className="inline-flex items-center gap-2 text-sm text-[color:var(--dash-muted)] mt-6">
-                    <input
-                        type="checkbox"
-                        checked={useSymbols}
-                        onChange={(event) => setUseSymbols(event.target.checked)}
-                    />
-                    {t('users.includeSymbols')}
-                </label>
-            </div>
-
-            <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-[color:var(--dash-muted)]">
-                    <span>{t('users.passwordStrength')}</span>
-                    <span>{strengthLabel}</span>
+                        <span>{length}</span>
+                    </label>
+                    <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-[color:var(--dash-fg)]">
+                        <input
+                            type="checkbox"
+                            checked={withSymbols}
+                            onChange={(e) => setWithSymbols(e.target.checked)}
+                        />
+                        {t('users.includeSymbols')}
+                    </label>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-3)]">
-                    <div className={`h-full transition-all ${strengthColor}`} style={{ width: `${Math.max(12, score * 20)}%` }} />
-                </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="subtle" onClick={fill}>
-                    {t('users.generatePassword')}
-                </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={copy}>
-                    {copied ? t('users.copied') : t('users.copyPassword')}
-                </Button>
-            </div>
+            )}
         </div>
     );
 }
