@@ -19,7 +19,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->words(fake()->numberBetween(2, 4), true);
-        $basePrice = fake()->randomFloat(2, 120000, 2500000);
+        $basePrice = fake()->randomFloat(2, 5, 80);
 
         return [
             'title' => [
@@ -71,14 +71,14 @@ class ProductFactory extends Factory
             $selectedValueIds = [];
 
             for ($variantIndex = 0; $variantIndex < $variantCount; $variantIndex++) {
-                $skuType = fake()->randomElement(['numeric', 'numeric', 'numeric', 'infinite', 'contact']);
+                $unitType = fake()->randomElement(['numeric', 'numeric', 'numeric', 'infinite', 'contact']);
                 $basePrice = (float) $product->base_price;
-                $price = max(0, $basePrice + fake()->randomFloat(2, -70000, 250000));
+                $price = max(0, $basePrice + fake()->randomFloat(2, -8, 25));
 
                 $variant = ProductVariant::query()->create([
                     'product_id' => $product->id,
-                    'sku_type' => $skuType,
-                    'sku' => $skuType === 'numeric' ? 'SKU-'.$product->id.'-'.($variantIndex + 1).'-'.Str::upper(Str::random(4)) : null,
+                    'unit_type' => $unitType,
+                    'unit' => $unitType === 'numeric' ? (string) random_int(1, 99) : null,
                     'price' => round($price, 2),
                     'is_default' => $variantIndex === 0,
                     'sort_order' => $variantIndex,

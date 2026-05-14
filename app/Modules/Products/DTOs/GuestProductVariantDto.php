@@ -10,8 +10,8 @@ class GuestProductVariantDto
     public function __construct(
         public readonly int $id,
         public readonly float $price,
-        public readonly ?string $sku,
-        public readonly string $skuType,
+        public readonly ?string $unit,
+        public readonly string $unitType,
         public readonly bool $isDefault,
         public readonly ?string $color,
         public readonly ?string $colorSwatch,
@@ -24,8 +24,8 @@ class GuestProductVariantDto
         return [
             'id' => $this->id,
             'price' => $this->price,
-            'sku' => $this->sku,
-            'sku_type' => $this->skuType,
+            'unit' => $this->unit,
+            'unit_type' => $this->unitType,
             'is_default' => $this->isDefault,
             'color' => $this->color,
             'color_swatch' => $this->colorSwatch,

@@ -50,8 +50,8 @@ export function syncVariantsWithAttributes(existingVariants, attributes, basePri
 
         return {
             ...(current ?? emptyVariantDraft(index)),
-            sku_type: current?.sku_type ?? 'numeric',
-            sku: current?.sku ?? '',
+            unit_type: current?.unit_type ?? 'numeric',
+            unit: current?.unit ?? '',
             price: current?.price ?? parseNumber(basePrice, 0),
             is_default: current ? Boolean(current.is_default) : (!hasDefault && index === 0),
             sort_order: index,

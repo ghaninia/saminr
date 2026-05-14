@@ -3,7 +3,7 @@ import { Input } from '../../../../shared/ui/input.jsx';
 import { formatPrice, parseNumber } from '../../../../shared/utils/common.js';
 import { useI18n } from '../../../../application/i18n/i18nContext.jsx';
 
-const SKU_TYPES = [
+const UNIT_TYPES = [
     { value: 'numeric', key: 'numeric' },
     { value: 'infinite', key: 'infinite' },
     { value: 'contact', key: 'contact' },
@@ -52,7 +52,7 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                 <div className="overflow-hidden rounded-2xl border border-[color:var(--dash-border)]">
                     <div className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
                         <div className="px-4 py-3">{t('products.editor.variant')}</div>
-                        <div className="px-4 py-3">{t('products.editor.sku')}</div>
+                        <div className="px-4 py-3">{t('products.editor.unit')}</div>
                         <div className="px-4 py-3">{t('products.editor.price')}</div>
                         <div className="px-4 py-3">{t('products.editor.default')}</div>
                     </div>
@@ -93,27 +93,27 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                     <div className="flex items-center gap-2 rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)] p-1.5">
                                         <select
                                             className="h-9 w-[120px] rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] px-2 text-sm"
-                                            value={variant?.sku_type ?? 'numeric'}
+                                            value={variant?.unit_type ?? 'numeric'}
                                             onChange={(event) => {
                                                 const nextType = event.target.value;
                                                 updateVariant(index, {
-                                                    sku_type: nextType,
-                                                    sku: nextType === 'numeric' ? (variant?.sku ?? '') : '',
+                                                    unit_type: nextType,
+                                                    unit: nextType === 'numeric' ? (variant?.unit ?? '') : '',
                                                 });
                                             }}
                                         >
-                                            {SKU_TYPES.map((type) => (
-                                                <option key={type.value} value={type.value}>{t(`products.editor.skuTypes.${type.key}`)}</option>
+                                            {UNIT_TYPES.map((type) => (
+                                                <option key={type.value} value={type.value}>{t(`products.editor.unitTypes.${type.key}`)}</option>
                                             ))}
                                         </select>
-                                        {(variant?.sku_type ?? 'numeric') === 'numeric' ? (
+                                        {(variant?.unit_type ?? 'numeric') === 'numeric' ? (
                                             <Input
                                                 className="h-9 flex-1"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
-                                                placeholder={t('products.editor.skuNumber')}
-                                                value={variant?.sku ?? ''}
-                                                onChange={(event) => updateVariant(index, { sku: event.target.value.replace(/[^0-9]/g, '') })}
+                                                placeholder={t('products.editor.unitNumber')}
+                                                value={variant?.unit ?? ''}
+                                                onChange={(event) => updateVariant(index, { unit: event.target.value.replace(/[^0-9]/g, '') })}
                                             />
                                         ) : (
                                             <div className="h-9 flex-1" aria-hidden="true" />

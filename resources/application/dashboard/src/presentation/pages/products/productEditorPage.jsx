@@ -175,14 +175,14 @@ export function ProductEditorPage() {
             const hasDefault = (draft?.variants ?? []).some((variant) => Boolean(variant?.is_default));
             if (!hasDefault) nextErrors.variant_default = t('products.editor.validation.defaultVariantRequired');
 
-            const hasMissingSkuType = (draft?.variants ?? []).some((variant) => !String(variant?.sku_type ?? '').trim());
-            if (hasMissingSkuType) nextErrors.variant_sku_type = t('products.editor.validation.skuTypeRequired');
+            const hasMissingUnitType = (draft?.variants ?? []).some((variant) => !String(variant?.unit_type ?? '').trim());
+            if (hasMissingUnitType) nextErrors.variant_unit_type = t('products.editor.validation.unitTypeRequired');
 
-            const hasMissingSku = (draft?.variants ?? []).some((variant) => {
-                if (String(variant?.sku_type ?? 'numeric') !== 'numeric') return false;
-                return !String(variant?.sku ?? '').trim();
+            const hasMissingUnit = (draft?.variants ?? []).some((variant) => {
+                if (String(variant?.unit_type ?? 'numeric') !== 'numeric') return false;
+                return !String(variant?.unit ?? '').trim();
             });
-            if (hasMissingSku) nextErrors.variant_sku = t('products.editor.validation.skuRequiredWhenNumeric');
+            if (hasMissingUnit) nextErrors.variant_unit = t('products.editor.validation.unitRequiredWhenNumeric');
         }
 
         return nextErrors;
@@ -287,7 +287,7 @@ export function ProductEditorPage() {
 
             if (allErrors.title_en || allErrors.title_fa || allErrors.short_link || allErrors.base_price || allErrors.category_ids) setActiveStep(0);
             else if (allErrors.attributes) setActiveStep(1);
-            else if (allErrors.variants || allErrors.variant_default || allErrors.variant_sku) setActiveStep(2);
+            else if (allErrors.variants || allErrors.variant_default || allErrors.variant_unit) setActiveStep(2);
 
             return;
         }
@@ -333,9 +333,9 @@ export function ProductEditorPage() {
                     })),
                 })),
                 variants: (draft.variants ?? []).map((variant, index) => ({
-                    sku_type: String(variant?.sku_type ?? 'numeric'),
-                    sku: String(variant?.sku_type ?? 'numeric') === 'numeric'
-                        ? (String(variant?.sku ?? '').trim() || null)
+                    unit_type: String(variant?.unit_type ?? 'numeric'),
+                    unit: String(variant?.unit_type ?? 'numeric') === 'numeric'
+                        ? (String(variant?.unit ?? '').trim() || null)
                         : null,
                     price: parseNumber(variant?.price, 0),
                     is_default: Boolean(variant?.is_default),
@@ -503,9 +503,9 @@ export function ProductEditorPage() {
                         onChange={(variants) => setDraft((previous) => ({ ...previous, variants }))}
                     />
                     {validationErrors.variants ? <div className="text-xs text-red-400">{validationErrors.variants}</div> : null}
-                    {validationErrors.variant_sku_type ? <div className="text-xs text-red-400">{validationErrors.variant_sku_type}</div> : null}
+                    {validationErrors.variant_unit_type ? <div className="text-xs text-red-400">{validationErrors.variant_unit_type}</div> : null}
                     {validationErrors.variant_default ? <div className="text-xs text-red-400">{validationErrors.variant_default}</div> : null}
-                    {validationErrors.variant_sku ? <div className="text-xs text-red-400">{validationErrors.variant_sku}</div> : null}
+                    {validationErrors.variant_unit ? <div className="text-xs text-red-400">{validationErrors.variant_unit}</div> : null}
                 </>
             ) : null}
 

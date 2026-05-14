@@ -59,8 +59,8 @@ class ProductUpsertRequest extends FormRequest
             'attributes.*.values.*.sort_order' => ['nullable', 'integer', 'min:0'],
 
             'variants' => ['nullable', 'array'],
-            'variants.*.sku_type' => ['required', Rule::in(['numeric', 'infinite', 'contact'])],
-            'variants.*.sku' => ['nullable', 'string', 'max:255'],
+            'variants.*.unit_type' => ['required', Rule::in(['numeric', 'infinite', 'contact'])],
+            'variants.*.unit' => ['nullable', 'string', 'max:255'],
             'variants.*.price' => ['required', 'numeric', 'min:0'],
             'variants.*.is_default' => ['nullable', 'boolean'],
             'variants.*.sort_order' => ['nullable', 'integer', 'min:0'],
@@ -140,21 +140,21 @@ class ProductUpsertRequest extends FormRequest
                     }
                 }
 
-                $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
-                $sku = Arr::get($variant, 'sku');
+                $unitType = (string) Arr::get($variant, 'unit_type', 'numeric');
+                $unit = Arr::get($variant, 'unit');
 
-                if ($skuType !== 'numeric') {
+                if ($unitType !== 'numeric') {
                     continue;
                 }
 
-                $skuString = is_string($sku) ? trim($sku) : '';
-                if ($skuString === '') {
-                    $validator->errors()->add("variants.{$index}.sku", 'SKU is required when SKU type is numeric.');
+                $unitString = is_string($unit) ? trim($unit) : '';
+                if ($unitString === '') {
+                    $validator->errors()->add("variants.{$index}.unit", 'Unit is required when unit type is numeric.');
                     continue;
                 }
 
-                if (! preg_match('/^[0-9]+$/', $skuString)) {
-                    $validator->errors()->add("variants.{$index}.sku", 'SKU must contain only numbers when SKU type is numeric.');
+                if (! preg_match('/^[0-9]+$/', $unitString)) {
+                    $validator->errors()->add("variants.{$index}.unit", 'Unit must contain only numbers when unit type is numeric.');
                 }
             }
         });
@@ -226,13 +226,13 @@ class ProductUpsertRequest extends FormRequest
 
         $validated['variants'] = array_map(function (array $variant): array {
             $options = is_array(Arr::get($variant, 'options')) ? Arr::get($variant, 'options') : [];
-            $skuType = (string) Arr::get($variant, 'sku_type', 'numeric');
-            $rawSku = Arr::get($variant, 'sku');
-            $sku = $skuType === 'numeric' ? ($rawSku !== null ? (string) $rawSku : null) : null;
+            $unitType = (string) Arr::get($variant, 'unit_type', 'numeric');
+            $rawUnit = Arr::get($variant, 'unit');
+            $unit = $unitType === 'numeric' ? ($rawUnit !== null ? (string) $rawUnit : null) : null;
 
             return [
-                'sku_type' => $skuType,
-                'sku' => $sku,
+                'unit_type' => $unitType,
+                'unit' => $unit,
                 'price' => (float) Arr::get($variant, 'price', 0),
                 'is_default' => (bool) Arr::get($variant, 'is_default', false),
                 'sort_order' => (int) Arr::get($variant, 'sort_order', 0),

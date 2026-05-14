@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->string('sku_type', 20)->default('numeric');
-            $table->string('sku')->nullable();
+            $table->string('unit_type', 20)->default('numeric');
+            $table->string('unit')->nullable();
             $table->decimal('price', 12, 2);
             $table->boolean('is_default')->default(false);
             $table->unsignedInteger('sort_order')->default(0);

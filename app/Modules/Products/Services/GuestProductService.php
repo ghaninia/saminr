@@ -36,8 +36,8 @@ class GuestProductService implements GuestProductServiceInterface
                 return new GuestProductVariantDto(
                     id: (int) $variant->id,
                     price: (float) $variant->price,
-                    sku: $variant->sku,
-                    skuType: (string) $variant->sku_type,
+                    unit: $variant->unit,
+                    unitType: (string) $variant->unit_type,
                     isDefault: (bool) $variant->is_default,
                     color: $colorAttribute['value'] ?? null,
                     colorSwatch: $this->extractColorSwatch($variant, $colorAttribute),
