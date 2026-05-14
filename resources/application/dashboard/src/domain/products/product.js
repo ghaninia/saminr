@@ -1,3 +1,5 @@
+import { deepClone as sharedDeepClone, slugify as sharedSlugify } from '../../shared/utils/common.js';
+
 export function emptyProductDraft() {
     return {
         title: { fa: '', en: '' },
@@ -47,25 +49,11 @@ export function emptyVariantDraft(index = 0) {
 }
 
 export function slugify(value) {
-    const input = String(value ?? '')
-        .trim()
-        .toLowerCase();
-    if (!input) return '';
-
-    const slug = input
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-
-    return slug;
+    return sharedSlugify(value);
 }
 
 export function deepClone(value) {
-    if (value === null || value === undefined) return value;
-    if (typeof value !== 'object') return value;
-    return JSON.parse(JSON.stringify(value));
+    return sharedDeepClone(value);
 }
 
 export function normalizeProductDraft(source) {

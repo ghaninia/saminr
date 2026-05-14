@@ -7,11 +7,7 @@ import { Modal } from '../../../shared/ui/modal.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
-
-function isLikelyImageUrl(url) {
-    if (!url) return false;
-    return /\.(png|jpe?g|webp|svg|ico)(\?.*)?$/i.test(url) || url.startsWith('data:image/');
-}
+import { isLikelyImageUrl } from '../../../shared/utils/media.js';
 const USER_TYPES = [
     { value: 'customer', label: 'Customer' },
     { value: 'admin', label: 'Admin' },

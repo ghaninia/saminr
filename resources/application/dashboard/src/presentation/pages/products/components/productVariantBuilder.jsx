@@ -1,20 +1,12 @@
 import React from 'react';
 import { Input } from '../../../../shared/ui/input.jsx';
+import { formatPrice, parseNumber } from '../../../../shared/utils/common.js';
 
 const SKU_TYPES = [
     { value: 'numeric', label: 'Numeric' },
     { value: 'infinite', label: 'Infinite' },
     { value: 'contact', label: 'Contact' },
 ];
-
-function parseNumber(value, fallback = 0) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function formatPrice(value) {
-    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(parseNumber(value, 0));
-}
 
 export function ProductVariantBuilder({ attributes, variants, onChange }) {
     const configuredAttributes = (attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0);

@@ -7,15 +7,7 @@ import { Field } from '../../../shared/ui/field.jsx';
 import { Input } from '../../../shared/ui/input.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
-
-function parseNumber(value, fallback = 0) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function formatPrice(value) {
-    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(parseNumber(value, 0));
-}
+import { formatPrice, parseNumber } from '../../../shared/utils/common.js';
 
 function getPriceSummary(item) {
     const variants = Array.isArray(item?.variants) ? item.variants : [];

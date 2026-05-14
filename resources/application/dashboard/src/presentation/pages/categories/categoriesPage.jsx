@@ -7,33 +7,8 @@ import { Modal } from '../../../shared/ui/modal.jsx';
 import { Pagination } from '../../../shared/ui/pagination.jsx';
 import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { useDashboardPerPage } from '../../../shared/hooks/useDashboardPerPage.js';
-
-function deepClone(value) {
-    if (value === null || value === undefined) return value;
-    if (typeof value !== 'object') return value;
-    return JSON.parse(JSON.stringify(value));
-}
-
-function slugify(value) {
-    const input = String(value ?? '')
-        .trim()
-        .toLowerCase();
-    if (!input) return '';
-
-    const slug = input
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-
-    return slug;
-}
-
-function isLikelyImageUrl(url) {
-    if (!url) return false;
-    return /\.(png|jpe?g|webp|svg|ico)(\?.*)?$/i.test(url) || url.startsWith('data:image/');
-}
+import { deepClone, slugify } from '../../../shared/utils/common.js';
+import { isLikelyImageUrl } from '../../../shared/utils/media.js';
 
 function emptyCategoryDraft() {
     return {
