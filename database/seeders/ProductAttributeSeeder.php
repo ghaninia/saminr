@@ -13,7 +13,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_color',
                 'label' => ['fa' => 'رنگ شمع', 'en' => 'Candle Color'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 2-2v-.8a1.2 1.2 0 0 1 1.2-1.2H18a3 3 0 0 0 0-6h-1.2A7.8 7.8 0 0 0 12 3Z"/><circle cx="8.2" cy="12" r="1"/><circle cx="10.8" cy="8.8" r="1"/><circle cx="14" cy="8.8" r="1"/><circle cx="15.8" cy="11.8" r="1"/></svg>',
                 'value_type' => 'color',
                 'values' => [
                     ['value' => ['fa' => 'سفید', 'en' => 'White'], 'meta' => ['hex' => '#ffffff']],
@@ -51,7 +51,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_scent',
                 'label' => ['fa' => 'رایحه شمع', 'en' => 'Candle Scent'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3c1 2 1 4-.4 5.6A4 4 0 0 0 11 15a4 4 0 0 0 3.4-6.4C13 7 13 5 14 3"/><path d="M6 20c2-1 4-1 6 0s4 1 6 0"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.7 2.3 3.5 4 3.5 6.4A3.5 3.5 0 1 1 8.5 9.4C8.5 7 10.3 5.3 12 3Z"/><path d="M8 15c0-1.7 1.3-3 3-3s3 1.3 3 3"/><path d="M5 18c1.4-1 3-1.5 5-1.5s3.6.5 5 1.5"/><path d="M6.5 21c1-.6 2.2-1 3.5-1s2.5.4 3.5 1"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => 'وانیل', 'en' => 'Vanilla']],
@@ -99,7 +99,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_shape',
                 'label' => ['fa' => 'شکل ظاهری شمع', 'en' => 'Candle Shape'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="4" height="8" rx="1"/><circle cx="12" cy="13" r="3"/><path d="M17 17h4l-2-8-2 8Z"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => 'ستونی', 'en' => 'Pillar']],
@@ -133,7 +133,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_wick',
                 'label' => ['fa' => 'فیتیله شمع', 'en' => 'Candle Wick'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M12 10c-1.5 1-2 2.5-2 4a2 2 0 1 0 4 0c0-1.5-.5-3-2-4Z"/><path d="M12 22v-4"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.7 2.2 3 3.6 3 5.4A3 3 0 1 1 9 8.4C9 6.6 10.3 5.2 12 3Z"/><path d="M12 10v11"/><path d="M9 21h6"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => 'فیتیله پنبه ای', 'en' => 'Cotton Wick']],
@@ -151,7 +151,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_type',
                 'label' => ['fa' => 'نوع شمع', 'en' => 'Candle Type'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M9 21V8h6v13"/><path d="M12 2v6"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8"/><path d="M9 20V9h6v11"/><path d="M12 3c1.6 2.1 3 3.6 3 5.1A3 3 0 0 1 9 8.1C9 6.6 10.4 5.1 12 3Z"/><path d="M7 12h10"/><path d="M10 15h4"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => 'شمع عطری', 'en' => 'Scented Candle']],
@@ -175,7 +175,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_weight',
                 'label' => ['fa' => 'وزن شمع', 'en' => 'Candle Weight'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20h12l-1-9H7l-1 9Z"/><path d="M9 11a3 3 0 1 1 6 0"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.2 1.8 2.5 3 2.5 4.5a2.5 2.5 0 1 1-5 0C9.5 6 10.8 4.8 12 3Z"/><path d="M7 7h10"/><path d="M8 7l-2 6a3 3 0 0 0 6 0L10 7"/><path d="M16 7l-2 6a3 3 0 0 0 6 0L18 7"/><path d="M12 13v7"/><path d="M9 20h6"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => '50 گرم', 'en' => '50 g']],
@@ -194,7 +194,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_dimensions',
                 'label' => ['fa' => 'ابعاد شمع', 'en' => 'Candle Dimensions'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5"/><path d="M20 15v5h-5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M9 4 4 9"/><path d="M15 20 20 15"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14v12H5z"/><path d="M8 6v3"/><path d="M11 6v4"/><path d="M14 6v3"/><path d="M17 6v4"/><path d="M5 10h3"/><path d="M5 13h4"/><path d="M5 16h3"/><path d="M19 9v6"/><path d="M17.5 10.5 19 9l1.5 1.5"/><path d="M17.5 13.5 19 15l1.5-1.5"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => '5x5 سانتی متر', 'en' => '5x5 cm']],
@@ -211,7 +211,7 @@ class ProductAttributeSeeder extends Seeder
             [
                 'key' => 'candle_burn_time',
                 'label' => ['fa' => 'زمان اتمام شمع', 'en' => 'Burn Time'],
-                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>',
+                'icon_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 1.5"/><path d="M12 4c1.7 2.2 3 3.8 3 5.4A3 3 0 1 1 9 9.4C9 7.8 10.3 6.2 12 4Z"/></svg>',
                 'value_type' => 'select',
                 'values' => [
                     ['value' => ['fa' => '4 ساعت', 'en' => '4 h']],
