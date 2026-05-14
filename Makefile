@@ -7,7 +7,7 @@ FRONT        := $(COMPOSE) exec frontend
         logs logs-front ps \
         shell front-shell \
         artisan npm \
-        migrate fresh test \
+	migrate fresh seed-products seed-reviews seed-fake test \
         install key \
         front-dev front-build
 
@@ -27,6 +27,9 @@ help:
 	@echo "  make npm cmd=\"...\"        Run npm <cmd> in frontend"
 	@echo "  make migrate              Run migrations"
 	@echo "  make fresh                Fresh migrate + seed"
+	@echo "  make seed-products        Seed only products (with variants)"
+	@echo "  make seed-reviews         Seed only reviews"
+	@echo "  make seed-fake            Seed products + reviews"
 	@echo "  make test                 Run test suite"
 	@echo "  make install              Composer install"
 	@echo "  make key                  Generate app key"
@@ -78,6 +81,16 @@ migrate:
 
 fresh:
 	$(APP) php artisan migrate:fresh --seed
+
+seed-products:
+	$(APP) php artisan db:seed --class=ProductSeeder
+
+seed-reviews:
+	$(APP) php artisan db:seed --class=ReviewSeeder
+
+seed-fake:
+	$(APP) php artisan db:seed --class=ProductSeeder
+	$(APP) php artisan db:seed --class=ReviewSeeder
 
 test:
 	$(APP) php artisan test
