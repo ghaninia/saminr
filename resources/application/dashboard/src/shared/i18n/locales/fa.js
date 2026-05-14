@@ -150,6 +150,14 @@ export const fa = {
         welcome: 'خوش آمدید',
         signedInAs: 'وارد شده با {email}.',
         description: 'این پنل مدیریت عمداً ساده و سبک است، اما برای نگه‌داری‌پذیری ساختار دارد.',
+        stats: {
+            totalUsers: 'کل کاربران',
+            totalProducts: 'کل محصولات',
+            totalReviews: 'کل نقدها',
+            totalCategories: 'کل دسته‌بندی‌ها',
+            totalSubscribers: 'کل مشترکین',
+            activeUsers: 'کاربران فعال',
+        },
     },
     products: {
         title: 'محصولات',

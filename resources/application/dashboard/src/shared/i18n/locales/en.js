@@ -150,6 +150,14 @@ export const en = {
         welcome: 'Welcome',
         signedInAs: 'Signed in as {email}.',
         description: 'This admin panel is intentionally minimal and lightweight, but structured for maintainability.',
+        stats: {
+            totalUsers: 'Total Users',
+            totalProducts: 'Total Products',
+            totalReviews: 'Total Reviews',
+            totalCategories: 'Total Categories',
+            totalSubscribers: 'Total Subscribers',
+            activeUsers: 'Active Users',
+        },
     },
     products: {
         title: 'Products',

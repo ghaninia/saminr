@@ -3,6 +3,7 @@
 use App\Modules\Auth\Http\Controllers\Admin\AuthController;
 use App\Modules\Auth\Http\Middleware\AdminJwtMiddleware;
 use App\Modules\Categories\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Modules\Dashboard\Http\Controllers\Admin\DashboardController;
 use App\Modules\Newsletter\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Modules\Newsletter\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 use App\Modules\Products\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
@@ -21,6 +22,8 @@ Route::prefix('auth')->group(function (): void {
 });
 
 Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+
     Route::get('/settings', [SettingController::class, 'index']);
     Route::patch('/settings/{setting}', [SettingController::class, 'update']);
     Route::post('/uploads', [UploadController::class, 'store']);
