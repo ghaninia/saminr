@@ -16,7 +16,7 @@ import { Textarea } from '../../../shared/ui/textarea.jsx';
 import { ProductAttributeSelector } from './components/productAttributeSelector.jsx';
 import { ProductVariantBuilder } from './components/productVariantBuilder.jsx';
 import { ProductGalleryManager } from './components/productGalleryManager.jsx';
-import { parseNumber } from '../../../shared/utils/common.js';
+import { formatDecimalInput, formatTomanPreview, normalizeDecimalInput, parseNumber } from '../../../shared/utils/common.js';
 import { useI18n } from '../../../application/i18n/i18nContext.jsx';
 
 function extractMediaUrl(media) {
@@ -66,7 +66,7 @@ function StepIcon({ stepKey }) {
 }
 
 export function ProductEditorPage() {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const navigate = useNavigate();
     const { productId } = useParams();
     const isEditing = Boolean(productId);
@@ -147,6 +147,8 @@ export function ProductEditorPage() {
         () => (draft.attributes ?? []).filter((attribute) => String(attribute?.key ?? '').trim() && (attribute?.values?.length ?? 0) > 0),
         [draft.attributes]
     );
+
+    const basePriceHint = useMemo(() => formatTomanPreview(draft.base_price, locale), [draft.base_price, locale]);
 
     const validateStep = (step) => {
         const nextErrors = {};
@@ -442,7 +444,32 @@ export function ProductEditorPage() {
                         <Field label={t('products.editor.titleEnRequired')} error={validationErrors.title_en}><Input required value={draft.title.en} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, en: event.target.value }, short_link: shortLinkTouched ? previous.short_link : slugify(event.target.value) }))} /></Field>
                         <Field label={t('products.editor.titleFaRequired')} error={validationErrors.title_fa}><Input required value={draft.title.fa} onChange={(event) => setDraft((previous) => ({ ...previous, title: { ...previous.title, fa: event.target.value } }))} /></Field>
                         <Field label={t('products.editor.shortLinkRequired')} error={validationErrors.short_link}><Input required value={draft.short_link} onChange={(event) => { setShortLinkTouched(true); setDraft((previous) => ({ ...previous, short_link: event.target.value })); }} /></Field>
-                        <Field label={t('products.editor.basePriceRequired')} error={validationErrors.base_price}><Input required type="number" min="0" step="0.01" value={draft.base_price} onChange={(event) => setDraft((previous) => ({ ...previous, base_price: event.target.value }))} /></Field>
+                        <Field label={t('products.editor.basePriceRequired')} error={validationErrors.base_price}>
+                            <Input
+                                required
+                                type="text"
+                                inputMode="decimal"
+                                value={formatDecimalInput(draft.base_price)}
+                                onChange={(event) => setDraft((previous) => ({ ...previous, base_price: normalizeDecimalInput(event.target.value) }))}
+                            />
+                            {basePriceHint ? (
+                                <div className="mt-2 flex items-start gap-2 rounded-xl border border-[color:var(--dash-accent)]/35 bg-[linear-gradient(135deg,rgba(88,138,255,0.12),rgba(88,138,255,0.03))] px-3 py-2 text-xs leading-5 text-[color:var(--dash-fg)] shadow-[0_6px_18px_rgba(0,0,0,0.08)]">
+                                    <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center text-[color:var(--dash-accent)]" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                                            <path d="M12 3v4" />
+                                            <path d="m16.5 5.5-2.8 2.8" />
+                                            <path d="M21 12h-4" />
+                                            <path d="m16.5 18.5-2.8-2.8" />
+                                            <path d="M12 21v-4" />
+                                            <path d="m7.5 18.5 2.8-2.8" />
+                                            <path d="M3 12h4" />
+                                            <path d="m7.5 5.5 2.8 2.8" />
+                                        </svg>
+                                    </span>
+                                    <span className="font-medium tracking-tight">{basePriceHint}</span>
+                                </div>
+                            ) : null}
+                        </Field>
                         <Field label={t('products.editor.subtitleEn')}><Input value={draft.subtitle.en} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, en: event.target.value } }))} /></Field>
                         <Field label={t('products.editor.subtitleFa')}><Input value={draft.subtitle.fa} onChange={(event) => setDraft((previous) => ({ ...previous, subtitle: { ...previous.subtitle, fa: event.target.value } }))} /></Field>
                     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input } from '../../../../shared/ui/input.jsx';
-import { formatPrice, parseNumber } from '../../../../shared/utils/common.js';
+import { formatDecimalInput, formatPrice, formatTomanPreview, normalizeDecimalInput, parseNumber } from '../../../../shared/utils/common.js';
 import { useI18n } from '../../../../application/i18n/i18nContext.jsx';
 
 const UNIT_TYPES = [
@@ -57,7 +57,10 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                         <div className="px-4 py-3">{t('products.editor.default')}</div>
                     </div>
                     <div className="divide-y divide-[color:var(--dash-border)]">
-                        {(variants ?? []).map((variant, index) => (
+                        {(variants ?? []).map((variant, index) => {
+                            const pricePreview = formatTomanPreview(variant?.price, locale);
+
+                            return (
                             <div key={(variant?.options ?? []).map((option) => `${option.attribute_key}:${option.value}`).join('|') || index} className="grid grid-cols-[minmax(0,2fr)_300px_160px_120px] gap-0 items-center bg-[color:var(--dash-surface)]">
                                 <div className="px-4 py-3 min-w-0">
                                     <div className="flex flex-wrap gap-2">
@@ -121,7 +124,21 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                     </div>
                                 </div>
                                 <div className="px-4 py-3">
-                                    <Input type="number" min="0" step="0.01" value={variant?.price ?? 0} onChange={(event) => updateVariant(index, { price: event.target.value })} />
+                                    <div className="space-y-1">
+                                        <Input type="text" inputMode="decimal" value={formatDecimalInput(variant?.price ?? 0)} onChange={(event) => updateVariant(index, { price: normalizeDecimalInput(event.target.value) })} />
+                                        {pricePreview ? (
+                                            <div className="flex items-start gap-1.5 rounded-lg border border-[color:var(--dash-accent)]/30 bg-[linear-gradient(135deg,rgba(88,138,255,0.10),rgba(88,138,255,0.02))] px-2.5 py-1.5 text-[11px] leading-4 text-[color:var(--dash-fg)]">
+                                                <span className="mt-0.5 inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center text-[color:var(--dash-accent)]" aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3">
+                                                        <circle cx="12" cy="12" r="8" />
+                                                        <path d="M12 8v4" />
+                                                        <path d="m12 12 3 2" />
+                                                    </svg>
+                                                </span>
+                                                <span className="font-medium tracking-tight">{pricePreview}</span>
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </div>
                                 <div className="px-4 py-3">
                                     <label className="inline-flex items-center gap-2 text-sm">
@@ -130,7 +147,8 @@ export function ProductVariantBuilder({ attributes, variants, onChange }) {
                                     </label>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             ) : null}
