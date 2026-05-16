@@ -9,4 +9,6 @@ interface GuestProductRepositoryInterface
 {
     /** @return Collection<int, Product> */
     public function listActive(): Collection;
+
+    public function findActiveByShortLink(string $shortLink): ?Product;
 }

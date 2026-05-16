@@ -8,4 +8,6 @@ interface GuestProductServiceInterface
 {
     /** @return list<GuestProductDto> */
     public function listForGuest(): array;
+
+    public function findForGuest(string $shortLink): ?GuestProductDto;
 }

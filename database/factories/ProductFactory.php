@@ -32,7 +32,7 @@ class ProductFactory extends Factory
             ],
             'description' => [
                 'fa' => 'توضیحات نمونه برای محصول فیک.',
-                'en' => fake()->sentences(2, true),
+                'en' => fake()->sentences(50, true),
             ],
             'short_link' => Str::slug($name.'-'.Str::lower(Str::random(6))),
             'base_price' => $basePrice,

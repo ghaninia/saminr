@@ -9,6 +9,7 @@ import Gallery from './pages/Gallery/Gallery'
 import Events from './pages/Events/Events'
 import RegistrationEvent from './pages/RegistrationEvent/RegistrationEvent'
 import GetTicket from './pages/GetTicket/GetTicket'
+import ProductDetails from './pages/Product/ProductDetails'
 import './App.css'
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               <Navigation />
               <Routes>
                 <Route path="/" element={<Main />} />
+                <Route path="/products/:shortLink" element={<ProductDetails />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/events" element={<Events />} />

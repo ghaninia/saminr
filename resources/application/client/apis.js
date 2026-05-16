@@ -52,6 +52,9 @@ export const apiClient = {
   getClientProducts() {
     return requestJson(apiEndpoints.client.products)
   },
+  getClientProduct(shortLink) {
+    return requestJson(`${apiEndpoints.client.products}/${encodeURIComponent(shortLink)}`)
+  },
   getClientReviews({ lang } = {}) {
     const query = lang ? `?lang=${encodeURIComponent(lang)}` : ''
     return requestJson(`${apiEndpoints.client.reviews}${query}`)

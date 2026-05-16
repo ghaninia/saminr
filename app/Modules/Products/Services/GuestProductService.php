@@ -25,50 +25,63 @@ class GuestProductService implements GuestProductServiceInterface
     {
         $products = $this->guestProductRepository->listActive();
 
-        return $products->map(function (Product $product): GuestProductDto {
-            $variants = $product->variants->map(function (ProductVariant $variant): GuestProductVariantDto {
-                $attributes = $variant->options
-                    ->map(fn (ProductVariantOption $option): ?VariantAttributeDto => $this->mapVariantAttribute($option))
-                    ->filter()
-                    ->values()
-                    ->all();
+        return $products
+            ->map(fn (Product $product): GuestProductDto => $this->mapProduct($product, limitSummaryAttributes: true))
+            ->values()
+            ->all();
+    }
 
-                $colorAttribute = collect($attributes)
-                    ->first(static fn (VariantAttributeDto $attr): bool => $attr->isColor);
+    public function findForGuest(string $shortLink): ?GuestProductDto
+    {
+        $product = $this->guestProductRepository->findActiveByShortLink($shortLink);
 
-                return new GuestProductVariantDto(
-                    id: (int) $variant->id,
-                    price: (float) $variant->price,
-                    unit: $variant->unit,
-                    unitType: (string) $variant->unit_type,
-                    isDefault: (bool) $variant->is_default,
-                    color: $colorAttribute?->value,
-                    colorSwatch: $this->extractColorSwatch($variant, $colorAttribute),
-                    attributes: $attributes,
-                );
-            })->values()->all();
+        return $product ? $this->mapProduct($product, limitSummaryAttributes: false) : null;
+    }
 
-            $defaultVariant = collect($variants)->first(
-                static fn (GuestProductVariantDto $variant): bool => $variant->isDefault,
-            ) ?? ($variants[0] ?? null);
+    private function mapProduct(Product $product, bool $limitSummaryAttributes): GuestProductDto
+    {
+        $variants = $product->variants->map(function (ProductVariant $variant): GuestProductVariantDto {
+            $attributes = $variant->options
+                ->map(fn (ProductVariantOption $option): ?VariantAttributeDto => $this->mapVariantAttribute($option))
+                ->filter()
+                ->values()
+                ->all();
 
-            $colors = $this->buildColors($variants);
+            $colorAttribute = collect($attributes)
+                ->first(static fn (VariantAttributeDto $attr): bool => $attr->isColor);
 
-            $summaryAttributes = array_slice($this->buildSummaryAttributes($variants, $defaultVariant), 0, 2);
-
-            return new GuestProductDto(
-                id: (int) $product->id,
-                title: $product->title,
-                subtitle: $product->subtitle,
-                description: $product->description,
-                shortLink: $product->short_link,
-                image: $this->resolveImage($product),
-                defaultVariant: $defaultVariant,
-                colors: $colors,
-                variants: $variants,
-                summaryAttributes: $summaryAttributes,
+            return new GuestProductVariantDto(
+                id: (int) $variant->id,
+                price: (float) $variant->price,
+                unit: $variant->unit,
+                unitType: (string) $variant->unit_type,
+                isDefault: (bool) $variant->is_default,
+                color: $colorAttribute?->value,
+                colorSwatch: $this->extractColorSwatch($variant, $colorAttribute),
+                attributes: $attributes,
             );
         })->values()->all();
+
+        $defaultVariant = collect($variants)->first(
+            static fn (GuestProductVariantDto $variant): bool => $variant->isDefault,
+        ) ?? ($variants[0] ?? null);
+
+        $summaryAttributes = $this->buildSummaryAttributes($variants, $defaultVariant);
+
+        return new GuestProductDto(
+            id: (int) $product->id,
+            title: $product->title,
+            subtitle: $product->subtitle,
+            description: $product->description,
+            shortLink: $product->short_link,
+            image: $this->resolveImage($product),
+            introVideo: $this->resolveIntroVideo($product),
+            gallery: $this->resolveGallery($product),
+            defaultVariant: $defaultVariant,
+            colors: $this->buildColors($variants),
+            variants: $variants,
+            summaryAttributes: $limitSummaryAttributes ? array_slice($summaryAttributes, 0, 2) : $summaryAttributes,
+        );
     }
 
     private function resolveImage(Product $product): ?string
@@ -80,6 +93,32 @@ class GuestProductService implements GuestProductServiceInterface
         }
 
         return $product->cover_image;
+    }
+
+    private function resolveIntroVideo(Product $product): ?string
+    {
+        $video = $product->getFirstMediaUrl('intro_video');
+
+        return $video !== '' ? $video : $product->intro_video;
+    }
+
+    /** @return list<string> */
+    private function resolveGallery(Product $product): array
+    {
+        $gallery = $product->getMedia('gallery')
+            ->map(fn ($media): string => $media->getUrl())
+            ->filter(fn (string $url): bool => $url !== '')
+            ->values()
+            ->all();
+
+        if ($gallery !== []) {
+            return $gallery;
+        }
+
+        return collect($product->gallery)
+            ->filter(fn ($item): bool => is_string($item) && $item !== '')
+            ->values()
+            ->all();
     }
 
     private function extractColorSwatch(ProductVariant $variant, ?VariantAttributeDto $colorAttribute): ?string

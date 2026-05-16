@@ -8,6 +8,7 @@ class GuestProductDto
      * @param list<GuestProductVariantDto> $variants
      * @param list<ProductColorDto>        $colors
      * @param list<SummaryAttributeDto>    $summaryAttributes
+     * @param list<string>                 $gallery
      */
     public function __construct(
         public readonly int $id,
@@ -16,6 +17,8 @@ class GuestProductDto
         public readonly array|string|null $description,
         public readonly ?string $shortLink,
         public readonly ?string $image,
+        public readonly ?string $introVideo,
+        public readonly array $gallery,
         public readonly ?GuestProductVariantDto $defaultVariant,
         public readonly array $colors,
         public readonly array $variants,

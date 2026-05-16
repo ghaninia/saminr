@@ -108,6 +108,24 @@
       "price": "700 USD<br><i>per day</i>"
     }
   },
+  "productDetails": {
+    "loading": "Loading product...",
+    "loadError": "Unable to load product.",
+    "notFound": "Product not found.",
+    "overview": "Overview",
+    "gallery": "Gallery",
+    "colors": "Colors",
+    "specifications": "Specifications",
+    "summary": "Summary",
+    "priceSuffix": "/ price",
+    "unit": "Unit",
+    "mediaImageFallback": "Product image",
+    "mediaProductFallback": "Product",
+    "mediaVideoSuffix": "video",
+    "noDescription": "No description provided for this product.",
+    "noMedia": "No media available for this product.",
+    "noSpecs": "No specifications provided for this product."
+  },
   "hero": {
     "slider": {
       "text1": "Handmade candle kits for every style",

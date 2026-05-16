@@ -23,6 +23,8 @@ class GuestProductResource extends JsonResource
             'description'        => $dto->description,
             'short_link'         => $dto->shortLink,
             'image'              => $dto->image,
+            'intro_video'        => $dto->introVideo,
+            'gallery'            => $dto->gallery,
             'default_variant'    => $dto->defaultVariant
                 ? new GuestProductVariantResource($dto->defaultVariant)
                 : null,

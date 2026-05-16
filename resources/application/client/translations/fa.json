@@ -108,6 +108,24 @@
       "price": "۷۰۰ دلار<br><i>روزانه</i>"
     }
   },
+  "productDetails": {
+    "loading": "در حال بارگذاری محصول...",
+    "loadError": "بارگذاری محصول ممکن نیست.",
+    "notFound": "محصول پیدا نشد.",
+    "overview": "اطلاعات کلی",
+    "gallery": "گالری تصاویر",
+    "colors": "رنگ‌بندی",
+    "specifications": "مشخصات",
+    "summary": "ویژگی‌ها",
+    "priceSuffix": "/ قیمت",
+    "unit": "واحد",
+    "mediaImageFallback": "تصویر محصول",
+    "mediaProductFallback": "محصول",
+    "mediaVideoSuffix": "ویدیو",
+    "noDescription": "توضیحاتی برای این محصول ثبت نشده است.",
+    "noMedia": "رسانه‌ای برای نمایش وجود ندارد.",
+    "noSpecs": "مشخصات دقیقی برای این محصول ثبت نشده است."
+  },
   "hero": {
     "slider": {
       "text1": "پکیج‌های شمع‌سازی دست‌ساز برای هر سلیقه",

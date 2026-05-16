@@ -22,4 +22,17 @@ class EloquentGuestProductRepository implements GuestProductRepositoryInterface
             ->limit(9)
             ->get();
     }
+
+    public function findActiveByShortLink(string $shortLink): ?Product
+    {
+        return Product::query()
+            ->where('is_active', true)
+            ->where('short_link', $shortLink)
+            ->with([
+                'variants.options.attribute',
+                'variants.options.value',
+                'media',
+            ])
+            ->first();
+    }
 }
