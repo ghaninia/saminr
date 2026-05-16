@@ -5,6 +5,7 @@ import { apiClient } from '../../apis'
 import { useLanguage } from '../../contexts/LanguageContext'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation } from 'swiper/modules'
+import ImageLightbox from '../../components/ImageLightbox'
 
 const DEFAULT_PRODUCT_IMAGE = '/images/file-corrupted.svg'
 
@@ -52,6 +53,8 @@ export default function ProductDetails() {
   const [error, setError] = useState('')
   const [selectedMedia, setSelectedMedia] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
 
   useEffect(() => {
     let isMounted = true
@@ -202,6 +205,12 @@ export default function ProductDetails() {
 
   const renderedSpecs = variantSpecs.length > 0 ? variantSpecs : summarySpecs
   const mainMedia = selectedMedia ?? normalizedProduct.mediaItems[0] ?? null
+  const imageMediaItems = normalizedProduct.mediaItems.filter((item) => item?.type === 'image' && item?.url)
+
+  const handleOpenLightbox = (index) => {
+    setLightboxIndex(index)
+    setIsLightboxOpen(true)
+  }
 
   return (
     <>
@@ -257,17 +266,25 @@ export default function ProductDetails() {
                         }}
                         className="products-swiper product-gallery-swiper"
                       >
-                {normalizedProduct.mediaItems.length > 1 ? (
-                    normalizedProduct.mediaItems.map((item, index) => {
+                {imageMediaItems.length > 0 ? (
+                    imageMediaItems.map((item, index) => {
                       return (
                         <SwiperSlide key={item.id ?? item.title}>
                         <div className='gallery-box'>
-                          <div
-                            className="gallery-img"
-                            role="img"
+                          <button
+                            type="button"
+                            className="gallery-popup-trigger"
+                            onClick={() => handleOpenLightbox(index)}
                             aria-label={item.label}
-                            style={{ backgroundImage: `url(${item.url})` }}
-                          />
+                            title={item.label}
+                          >
+                            <div
+                              className="gallery-img"
+                              role="img"
+                              aria-label={item.label}
+                              style={{ backgroundImage: `url(${item.url})` }}
+                            />
+                          </button>
                         </div>
                         </SwiperSlide>
                       )
@@ -357,6 +374,13 @@ export default function ProductDetails() {
       </div>
       </div>
     </section>
+    <ImageLightbox
+      isOpen={isLightboxOpen}
+      items={imageMediaItems}
+      initialIndex={lightboxIndex}
+      dir={language === 'fa' ? 'rtl' : 'ltr'}
+      onClose={() => setIsLightboxOpen(false)}
+    />
     </>
   )
 }
