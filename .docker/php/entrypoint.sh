@@ -3,28 +3,43 @@ set -e
 
 cd /var/www/html
 
-# Ensure needed directories exist and are writable
-mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache
-chmod -R 775 storage bootstrap/cache || true
+echo "Starting Laravel container..."
 
-# Install dependencies if missing
+# temp dir
+mkdir -p /tmp
+chmod 1777 /tmp || true
+
+# required directories
+mkdir -p \
+  storage/framework/cache \
+  storage/framework/sessions \
+  storage/framework/views \
+  storage/logs \
+  bootstrap/cache \
+  database
+
+# sqlite db
+if [ ! -f database/database.sqlite ]; then
+  touch database/database.sqlite
+fi
+
+# permissions
+chmod -R 775 storage bootstrap/cache database || true
+chown -R www:www storage bootstrap/cache database || true
+
+# install dependencies if needed
 if [ ! -f vendor/autoload.php ]; then
+  echo "Installing composer dependencies..."
   composer install --no-interaction --prefer-dist --no-progress
 fi
 
-# Generate app key if missing
-if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
+# generate app key only if missing
+if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
+  echo "Generating APP_KEY..."
   php artisan key:generate --force || true
 fi
 
-# Clear and cache configurations for better performance
-php artisan config:clear || true
-php artisan config:cache || true
-
-# Cache routes for better performance
-php artisan route:cache || true
-
-# Optimize autoloader
-composer dump-autoload --optimize || true
+# clear caches only (better for dev)
+php artisan optimize:clear || true
 
 exec "$@"
