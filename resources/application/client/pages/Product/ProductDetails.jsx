@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { CheckCircle2, CircleDollarSign, Package, PlayCircle } from 'lucide-react'
 import { apiClient } from '../../services/apiClient'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { useGlobalLoading } from '../../contexts/LoadingContext'
 import {
   resolveLocalizedText,
   resolveLocalizedValue,
@@ -18,8 +19,8 @@ import ImageLightbox from '../../components/ImageLightbox'
 export default function ProductDetails() {
   const { shortLink } = useParams()
   const { language, t } = useLanguage()
+  const { startLoading, finishLoading } = useGlobalLoading()
   const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedMedia, setSelectedMedia] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -28,7 +29,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     let isMounted = true
-    setLoading(true)
+    startLoading()
     setError('')
 
     apiClient
@@ -44,13 +45,13 @@ export default function ProductDetails() {
       })
       .finally(() => {
         if (!isMounted) return
-        setLoading(false)
+        finishLoading()
       })
 
     return () => {
       isMounted = false
     }
-  }, [shortLink, t])
+  }, [shortLink, t, startLoading, finishLoading])
 
   const normalizedProduct = useMemo(() => {
     if (!product) return null
@@ -134,14 +135,6 @@ export default function ProductDetails() {
       null
     )
   }, [normalizedProduct, visibleVariants])
-
-  if (loading) {
-    return (
-      <section className="mx-auto max-w-7xl px-4 py-16 text-sm text-slate-500">
-        {t('productDetails.loading')}
-      </section>
-    )
-  }
 
   if (error || !normalizedProduct) {
     return (
