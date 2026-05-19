@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('key')->unique();
             $table->json('label');
             $table->enum('value_type', ['text', 'number', 'select', 'color'])->default('select');
+            $table->text("icon_svg")->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });

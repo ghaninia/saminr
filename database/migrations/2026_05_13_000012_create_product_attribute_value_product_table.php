@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('product_attribute_value_product', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('product_attribute_value_id')->constrained('product_attribute_values')->cascadeOnDelete();
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_attribute_value_id');
             $table->timestamps();
 
-            $table->unique(['product_id', 'product_attribute_value_id']);
+            // Use explicit short constraint names to avoid MySQL identifier length limit (64 chars)
+            $table->foreign('product_id', 'pavp_product_fk')
+                ->references('id')
+                ->on('products')
+                ->cascadeOnDelete();
+            $table->foreign('product_attribute_value_id', 'pavp_pav_fk')
+                ->references('id')
+                ->on('product_attribute_values')
+                ->cascadeOnDelete();
         });
     }
 

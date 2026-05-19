@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('value');
             $table->json('meta')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
+            $table->text('label')->nullable();
+            $table->text('icon_svg')->nullable();
             $table->timestamps();
 
             $table->unique(['product_attribute_id', 'value']);

@@ -13,12 +13,24 @@ return new class extends Migration
     {
         Schema::create('product_variant_options', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
-            $table->foreignId('product_attribute_id')->constrained('product_attributes')->cascadeOnDelete();
-            $table->foreignId('product_attribute_value_id')->constrained('product_attribute_values')->cascadeOnDelete();
+            $table->unsignedBigInteger('product_variant_id');
+            $table->unsignedBigInteger('product_attribute_id');
+            $table->unsignedBigInteger('product_attribute_value_id');
             $table->timestamps();
 
-            $table->unique(['product_variant_id', 'product_attribute_id']);
+            // Use explicit short constraint names to avoid MySQL identifier length limit (64 chars)
+            $table->foreign('product_variant_id', 'pvo_pv_fk')
+                ->references('id')
+                ->on('product_variants')
+                ->cascadeOnDelete();
+            $table->foreign('product_attribute_id', 'pvo_pa_fk')
+                ->references('id')
+                ->on('product_attributes')
+                ->cascadeOnDelete();
+            $table->foreign('product_attribute_value_id', 'pvo_pav_fk')
+                ->references('id')
+                ->on('product_attribute_values')
+                ->cascadeOnDelete();
         });
     }
 

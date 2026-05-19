@@ -13,11 +13,21 @@ return new class extends Migration
     {
         Schema::create('product_category', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
 
             $table->unique(['product_id', 'category_id']);
+            
+            // Use explicit short constraint names to avoid MySQL identifier length limit (64 chars)
+            $table->foreign('product_id', 'pc_product_fk')
+                ->references('id')
+                ->on('products')
+                ->cascadeOnDelete();
+            $table->foreign('category_id', 'pc_category_fk')
+                ->references('id')
+                ->on('categories')
+                ->cascadeOnDelete();
         });
     }
 
