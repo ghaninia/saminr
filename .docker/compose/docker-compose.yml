@@ -1,5 +1,6 @@
 services:
   php:
+    container_name: samin-php
     build:
       context: ../..
       dockerfile: .docker/php/Dockerfile
@@ -10,18 +11,18 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: "5432"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
       REDIS_HOST: redis
       QUEUE_CONNECTION: redis
     volumes:
       - ../..:/var/www/html:delegated
-      - vendor:/var/www/html/vendor
-      - node_modules:/var/www/html/node_modules
-      - storage:/var/www/html/storage
+      - samin_vendor:/var/www/html/vendor
+      - samin_node_modules:/var/www/html/node_modules
+      - samin_storage:/var/www/html/storage
     depends_on:
-      - postgres
+      - mysql
       - redis
     networks:
       - app-network
@@ -33,6 +34,7 @@ services:
       start_period: 20s
 
   nginx:
+    container_name: samin-nginx
     build:
       context: ../..
       dockerfile: .docker/nginx/Dockerfile
@@ -45,7 +47,7 @@ services:
       - app-network
     volumes:
       - ../..:/var/www/html:ro
-      - storage:/var/www/html/storage
+      - samin_storage:/var/www/html/storage
     healthcheck:
       test: ["CMD-SHELL", "curl --fail --silent http://localhost/ || exit 1"]
       interval: 30s
@@ -54,6 +56,7 @@ services:
       start_period: 20s
 
   node:
+    container_name: samin-node
     build:
       context: ../..
       dockerfile: .docker/node/Dockerfile
@@ -64,7 +67,7 @@ services:
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     volumes:
       - ../..:/var/www/html:delegated
-      - node_modules:/var/www/html/node_modules
+      - samin_node_modules:/var/www/html/node_modules
     ports:
       - "5173:5173"
     depends_on:
@@ -78,33 +81,37 @@ services:
       retries: 5
       start_period: 20s
 
-  postgres:
-    image: postgres:16-alpine
+  mysql:
+    container_name: samin-mysql
+    image: mysql:8.0
     restart: always
     env_file:
       - ../../.env
     environment:
-      - POSTGRES_USER=${DB_USERNAME:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
-      - POSTGRES_DB=${DB_DATABASE:-postgres}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root}
+      - MYSQL_DATABASE=${DB_DATABASE:-samin}
+      - MYSQL_USER=${DB_USERNAME:-laravel}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-password}
+    ports:
+      - "${MYSQL_PORT_FORWARD:-3306}:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ../postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - samin_mysql_data:/var/lib/mysql
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-postgres} -h localhost || exit 1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD:-root}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
 
   redis:
+    container_name: samin-redis
     image: redis:7-alpine
     restart: always
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     volumes:
-      - redis_data:/data
+      - samin_redis_data:/data
       - ../redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
     networks:
       - app-network
@@ -116,6 +123,7 @@ services:
       start_period: 10s
 
   worker:
+    container_name: samin-worker
     build:
       context: ../..
       dockerfile: .docker/php/Dockerfile
@@ -131,16 +139,16 @@ services:
       - app-network
     volumes:
       - ../..:/var/www/html:delegated
-      - vendor:/var/www/html/vendor
-      - storage:/var/www/html/storage
+      - samin_vendor:/var/www/html/vendor
+      - samin_storage:/var/www/html/storage
     restart: unless-stopped
 
 volumes:
-  vendor:
-  node_modules:
-  storage:
-  postgres_data:
-  redis_data:
+  samin_vendor:
+  samin_node_modules:
+  samin_storage:
+  samin_mysql_data:
+  samin_redis_data:
 
 networks:
   app-network:

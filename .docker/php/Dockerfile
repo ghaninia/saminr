@@ -9,7 +9,7 @@ RUN apk add --no-cache --virtual .build-deps \
     freetype-dev \
     libjpeg-turbo-dev \
     zlib-dev \
-    postgresql-dev \
+    mariadb-dev \
     bash \
     curl \
     git \
@@ -21,12 +21,12 @@ RUN apk add --no-cache --virtual .build-deps \
     freetype \
     zlib \
     supervisor \
-    postgresql-libs \
+    mariadb-client \
   && docker-php-ext-configure gd --with-freetype --with-jpeg \
   && docker-php-ext-install -j$(nproc) \
     bcmath \
     pcntl \
-    pdo_pgsql \
+    pdo_mysql \
     gd \
     zip \
     opcache \
@@ -80,4 +80,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
 EXPOSE 9000
 USER www-data:www-data
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["php-fpm"]
+CMD ["php-fpm"] 
