@@ -9,8 +9,10 @@ fi
 
 # Make storage and cache writable by the application user.
 mkdir -p storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R 755 storage bootstrap/cache
+# Attempt to change ownership; ignore failures on filesystems that don't support chown
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+# Ensure sensible permissions where possible; ignore errors
+chmod -R 755 storage bootstrap/cache 2>/dev/null || true
 
 if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "prod" ]; then
   if [ -f artisan ]; then
