@@ -45,70 +45,6 @@
     },
     "note": "If you've never ordered a package before, we'll guide you through the process."
   },
-  "products": {
-    "subtitle": "Our Products",
-    "title": "Featured Products",
-    "product1": {
-      "title": "Candle Making Kit",
-      "description": "Complete kit with all tools and materials needed to make your own candles.",
-      "details": {
-        "passengers": "4 Candles",
-        "transmission": "Paraffin Wax",
-        "age": "25 Days"
-      },
-      "price": "800 USD<br><i>per day</i>"
-    },
-    "product2": {
-      "title": "Scented Candles",
-      "description": "A variety of scented candles in different fragrances and sizes.",
-      "details": {
-        "passengers": "6 Candles",
-        "transmission": "Soy Wax",
-        "age": "30 Days"
-      },
-      "price": "600 USD<br><i>per day</i>"
-    },
-    "product3": {
-      "title": "Custom Packages",
-      "description": "Personalized candle packages tailored to your specific needs and preferences.",
-      "details": {
-        "passengers": "8 Candles",
-        "transmission": "Beeswax",
-        "age": "20 Days"
-      },
-      "price": "1000 USD<br><i>per day</i>"
-    },
-    "product4": {
-      "title": "Essential Oil Set",
-      "description": "High-quality essential oils for candle making and aromatherapy.",
-      "details": {
-        "passengers": "10 Oils",
-        "transmission": "Natural Oils",
-        "age": "40 Days"
-      },
-      "price": "500 USD<br><i>per day</i>"
-    },
-    "product5": {
-      "title": "Wick Assortment",
-      "description": "Various types of wicks for different candle sizes and types.",
-      "details": {
-        "passengers": "50 Wicks",
-        "transmission": "Cotton Wicks",
-        "age": "35 Days"
-      },
-      "price": "300 USD<br><i>per day</i>"
-    },
-    "product6": {
-      "title": "Candle Containers",
-      "description": "Beautiful containers and jars for your handmade candles.",
-      "details": {
-        "passengers": "12 Containers",
-        "transmission": "Glass Jars",
-        "age": "45 Days"
-      },
-      "price": "700 USD<br><i>per day</i>"
-    }
-  },
   "productDetails": {
     "loading": "Loading product...",
     "loadError": "Unable to load product.",
@@ -183,6 +119,8 @@
     "themeToggle": "Toggle dark/light theme"
   },
   "products": {
+    "subtitle": "Our Products",
+    "title": "Featured Products",
     "currencyUnit": "Toman",
     "noVariant": "No variants found for this color",
     "summaryTitle": "Summary",
