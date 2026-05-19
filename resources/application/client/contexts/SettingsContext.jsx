@@ -1,57 +1,72 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useLanguage } from './LanguageContext'
-import { apiClient } from '../apis'
+import { apiClient } from '../services/apiClient'
+import { STORAGE_KEYS, CACHE_TTL } from '../constants/index'
+import {
+  getValueByPath,
+  resolveLocalizedNested,
+  isLocalizedObject,
+  safeJsonParse,
+  safeJsonStringify,
+} from '../utils/index'
 
 const SettingsContext = createContext()
 
-const SETTINGS_STORAGE_KEY = 'client_settings_cache'
-const SETTINGS_STORAGE_TTL = 24 * 60 * 60 * 1000
-
 let settingsRequestPromise = null
 
+/**
+ * Clears stored settings from localStorage
+ */
 function clearStoredSettings() {
-  localStorage.removeItem(SETTINGS_STORAGE_KEY)
+  localStorage.removeItem(STORAGE_KEYS.SETTINGS_CACHE)
 }
 
+/**
+ * Reads settings from localStorage with TTL validation
+ * @returns {Object|null} Cached settings or null if expired/invalid
+ */
 function readSettingsFromStorage() {
-  const rawSettings = localStorage.getItem(SETTINGS_STORAGE_KEY)
+  const rawSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS_CACHE)
 
   if (!rawSettings) {
     return null
   }
 
-  try {
-    const parsedSettings = JSON.parse(rawSettings)
+  const parsedSettings = safeJsonParse(rawSettings)
 
-    if (!parsedSettings || typeof parsedSettings !== 'object') {
-      clearStoredSettings()
-      return null
-    }
-
-    if (typeof parsedSettings.expiresAt !== 'number' || Date.now() >= parsedSettings.expiresAt) {
-      clearStoredSettings()
-      return null
-    }
-
-    return parsedSettings.data && typeof parsedSettings.data === 'object'
-      ? parsedSettings.data
-      : null
-  } catch {
+  if (!parsedSettings || typeof parsedSettings !== 'object') {
     clearStoredSettings()
     return null
   }
+
+  if (typeof parsedSettings.expiresAt !== 'number' || Date.now() >= parsedSettings.expiresAt) {
+    clearStoredSettings()
+    return null
+  }
+
+  return parsedSettings.data && typeof parsedSettings.data === 'object'
+    ? parsedSettings.data
+    : null
 }
 
+/**
+ * Writes settings to localStorage with TTL
+ * @param {Object} settings - The settings to cache
+ */
 function writeSettingsToStorage(settings) {
-  localStorage.setItem(
-    SETTINGS_STORAGE_KEY,
-    JSON.stringify({
-      data: settings,
-      expiresAt: Date.now() + SETTINGS_STORAGE_TTL
-    })
-  )
+  const cacheData = {
+    data: settings,
+    expiresAt: Date.now() + CACHE_TTL.SETTINGS,
+  }
+  const jsonString = safeJsonStringify(cacheData)
+  localStorage.setItem(STORAGE_KEYS.SETTINGS_CACHE, jsonString)
 }
 
+/**
+ * Normalizes API response to settings object
+ * @param {any} payload - API response
+ * @returns {Object} Normalized settings
+ */
 function normalizeSettingsResponse(payload) {
   const items = Array.isArray(payload) ? payload : payload?.data
 
@@ -69,15 +84,17 @@ function normalizeSettingsResponse(payload) {
   }, {})
 }
 
+/**
+ * Fetches settings from API with request deduplication
+ * @returns {Promise<Object>} Settings data
+ */
 async function fetchSettingsFromApi() {
   if (!settingsRequestPromise) {
     settingsRequestPromise = apiClient
       .getClientSettings()
       .then((payload) => {
         const normalizedSettings = normalizeSettingsResponse(payload)
-
         writeSettingsToStorage(normalizedSettings)
-
         return normalizedSettings
       })
       .finally(() => {
@@ -88,36 +105,10 @@ async function fetchSettingsFromApi() {
   return settingsRequestPromise
 }
 
-function getValueByPath(source, path) {
-  if (!path) {
-    return source
-  }
-
-  return path.split('.').reduce((value, segment) => value?.[segment], source)
-}
-
-function isLocalizedObject(value) {
-  return Boolean(
-    value &&
-      typeof value === 'object' &&
-      !Array.isArray(value) &&
-      (Object.prototype.hasOwnProperty.call(value, 'fa') ||
-        Object.prototype.hasOwnProperty.call(value, 'en'))
-  )
-}
-
-function resolveLocalizedValue(value, locale) {
-  if (Array.isArray(value)) {
-    return value.map((item) => resolveLocalizedValue(item, locale))
-  }
-
-  if (isLocalizedObject(value)) {
-    return value[locale] ?? value.fa ?? value.en ?? null
-  }
-
-  return value
-}
-
+/**
+ * Gets initial state from cache or defaults
+ * @returns {Object} Initial state
+ */
 function getInitialState() {
   const cachedSettings = readSettingsFromStorage()
 
@@ -125,7 +116,7 @@ function getInitialState() {
     settings: cachedSettings ?? {},
     isLoading: cachedSettings === null,
     error: null,
-    shouldLoadFromApi: cachedSettings === null
+    shouldLoadFromApi: cachedSettings === null,
   }
 }
 
@@ -150,7 +141,7 @@ export function SettingsProvider({ children }) {
           settings: nextSettings,
           isLoading: false,
           error: null,
-          shouldLoadFromApi: false
+          shouldLoadFromApi: false,
         })
       })
       .catch((error) => {
@@ -162,7 +153,7 @@ export function SettingsProvider({ children }) {
           ...currentState,
           isLoading: false,
           error: error instanceof Error ? error.message : 'Failed to load settings',
-          shouldLoadFromApi: false
+          shouldLoadFromApi: false,
         }))
       })
 
@@ -175,7 +166,7 @@ export function SettingsProvider({ children }) {
     setState((currentState) => ({
       ...currentState,
       isLoading: true,
-      error: null
+      error: null,
     }))
 
     try {
@@ -184,7 +175,7 @@ export function SettingsProvider({ children }) {
         settings: nextSettings,
         isLoading: false,
         error: null,
-        shouldLoadFromApi: false
+        shouldLoadFromApi: false,
       })
 
       return nextSettings
@@ -195,7 +186,7 @@ export function SettingsProvider({ children }) {
         ...currentState,
         isLoading: false,
         error: message,
-        shouldLoadFromApi: false
+        shouldLoadFromApi: false,
       }))
 
       throw error
@@ -214,7 +205,7 @@ export function SettingsProvider({ children }) {
       return value
     }
 
-    const resolvedValue = resolveLocalizedValue(value, locale)
+    const resolvedValue = resolveLocalizedNested(value, locale)
     return resolvedValue ?? fallback
   }
 
@@ -225,7 +216,7 @@ export function SettingsProvider({ children }) {
         settingsError: state.error,
         settingsLoading: state.isLoading,
         refreshSettings,
-        getSetting
+        getSetting,
       }}
     >
       {children}

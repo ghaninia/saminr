@@ -1,17 +1,18 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { STORAGE_KEYS, DEFAULTS } from '../constants/index'
 
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     // Load from localStorage or default to 'dark' - DARK THEME IS DEFAULT
-    return localStorage.getItem('theme') || 'dark'
+    return localStorage.getItem(STORAGE_KEYS.THEME) || DEFAULTS.THEME
   })
 
   useEffect(() => {
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
+    localStorage.setItem(STORAGE_KEYS.THEME, theme)
   }, [theme])
 
   const toggleTheme = () => {

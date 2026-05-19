@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../../../../contexts/LanguageContext'
 import { useSettings } from '../../../../contexts/SettingsContext'
+import { DEFAULTS } from '../../../../constants/index'
 import './SectionComponents.css'
 
 const SLOGAN_POSITIONS = [
@@ -66,7 +67,7 @@ function HeroSection() {
 
     pickRandomSlogan()
 
-    const interval = setInterval(pickRandomSlogan, 5000)
+    const interval = setInterval(pickRandomSlogan, DEFAULTS.HERO_SLOGAN_INTERVAL)
     return () => clearInterval(interval)
   }, [allSlogans])
 

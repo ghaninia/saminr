@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useSettings } from '../contexts/SettingsContext'
-import { apiClient } from '../apis'
+import { apiClient } from '../services/apiClient'
+import { removeWhitespace } from '../utils/index'
+import { ASSETS, LOCALES, ERROR_MESSAGES, ROUTES } from '../constants/index'
 import { Phone, Mail, MapPin, Instagram, Youtube, PlayCircle, ArrowUpRight } from 'lucide-react'
 import './Footer.css'
 
@@ -13,12 +16,12 @@ function Footer() {
   const [submitting, setSubmitting] = useState(false)
   const [subscribeError, setSubscribeError] = useState('')
   const [subscribeNotice, setSubscribeNotice] = useState('')
-  const inputDirection = language === 'fa' ? 'rtl' : 'ltr'
+  const inputDirection = language === LOCALES.FA ? 'rtl' : 'ltr'
 
   const phone = getSetting('phone', { fallback: t('footer.contact.phone'), localized: false })
   const mobile = getSetting('mobile', { fallback: null, localized: false })
   const contactNumbers = [phone, mobile].filter(Boolean).join(' - ')
-  const supportHref = `tel:${String(phone || mobile || '').replace(/\s+/g, '')}`
+  const supportHref = `tel:${removeWhitespace(String(phone || mobile || ''))}`
 
   const email = getSetting('email', { fallback: t('footer.email.address'), localized: false })
   const address = getSetting('address', { fallback: t('footer.address.location') })
@@ -28,7 +31,7 @@ function Footer() {
   const aparat = getSetting('aparat', { fallback: '#', localized: false })
   const youtube = getSetting('youtube', { fallback: '#', localized: false })
   const copyright = getSetting('copyright', {
-    fallback: `${t('footer.copyright.text')} ${t('footer.copyright.designer')}`
+    fallback: `${t('footer.copyright.text')} ${t('footer.copyright.designer')}`,
   })
 
   const onSubscribe = async (event) => {
@@ -42,7 +45,7 @@ function Footer() {
     try {
       await apiClient.subscribe({
         fullname: fullname.trim(),
-        email: subscriberEmail.trim()
+        email: subscriberEmail.trim(),
       })
 
       setSubscribeNotice(t('footer.subscribe.success'))
@@ -51,7 +54,9 @@ function Footer() {
     } catch (error) {
       const message = error instanceof Error ? error.message : ''
       const isRateLimited = message.includes('Too Many Attempts') || message.includes('429')
-      setSubscribeError(isRateLimited ? t('footer.subscribe.rateLimited') : t('footer.subscribe.error'))
+      setSubscribeError(
+        isRateLimited ? t('footer.subscribe.rateLimited') : t('footer.subscribe.error')
+      )
     } finally {
       setSubmitting(false)
     }
@@ -73,7 +78,9 @@ function Footer() {
                   </div>
                   <div className="footer-contact-link-content">
                     <h6>{t('footer.contact.title')}</h6>
-                    <p><a href={supportHref}>{contactNumbers || t('footer.contact.phone')}</a></p>
+                    <p>
+                      <a href={supportHref}>{contactNumbers || t('footer.contact.phone')}</a>
+                    </p>
                   </div>
                 </div>
                 <div className="footer-contact-links-divider hidden md:block"></div>
@@ -111,24 +118,42 @@ function Footer() {
             <div className="md:col-span-4 widget-area">
               <div className="widget">
                 <div className="footer-logo mb-4">
-                  <img alt="" src="img/logo-light.png" />
+                  <img alt="" src={ASSETS.IMAGES.LOGO_LIGHT} />
                 </div>
                 <div className="widget-text">
                   <p className="mb-4">{aboutUs}</p>
                   <div className="social-icons">
                     <ul className="flex space-x-2">
                       <li>
-                        <a href={aparat} target="_blank" rel="noreferrer" aria-label="Aparat" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                        <a
+                          href={aparat}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Aparat"
+                          className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition"
+                        >
                           <PlayCircle className="w-5 h-5" />
                         </a>
                       </li>
                       <li>
-                        <a href={instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                        <a
+                          href={instagram}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Instagram"
+                          className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition"
+                        >
                           <Instagram className="w-5 h-5" />
                         </a>
                       </li>
                       <li>
-                        <a href={youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition">
+                        <a
+                          href={youtube}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="YouTube"
+                          className="flex items-center justify-center w-12 h-12 border border-yellow-500 rounded-full text-white hover:bg-yellow-500 hover:text-black transition"
+                        >
                           <Youtube className="w-5 h-5" />
                         </a>
                       </li>
@@ -142,11 +167,31 @@ function Footer() {
               <div className="widget usful-links">
                 <h3 className="widget-title mb-4">{t('footer.quickLinks.title')}</h3>
                 <ul className="space-y-2">
-                  <li><a href="about.html" className="text-gray-300 hover:text-yellow-500">{t('footer.quickLinks.about')}</a></li>
-                  <li><a href="cars.html" className="text-gray-300 hover:text-yellow-500">{t('footer.quickLinks.cars')}</a></li>
-                  <li><a href="car-types.html" className="text-gray-300 hover:text-yellow-500">{t('footer.quickLinks.carTypes')}</a></li>
-                  <li><a href="team.html" className="text-gray-300 hover:text-yellow-500">{t('footer.quickLinks.team')}</a></li>
-                  <li><a href="contact.html" className="text-gray-300 hover:text-yellow-500">{t('footer.quickLinks.contact')}</a></li>
+                  <li>
+                    <Link to={ROUTES.HOME} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.about')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={ROUTES.PRODUCTS} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.cars')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={ROUTES.GALLERY} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.carTypes')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={ROUTES.HOME} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.team')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={ROUTES.CONTACT} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.contact')}
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -187,7 +232,9 @@ function Footer() {
                         <ArrowUpRight className="w-4 h-4" />
                       </button>
                     </div>
-                    {subscribeNotice ? <div className="text-sm text-green-400">{subscribeNotice}</div> : null}
+                    {subscribeNotice ? (
+                      <div className="text-sm text-green-400">{subscribeNotice}</div>
+                    ) : null}
                     {subscribeError ? <div className="text-sm text-red-400">{subscribeError}</div> : null}
                   </form>
                 </div>
@@ -198,9 +245,7 @@ function Footer() {
         {/* bottom footer */}
         <div className="bottom-footer-text py-10">
           <div className="copyright text-center">
-            <p className="text-gray-500 text-sm">
-              {copyright}
-            </p>
+            <p className="text-gray-500 text-sm">{copyright}</p>
           </div>
         </div>
       </div>

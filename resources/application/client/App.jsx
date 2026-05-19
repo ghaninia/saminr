@@ -10,6 +10,7 @@ import Events from './pages/Events/Events'
 import RegistrationEvent from './pages/RegistrationEvent/RegistrationEvent'
 import GetTicket from './pages/GetTicket/GetTicket'
 import ProductDetails from './pages/Product/ProductDetails'
+import { ROUTES } from './constants/index'
 import './App.css'
 
 function App() {
@@ -21,13 +22,13 @@ function App() {
             <div className="App">
               <Navigation />
               <Routes>
-                <Route path="/" element={<Main />} />
-                <Route path="/products/:shortLink" element={<ProductDetails />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/registration-event" element={<RegistrationEvent />} />
-                <Route path="/get-ticket" element={<GetTicket />} />
+                <Route path={ROUTES.HOME} element={<Main />} />
+                <Route path={ROUTES.PRODUCT_DETAIL} element={<ProductDetails />} />
+                <Route path={ROUTES.CONTACT} element={<Contact />} />
+                <Route path={ROUTES.GALLERY} element={<Gallery />} />
+                <Route path={ROUTES.EVENTS} element={<Events />} />
+                <Route path={ROUTES.REGISTRATION_EVENT} element={<RegistrationEvent />} />
+                <Route path={ROUTES.GET_TICKET} element={<GetTicket />} />
               </Routes>
             </div>
           </Router>

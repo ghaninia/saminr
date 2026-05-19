@@ -1,12 +1,19 @@
 import { useLanguage } from '../../../../contexts/LanguageContext'
 import { useTheme } from '../../../../contexts/ThemeContext'
+import { useSettings } from '../../../../contexts/SettingsContext'
 import { Play, X } from 'lucide-react'
 import { useState } from 'react'
 
 function VideoSection() {
   const { t } = useLanguage()
   const { theme } = useTheme()
+  const { getSetting } = useSettings()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const videoUrl = getSetting('video_url', { 
+    fallback: 'https://www.aparat.com/video/video/embed/videohash/default',
+    localized: false 
+  })
 
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
@@ -42,8 +49,8 @@ function VideoSection() {
               <X size={20} />
             </button>
             <iframe
-              src="https://www.aparat.com/video/video/embed/videohash/123456"
-              title="Video Promo"
+              src={videoUrl}
+              title={t('video.title')}
               className="modal-iframe"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

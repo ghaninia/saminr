@@ -4,7 +4,8 @@
     "events": "رویدادها",
     "gallery": "گالری",
     "contact": "تماس با ما",
-    "needHelp": "به کمک نیاز دارید؟"
+    "needHelp": "به کمک نیاز دارید؟",
+    "menuToggle": "باز/بستن منوی ناوبری"
   },
   "pages": {
     "main": {
@@ -144,7 +145,8 @@
   },
   "language": {
     "fa": "فارسی",
-    "en": "English"
+    "en": "English",
+    "change": "تغییر زبان"
   },
   "categories": {
     "subtitle": "دسته‌بندی‌های ما",
@@ -153,11 +155,66 @@
   "video": {
     "subtitle": "کاوش کنید",
     "title": "ویدیو",
-    "titleSpan": "شمع‌سازی"
+    "titleSpan": "شمع‌سازی",
+    "modalTitle": "ویدیو شمع‌سازی"
   },
   "testimonials": {
     "subtitle": "توصیفات",
     "title": "نظر کاربران"
+  },
+  "common": {
+    "currencyUnit": "تومان",
+    "loadMore": "بیشتر نشان بده",
+    "close": "بستن",
+    "cancel": "انصراف",
+    "save": "ذخیره",
+    "delete": "حذف",
+    "edit": "ویرایش",
+    "add": "افزودن",
+    "search": "جستجو",
+    "filter": "فیلتر",
+    "sort": "مرتب‌سازی",
+    "noResults": "نتیجه‌ای پیدا نشد",
+    "loading": "در حال بارگذاری...",
+    "error": "خطایی رخ داد",
+    "success": "موفق",
+    "warning": "هشدار",
+    "info": "اطلاعات",
+    "themeToggle": "تغییر تم روشن/تیره"
+  },
+  "products": {
+    "currencyUnit": "تومان",
+    "noVariant": "واریانتی برای این رنگ پیدا نشد",
+    "summaryTitle": "ویژگی‌ها",
+    "defaultValue": "پیش‌فرض",
+    "selectColor": "انتخاب رنگ",
+    "price": "قیمت",
+    "availability": "دسترسی",
+    "inStock": "در انبار",
+    "outOfStock": "ناموجود",
+    "addToCart": "افزودن به سبد",
+    "viewDetails": "مشاهده جزئیات"
+  },
+  "errors": {
+    "rateLimited": "تعداد درخواست‌ها زیاد است. لطفاً کمی بعد دوباره تلاش کنید.",
+    "networkError": "خطای شبکه. لطفاً اتصال خود را بررسی کنید.",
+    "loadError": "بارگذاری ناموفق بود. لطفاً دوباره تلاش کنید.",
+    "notFound": "پیدا نشد",
+    "unauthorized": "شما مجاز نیستید",
+    "forbidden": "این عمل ممنوع است",
+    "serverError": "خطای سرور. لطفاً بعداً دوباره تلاش کنید.",
+    "validationError": "لطفاً ورودی خود را بررسی کنید",
+    "required": "این فیلد ضروری است",
+    "invalidEmail": "لطفاً یک آدرس ایمیل معتبر وارد کنید",
+    "passwordMismatch": "رمزعبور‌ها مطابقت ندارند"
+  },
+  "validation": {
+    "required": "این فیلد ضروری است",
+    "email": "لطفاً یک آدرس ایمیل معتبر وارد کنید",
+    "phone": "لطفاً یک شماره تلفن معتبر وارد کنید",
+    "minLength": "باید حداقل {min} کاراکتر باشد",
+    "maxLength": "نباید بیش از {max} کاراکتر باشد",
+    "url": "لطفاً یک آدرس معتبر وارد کنید"
   },
   "app": {
     "subtitle": "شبکه‌های اجتماعی",

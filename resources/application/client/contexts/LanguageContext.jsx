@@ -1,26 +1,27 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import faTranslations from '../translations/fa.json'
 import enTranslations from '../translations/en.json'
+import { STORAGE_KEYS, DEFAULTS, LOCALES } from '../constants/index'
 
 const LanguageContext = createContext()
 
 const translations = {
-  fa: faTranslations,
-  en: enTranslations
+  [LOCALES.FA]: faTranslations,
+  [LOCALES.EN]: enTranslations,
 }
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
     // Load from localStorage or default to 'fa'
-    return localStorage.getItem('language') || 'fa'
+    return localStorage.getItem(STORAGE_KEYS.LANGUAGE) || DEFAULTS.LANGUAGE
   })
 
   useEffect(() => {
     // Save to localStorage when language changes
-    localStorage.setItem('language', language)
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, language)
 
     // Keep document language and direction in sync with selected language.
-    const dir = language === 'fa' ? 'rtl' : 'ltr'
+    const dir = language === LOCALES.FA ? 'rtl' : 'ltr'
     document.documentElement.setAttribute('lang', language)
     document.documentElement.setAttribute('dir', dir)
   }, [language])

@@ -5,6 +5,8 @@ import { apiClient } from '../../../../apis'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation } from 'swiper/modules'
 import { ArrowUpRight } from 'lucide-react'
+import { LOCALES, ROUTES } from '../../../../constants/index'
+import { resolveLocalizedText } from '../../../../utils/index'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
@@ -20,7 +22,7 @@ function normalizeCategoriesResponse(payload) {
   return Array.isArray(payload?.data) ? payload.data : []
 }
 
-function resolveLocalizedText(value, locale) {
+function resolveLocalizedTextInline(value, locale) {
   if (!value) {
     return ''
   }
@@ -113,7 +115,7 @@ function CategoriesSection({ categories }) {
         </div>
         <Swiper
           key={language}
-          dir={language === 'fa' ? 'rtl' : 'ltr'}
+          dir={language === LOCALES.FA ? 'rtl' : 'ltr'}
           modules={[Pagination, Navigation]}
           spaceBetween={30}
           slidesPerView={1}
@@ -159,7 +161,7 @@ function CategoriesSection({ categories }) {
                   {category.subtitle ? <p className="subtitle">{category.subtitle}</p> : null}
                 </div>
                 <div className="curv-butn">
-                  <a href="#" className="vid">
+                  <a href={ROUTES.PRODUCTS} className="vid">
                     <div className="icon">
                       <ArrowUpRight />
                     </div>
