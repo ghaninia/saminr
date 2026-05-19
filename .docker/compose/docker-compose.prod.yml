@@ -1,0 +1,105 @@
+services:
+  php:
+    build:
+      context: ../..
+      dockerfile: .docker/php/Dockerfile
+      target: prod
+    image: saminr-php:prod
+    env_file:
+      - ../../.env
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: ../..
+      dockerfile: .docker/nginx/Dockerfile
+    image: saminr-nginx:prod
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+    networks:
+      - app-network
+    volumes:
+      - ../..:/var/www/html:ro
+      - app_storage:/var/www/html/storage
+
+  node:
+    build:
+      context: ../..
+      dockerfile: .docker/node/Dockerfile
+    image: saminr-node:prod
+    env_file:
+      - ../../.env
+    working_dir: /var/www/html
+    command: ["sh", "-c", "npm ci --no-audit --silent && npm run build"]
+    volumes:
+      - ../..:/var/www/html:rw
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    env_file:
+      - ../../.env
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - app-network
+    volumes:
+      - redis_data:/data
+      - ../redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: .docker/php/Dockerfile
+      target: prod
+    image: saminr-worker:prod
+    command: ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+    env_file:
+      - ../../.env
+    depends_on:
+      - php
+      - redis
+    networks:
+      - app-network
+    volumes:
+      - app_storage:/var/www/html/storage
+    restart: always
+
+volumes:
+  app_storage:
+  app_cache:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

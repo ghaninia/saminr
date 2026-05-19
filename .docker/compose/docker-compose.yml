@@ -1,0 +1,143 @@
+services:
+  php:
+    build:
+      context: ../..
+      dockerfile: .docker/php/Dockerfile
+      target: dev
+    image: saminr-php:dev
+    env_file:
+      - ../../.env
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+    volumes:
+      - ../..:/var/www/html:delegated
+      - vendor:/var/www/html/vendor
+      - node_modules:/var/www/html/node_modules
+      - storage:/var/www/html/storage
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(file_exists(\"/var/www/html/artisan\") ? 0 : 1);'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  nginx:
+    build:
+      context: ../..
+      dockerfile: .docker/nginx/Dockerfile
+    image: saminr-nginx:dev
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+    networks:
+      - app-network
+    volumes:
+      - ../..:/var/www/html:ro
+      - storage:/var/www/html/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  node:
+    build:
+      context: ../..
+      dockerfile: .docker/node/Dockerfile
+    image: saminr-node:dev
+    env_file:
+      - ../../.env
+    working_dir: /var/www/html
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    volumes:
+      - ../..:/var/www/html:delegated
+      - node_modules:/var/www/html/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - php
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5173 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    env_file:
+      - ../../.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-postgres} -h localhost || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - redis_data:/data
+      - ../redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: .docker/php/Dockerfile
+      target: dev
+    image: saminr-worker:dev
+    command: ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+    env_file:
+      - ../../.env
+    depends_on:
+      - php
+      - redis
+    networks:
+      - app-network
+    volumes:
+      - ../..:/var/www/html:delegated
+      - vendor:/var/www/html/vendor
+      - storage:/var/www/html/storage
+    restart: unless-stopped
+
+volumes:
+  vendor:
+  node_modules:
+  storage:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,59 +1,72 @@
-# syntax=docker/dockerfile:1
-FROM php:8.2-fpm-alpine
+FROM php:8.3-fpm-alpine AS base
 
-# System dependencies
-RUN apk add --no-cache \
-    bash git curl zip unzip \
-    libzip-dev icu-dev oniguruma-dev zlib-dev \
-    libpng-dev libjpeg-turbo-dev freetype-dev \
-    openssl-dev autoconf g++ make shadow sqlite-dev
+RUN apk add --no-cache --virtual .build-deps \
+    $PHPIZE_DEPS \
+    icu-dev \
+    libzip-dev \
+    oniguruma-dev \
+    libpng-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    zlib-dev \
+    postgresql-dev \
+    bash \
+    curl \
+    git \
+    openssh-client \
+    supervisor \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-install -j$(nproc) \
+    bcmath \
+    pcntl \
+    pdo_pgsql \
+    gd \
+    zip \
+    opcache \
+  && pecl install redis \
+  && docker-php-ext-enable redis \
+  && apk del .build-deps \
+  && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-# PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
- && docker-php-ext-install -j"$(nproc)" \
-    pdo pdo_sqlite bcmath gd intl opcache exif
-
-# Redis extension
-RUN pecl install redis \
- && docker-php-ext-enable redis
-
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Create user
-RUN addgroup -S www && adduser -S -G www www
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html
+COPY .docker/php/php.ini /usr/local/etc/php/conf.d/docker-php.ini
 
-# Temp directory fix (important for Windows)
-RUN mkdir -p /tmp \
-    && chmod 1777 /tmp
+FROM base AS vendor-dev
+COPY --from=base /usr/local/bin/composer /usr/local/bin/composer
+WORKDIR /var/www/html
+COPY composer.json composer.lock ./
+RUN composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-# Laravel writable dirs
-RUN mkdir -p \
-    /var/www/html/storage \
-    /var/www/html/bootstrap/cache \
-    /var/www/html/vendor \
-    && chown -R www:www /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+FROM base AS vendor-prod
+COPY --from=base /usr/local/bin/composer /usr/local/bin/composer
+WORKDIR /var/www/html
+COPY composer.json composer.lock ./
+RUN composer install --prefer-dist --no-dev --no-progress --no-interaction --optimize-autoloader --classmap-authoritative
 
-# PHP config
-COPY <<'PHP_INI' /usr/local/etc/php/conf.d/dev.ini
-memory_limit=512M
-post_max_size=64M
-upload_max_filesize=64M
-max_execution_time=120
-sys_temp_dir=/tmp
-upload_tmp_dir=/tmp
-opcache.enable=1
-opcache.validate_timestamps=1
-opcache.revalidate_freq=1
-PHP_INI
+FROM base AS dev
+COPY --from=vendor-dev /var/www/html/vendor /var/www/html/vendor
+COPY . /var/www/html
+COPY .docker/php/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY .docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY .docker/supervisor/*.conf /etc/supervisor/conf.d/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+ && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+EXPOSE 9000
+USER www-data:www-data
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["php-fpm"]
 
-# Entrypoint
-COPY .docker/php/entrypoint.sh /usr/local/bin/app-entrypoint.sh
-RUN chmod +x /usr/local/bin/app-entrypoint.sh
-
-ENTRYPOINT ["/usr/local/bin/app-entrypoint.sh"]
-
-CMD ["php-fpm", "-F"]
+FROM base AS prod
+COPY --from=vendor-prod /var/www/html/vendor /var/www/html/vendor
+COPY . /var/www/html
+COPY .docker/php/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY .docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY .docker/supervisor/*.conf /etc/supervisor/conf.d/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+ && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+EXPOSE 9000
+USER www-data:www-data
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["php-fpm"]
