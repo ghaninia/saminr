@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { useSettings } from '../contexts/SettingsContext'
 import { apiClient } from '../services/apiClient'
 import { removeWhitespace } from '../utils/index'
-import { ASSETS, LOCALES, ERROR_MESSAGES, ROUTES } from '../constants/index'
+import { ASSETS, LOCALES, ROUTES } from '../constants/index'
 import { Phone, Mail, MapPin, Instagram, Youtube, PlayCircle, ArrowUpRight } from 'lucide-react'
 import './Footer.css'
 

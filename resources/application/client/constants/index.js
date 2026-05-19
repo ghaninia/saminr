@@ -75,17 +75,6 @@ export const HTTP_STATUS = {
   INTERNAL_ERROR: 500,
 }
 
-export const ERROR_MESSAGES = {
-  RATE_LIMITED: (lang = 'en') => lang === 'fa' ? 'درخواست های زیادی ارسال شده است' : 'Too many requests. Please try again later.',
-  NETWORK_ERROR: (lang = 'en') => lang === 'fa' ? 'خطای شبکه' : 'Network error',
-  LOAD_ERROR: (lang = 'en') => lang === 'fa' ? 'خطا در بارگذاری' : 'Failed to load',
-  GENERAL_ERROR: (lang = 'en') => lang === 'fa' ? 'خطای داخلی سرور' : 'An error occurred',
-}
-
-export const SUCCESS_MESSAGES = {
-  SUBSCRIBE: (lang = 'en') => lang === 'fa' ? 'با تشکر از اشتراک شما' : 'Thank you for subscribing!',
-}
-
 export const LOCALES = {
   FA: 'fa',
   EN: 'en',
