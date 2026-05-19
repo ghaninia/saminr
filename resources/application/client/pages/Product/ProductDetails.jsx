@@ -136,15 +136,6 @@ export default function ProductDetails() {
     )
   }, [normalizedProduct, visibleVariants])
 
-  if (error || !normalizedProduct) {
-    return (
-      <section className="mx-auto max-w-7xl px-4 py-16">
-        <div className="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-8 text-sm text-rose-700">
-          {error || t('productDetails.notFound')}
-        </div>
-      </section>
-    )
-  }
 
   const labels = {
     overview: t('productDetails.overview'),
