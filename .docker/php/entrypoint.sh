@@ -8,7 +8,8 @@ if [ ! -f .env ] && [ -f .env.example ]; then
 fi
 
 # Make storage and cache writable by the application user.
-mkdir -p storage bootstrap/cache
+# Create Laravel runtime directories required for views, sessions and cache.
+mkdir -p storage/framework/cache/data storage/framework/views storage/framework/sessions storage/logs bootstrap/cache
 # Attempt to change ownership; ignore failures on filesystems that don't support chown
 chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 # Ensure sensible permissions where possible; ignore errors
