@@ -106,7 +106,7 @@ help:
 # ─────────────────────────────────────────────────────────────
 # Docker commands
 up:
-	$(DC) up --build -d
+	$(DC) up -d
 
 down:
 	$(DC) down --volumes --remove-orphans
