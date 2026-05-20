@@ -150,6 +150,10 @@ export default function ProductDetails() {
     noSpecs: t('productDetails.noSpecs'),
   }
 
+  if (!normalizedProduct) {
+    return null
+  }
+
   const summarySpecs = normalizedProduct.summaryAttributes
     .map((attribute, index) => {
       const label = resolveLocalizedValue(

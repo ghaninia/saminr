@@ -163,3 +163,145 @@
     opacity: 0;
   }
 }
+
+.loader {
+	width: 80px;
+	height: 80px;
+}
+
+.loader svg{
+  fill: var( --palette-accent);
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(1.0);
+		
+  }
+  50% {
+    transform: scale(1.2);
+		opacity: .8;
+  }
+	
+	100% {
+    transform: scale(1.0);
+  }
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+	
+	50% {
+		transform: scale(1.1);
+	}
+	
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes dash {
+	0% {
+		stroke-dasharray: 0 300;
+    stroke-dashoffset: -150;
+		opacity: 0.1;
+	}
+	
+  50% {
+    stroke-dasharray: 300 300;
+    stroke-dashoffset: 0;
+		opacity: 0.8;
+  }
+	
+	100% {
+    stroke-dasharray: 0 300;
+    stroke-dashoffset: 0;
+		opacity: 0.1;
+  }
+}
+
+@keyframes dash-fill {
+	0% {
+		stroke-dasharray: 0 300;
+    stroke-dashoffset: -150;
+		opacity: 0.1;
+	}
+	
+	25% {
+		fill: transparent;
+	}
+	
+  50% {
+    stroke-dasharray: 300 300;
+    stroke-dashoffset: 0;
+		fill: #1C252E;
+		opacity: 0.8;
+  }
+	
+	75% {
+		stroke-dasharray: 300 300;
+    stroke-dashoffset: 0;
+		fill: #1C252E;
+		opacity: 0.8;
+	}
+	
+	100% {
+    stroke-dasharray: 0 300;
+    stroke-dashoffset: 0;
+		fill: #1C252E;
+		opacity: 0.1;
+  }
+}
+
+.depthmarket-loader {
+	.depthgraph,
+	.depthgraph-2{
+		transform: scale(1.2);
+		stroke-dasharray: 42 300;
+    stroke-dashoffset: -150;
+		animation: dash 2s linear infinite;
+	}
+	
+	.circle {
+		transform: scale(1.2);
+		animation: dash-fill 2s linear infinite;
+		animation-delay: 0s;
+		fill: transparent;
+	}
+}
+
+.linechart-loader {
+	.linechart {
+		transform: scale(1.2);
+		stroke-dasharray: 42 300;
+    stroke-dashoffset: -150;
+		animation: dash 3s linear infinite reverse;
+		animation-delay: 0.2s;
+		fill: transparent;
+	}
+}
+
+.candlechart-loader {
+	& > * {
+		animation: wave 2s linear infinite;
+		transform-origin: 27px 20px;
+		opacity: 0.1;
+	}
+	
+	& .candle-1 {
+	}
+	
+	& .candle-2 {
+		animation-delay: 0.33s;
+	}
+	
+	& .candle-3 {
+		animation-delay: .66s;
+	}
+	
+	& .candle-4 {
+		animation-delay: 0.99s;
+	}
+}
