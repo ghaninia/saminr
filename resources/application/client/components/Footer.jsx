@@ -118,7 +118,7 @@ function Footer() {
             <div className="md:col-span-4 widget-area">
               <div className="widget">
                 <div className="footer-logo mb-4">
-                  <img alt="" src={ASSETS.IMAGES.LOGO_LIGHT} />
+                  
                 </div>
                 <div className="widget-text">
                   <p className="mb-4">{aboutUs}</p>

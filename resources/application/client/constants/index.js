@@ -27,7 +27,6 @@ export const ROUTES = {
 export const ASSETS = {
   IMAGES: {
     NOT_FOUND: '/images/file-corrupted.svg',
-    LOGO_LIGHT: '/img/logo-light.png',
     CORRUPTED: '/images/file-corrupted.svg',
   },
 }

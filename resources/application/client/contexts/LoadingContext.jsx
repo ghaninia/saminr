@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo } from 'react'
 
 const LoadingContext = createContext()
 
@@ -24,13 +24,16 @@ export function LoadingProvider({ children }) {
     setIsLoading(false)
   }, [])
 
-  const value = {
-    isLoading,
-    progress,
-    startLoading,
-    updateProgress,
-    finishLoading,
-  }
+  const value = useMemo(
+    () => ({
+      isLoading,
+      progress,
+      startLoading,
+      updateProgress,
+      finishLoading,
+    }),
+    [isLoading, progress, startLoading, updateProgress, finishLoading]
+  )
 
   return (
     <LoadingContext.Provider value={value}>

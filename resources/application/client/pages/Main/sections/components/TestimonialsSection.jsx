@@ -44,6 +44,9 @@ function TestimonialsSection() {
     }))
   }, [items, language])
 
+  // Disable loop if not enough slides to prevent Swiper warning
+  const shouldEnableLoop = reviews.length > 3
+
   return (
     <section className="testimonials section-padding mt-15">
       <div className="container">
@@ -57,7 +60,7 @@ function TestimonialsSection() {
               key={language}
               dir={language === LOCALES.FA ? 'rtl' : 'ltr'}
               {...SWIPER_CONFIG.TESTIMONIALS}
-              loop={true}
+              loop={shouldEnableLoop}
               autoplay={{ delay: DEFAULTS.SWIPER.AUTOPLAY_DELAY }}
             >
               {reviews.map((review, index) => (

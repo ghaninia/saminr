@@ -22,7 +22,12 @@ function App() {
       <LanguageProvider>
         <SettingsProvider>
           <LoadingProvider>
-            <Router>
+            <Router
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+              }}
+            >
               <SplashScreen />
               <div className="App">
                 <Navigation />
