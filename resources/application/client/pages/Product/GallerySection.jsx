@@ -1,5 +1,4 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Pagination } from 'swiper/modules'
 import { LOCALES } from '../../constants/index'
 
 export default function GallerySection({
@@ -27,7 +26,6 @@ export default function GallerySection({
           loop={false}
           pagination={{ clickable: false }}
           navigation={false}
-          modules={[Pagination]}
           breakpoints={{
             768: {
               slidesPerView: 2,

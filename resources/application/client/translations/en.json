@@ -56,6 +56,7 @@
     "summary": "Summary",
     "priceSuffix": "/ price",
     "unit": "Unit",
+    "noPrice": "Price not available",
     "mediaImageFallback": "Product image",
     "mediaProductFallback": "Product",
     "mediaVideoSuffix": "video",

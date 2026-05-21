@@ -22,7 +22,7 @@ export default function SplashScreen() {
           <svg className="loader">
               <g id="loader-3">
                 <rect id="bg" fill="none" x="0" y="0" width="80" height="80"></rect>
-                <g className="linechart-loader" transform="translate(13.000000, 25.000000)" stroke="#CBCDD2" stroke-width="2">
+                <g className="linechart-loader" transform="translate(13.000000, 25.000000)" stroke="#CBCDD2">
                   <polyline className="linechart" points="0.747315209 24.6458138 7.44456625 29.6458138 14.1418173 10.6458138 20.8390683 15.6458138 27.5363194 17.6458138 34.2335704 25.6458138 38.9308215 2.6458138 46.6280725 15.6458138 50.8543411 10.4098828 54.3253236 0.645813797"></polyline>
                 </g>
               </g>

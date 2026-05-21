@@ -6,10 +6,8 @@ import { useGlobalLoading } from '../../contexts/LoadingContext'
 import { normalizeObjectResponse } from '../../utils/index'
 import { LOCALES } from '../../constants/index'
 import ImageLightbox from '../../components/ImageLightbox'
-import PriceSection from './PriceSection'
-import ColorSelector from './ColorSelector'
+import PriceSidebar from './PriceSidebar'
 import GallerySection from './GallerySection'
-import SpecsSection from './SpecsSection'
 import {
   normalizeProduct,
   getGalleryImages,
@@ -76,7 +74,7 @@ export default function ProductDetails() {
   const imageItems = getImageMediaItems(galleryImages)
   const visibleVariants = getVisibleVariants(normalized, selectedColor)
   const activeVariant = getActiveVariant(visibleVariants, normalized)
-  const { specs, source } = getRenderedSpecs(activeVariant, normalized, language)
+  const { specs } = getRenderedSpecs(activeVariant, normalized, language)
   const direction = getTextDirection(language)
 
   return (
@@ -123,21 +121,15 @@ export default function ProductDetails() {
 
             {/* Sidebar */}
             <aside className="lg:col-span-4">
-              <div className="sticky top-6 overflow-hidden rounded-3xl border border-white/10 bg-[#1f1f1f]">
-                <PriceSection variant={activeVariant} language={language} t={t} />
-
-                <div className="space-y-6 p-6">
-                  <ColorSelector
-                    colors={normalized.colors}
-                    selectedColor={selectedColor}
-                    onColorChange={setSelectedColor}
-                    language={language}
-                    t={t}
-                  />
-
-                  <SpecsSection specs={specs} source={source} t={t} />
-                </div>
-              </div>
+              <PriceSidebar
+                variant={activeVariant}
+                specs={specs}
+                colors={normalized.colors}
+                selectedColor={selectedColor}
+                onColorChange={setSelectedColor}
+                language={language}
+                t={t}
+              />
             </aside>
           </div>
         </div>

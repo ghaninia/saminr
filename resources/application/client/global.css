@@ -1883,6 +1883,11 @@ section .swiper-button-prev::after {
     position: relative;
 }
 
+.car-details h3 {
+    color: #1b1b1b;
+    font-size: 21px;
+}
+
 .car-details .title {
     font-size: 1.5rem;
     font-family: 'iranbakhblack', sans-serif;
@@ -1899,11 +1904,12 @@ section .swiper-button-prev::after {
     position: relative;
     display: block;
     padding: 0;
-    background: #222;
+    background: #f2f2f2;
     border-radius: 20px;
     margin-top: -225px;
     z-index: 9;
 }
+
 .car-details .sidebar-car .title {
     position: relative;
     background-color: #f5b754;
@@ -1911,44 +1917,75 @@ section .swiper-button-prev::after {
     border-radius: 20px 20px 0 0;
     text-align: center;
 }
+
 .car-details .sidebar-car .title h4 {
-    font-family: 'peyda', sans-serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 32px;
     line-height: 1.2em;
     color: #1b1b1b;
     font-weight: 700;
     margin: 0;
 }
+
 .car-details .sidebar-car .title h4 > span {
-    font-family: 'peyda', sans-serif;
+    font-family: 'Outfit', sans-serif;
     margin-bottom: 0;
     font-size: 14px;
     color: #1b1b1b;
     font-weight: 300;
 }
+
 .car-details .sidebar-car .item {
     padding: 30px;
 }
+
 .car-details .sidebar-car .item .features {
     padding: 15px 0;
     display: grid;
     grid-template-columns: 50% 50%;
 }
+
 .car-details .sidebar-car .item .features span {
-    color: #999;
+    color: #555;
 }
+
 .car-details .sidebar-car .item .features span i {
     color: #f5b754;
-    margin-left: 10px;
+    margin-right: 10px;
     font-size: 14px;
     background: #333;
     padding: 10px;
     border-radius: 100%;
 }
+
+.car-details .sidebar-car .item .features .spec-icon {
+    color: #f5b754;
+    margin-right: 10px;
+    font-size: 14px;
+    background: #333;
+    padding: 10px;
+    border-radius: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.car-details .sidebar-car .item .features .spec-icon-placeholder {
+    color: #f5b754;
+    margin-right: 10px;
+    font-size: 14px;
+    background: #333;
+    padding: 10px;
+    border-radius: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .car-details .sidebar-car .item .features p {
     margin-bottom: 0px;
-    color: #fff;
-    text-align: left;
+    color: #555;
+    text-align: right;
 }
 /* double button */
 .btn-double {
@@ -2010,6 +2047,41 @@ section .swiper-button-prev::after {
     color: #1b1b1b;
 }
 
+/* Features container and spacing */
+.car-details .sidebar-car .item .features-container {
+    margin-bottom: 30px;
+}
+
+.car-details .sidebar-car .item .features:last-of-type {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.car-details .sidebar-car .item .features .spec-icon,
+.car-details .sidebar-car .item .features .spec-icon-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    background: #333;
+    color: #f5b754;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.car-details .sidebar-car .item .features .spec-icon svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
 
 /* =======  Gallery Image style  ======= */
 .gallery-filter {
