@@ -35,9 +35,7 @@ export function normalizeProduct(product, language, translate) {
 
   const variants = Array.isArray(product.variants) ? product.variants : []
   const colors = Array.isArray(product.colors) ? product.colors : []
-  const summaryAttributes = Array.isArray(product.summary_attributes)
-    ? product.summary_attributes
-    : []
+  const attributes = getAvailableAttributesFromVariants(variants)
 
   const defaultVariant =
     product.default_variant ??
@@ -55,9 +53,48 @@ export function normalizeProduct(product, language, translate) {
     introVideo,
     variants,
     colors,
-    summaryAttributes,
+    attributes,
     defaultVariant,
   }
+}
+
+/**
+ * Dynamically extracts unique attributes (excluding color) from variants
+ * @param {Array} variants 
+ * @returns {Array} List of formatted attributes
+ */
+export function getAvailableAttributesFromVariants(variants) {
+  if (!Array.isArray(variants)) return []
+
+  const attributesMap = {}
+
+  variants.forEach((variant) => {
+    if (!Array.isArray(variant.attributes)) return
+
+    variant.attributes.forEach((attr) => {
+      // Check both is_color and isColor (camelCase/snake_case check for safety)
+      const isColor = attr.is_color || attr.isColor
+      if (isColor) return
+
+      if (!attributesMap[attr.key]) {
+        attributesMap[attr.key] = {
+          key: attr.key,
+          label: attr.label,
+          icon_svg: attr.icon_svg || attr.iconSvg,
+          values: [],
+          values_i18n: [],
+        }
+      }
+
+      const attrGroup = attributesMap[attr.key]
+      if (!attrGroup.values.includes(attr.value)) {
+        attrGroup.values.push(attr.value)
+        attrGroup.values_i18n.push(attr.value_i18n || attr.valueI18n || attr.value)
+      }
+    })
+  })
+
+  return Object.values(attributesMap)
 }
 
 /**

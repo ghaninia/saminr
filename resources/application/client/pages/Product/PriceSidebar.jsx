@@ -1,4 +1,5 @@
 import { formatPrice, resolveLocalizedValue } from '../../utils/index'
+import AttributeSelector from './AttributeSelector'
 
 export default function PriceSidebar({
   variant,
@@ -6,6 +7,9 @@ export default function PriceSidebar({
   colors,
   selectedColor,
   onColorChange,
+  attributes,
+  selectedAttributes,
+  onAttributeChange,
   language,
   t,
 }) {
@@ -68,6 +72,17 @@ export default function PriceSidebar({
               </ul>
             </div>
           )}
+
+          {/* Dynamic Attributes Selector */}
+          {attributes && attributes.map((attr) => (
+            <AttributeSelector
+              key={attr.key}
+              attribute={attr}
+              selectedValue={selectedAttributes[attr.key]}
+              onChange={(value) => onAttributeChange(attr.key, value)}
+              language={language}
+            />
+          ))}
         </div>
       </div>
     </div>

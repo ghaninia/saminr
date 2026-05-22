@@ -25,6 +25,7 @@ export default function ProductDetails() {
   const { startLoading, finishLoading } = useGlobalLoading()
   const [product, setProduct] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedAttributes, setSelectedAttributes] = useState({})
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
@@ -57,11 +58,25 @@ export default function ProductDetails() {
     }
   }, [shortLink, startLoading, finishLoading])
 
-  // Initialize color selection on product change
+  // Initialize selection on product change
   useEffect(() => {
     if (product) {
       const normalized = normalizeProduct(product, language, t)
-      setSelectedColor(getInitialColor(normalized))
+      const initialColor = getInitialColor(normalized)
+      setSelectedColor(initialColor)
+
+      // Initialize other attributes with default/first values of the default variant
+      const defaultVariant = normalized.defaultVariant
+      const initialAttrs = {}
+      if (defaultVariant && defaultVariant.attributes) {
+        defaultVariant.attributes.forEach((attr) => {
+          const isColor = attr.isColor || attr.is_color
+          if (!isColor) {
+            initialAttrs[attr.key] = attr.value
+          }
+        })
+      }
+      setSelectedAttributes(initialAttrs)
     }
   }, [product, language, t])
 
@@ -72,8 +87,33 @@ export default function ProductDetails() {
   const normalized = normalizeProduct(product, language, t)
   const galleryImages = getGalleryImages(normalized, t)
   const imageItems = getImageMediaItems(galleryImages)
-  const visibleVariants = getVisibleVariants(normalized, selectedColor)
-  const activeVariant = getActiveVariant(visibleVariants, normalized)
+
+  // Filter variants first by selected color
+  let visibleVariants = getVisibleVariants(normalized, selectedColor)
+
+  const handleAttributeChange = (key, value) => {
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [key]: value,
+    }))
+  }
+
+  // Find active variant matching both selected color AND selected attributes
+  let activeVariant = visibleVariants.find((variant) => {
+    if (selectedColor && variant.color !== selectedColor) return false
+    
+    // Check if variant has all of the selected attributes
+    return Object.entries(selectedAttributes).every(([key, value]) => {
+      const attr = variant.attributes?.find((a) => a.key === key)
+      return attr && attr.value === value
+    })
+  })
+
+  // Fallback: If no exact variant matches the combined options, select the first match in the color group
+  if (!activeVariant && visibleVariants.length > 0) {
+    activeVariant = visibleVariants[0]
+  }
+
   const { specs } = getRenderedSpecs(activeVariant, normalized, language)
   const direction = getTextDirection(language)
 
@@ -127,6 +167,9 @@ export default function ProductDetails() {
                 colors={normalized.colors}
                 selectedColor={selectedColor}
                 onColorChange={setSelectedColor}
+                attributes={normalized.attributes}
+                selectedAttributes={selectedAttributes}
+                onAttributeChange={handleAttributeChange}
                 language={language}
                 t={t}
               />

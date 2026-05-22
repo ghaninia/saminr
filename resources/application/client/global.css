@@ -2215,13 +2215,15 @@ section .swiper-button-prev::after {
     height: 100%;
 }
 
-.colors .color__title {
+.colors .color__title, 
+.attributes .attribute__title {
     display: block;
     padding: 10px 0;
     font-size: 1.1rem;
 }
 
-.colors ul.color__items {
+.colors ul.color__items , 
+.attributes ul.attribute__items{
     display: block;
     margin: 20px 0;
     list-style: none;
@@ -2260,4 +2262,26 @@ section .swiper-button-prev::after {
     border: 1px solid var(--palette-accent);
     box-shadow: 0 0 5px var(--palette-accent);
     background: transparent;
+}
+
+.attributes ul.attribute__items li {
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: 1px var(--sidebar-border) solid;
+    margin: 0 5px;
+    padding: 5px 15px;
+    overflow: hidden;
+}
+
+.attributes ul.attribute__items li.selected {
+    border: 1px solid var(--palette-accent);
+    box-shadow: 0 0 5px var(--palette-accent);
+    background: transparent;
+}
+
+.attributes ul.attribute__items li span {
+    font-size: 12px;
+    transition: all 0.3s ease;
 }
