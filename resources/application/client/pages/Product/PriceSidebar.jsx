@@ -12,6 +12,7 @@ export default function PriceSidebar({
   onAttributeChange,
   language,
   t,
+  priceUnit,
 }) {
   if (!variant) {
     return (
@@ -35,6 +36,9 @@ export default function PriceSidebar({
         <div className="title">
           <h4>
             {formatPrice(variant.price, language)}
+            <span className="product-price-unit">
+              {priceUnit}
+            </span>
             {variant.unit && (
               <span> / {variant.unit}</span>
             )}

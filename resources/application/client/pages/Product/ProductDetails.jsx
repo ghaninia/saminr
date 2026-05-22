@@ -28,6 +28,8 @@ export default function ProductDetails() {
   const [selectedAttributes, setSelectedAttributes] = useState({})
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+  
+  const priceUnit = t('products.currencyUnit')
 
   // Load product data
   useEffect(() => {
@@ -172,6 +174,7 @@ export default function ProductDetails() {
                 onAttributeChange={handleAttributeChange}
                 language={language}
                 t={t}
+                priceUnit={priceUnit}
               />
             </aside>
           </div>
