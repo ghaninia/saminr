@@ -39,6 +39,36 @@ export default function PriceSidebar({
 
         {/* Features Section */}
         <div className="item">
+          {/* Color Selector Section */}
+          {colors && colors.length > 0 && (
+            <div className="colors">
+              <div className="color__title">
+                {t('productDetails.colors')}
+              </div>
+              <ul className="color__items">
+                {colors.map((colorItem) => {
+                  const isSelected = selectedColor === colorItem.name
+                  const label = resolveLocalizedValue(
+                    colorItem.name,
+                    colorItem.name_i18n,
+                    language
+                  )
+                  return (
+                    <li
+                      key={`color-${colorItem.name}`}
+                      onClick={() => onColorChange(colorItem.name)}
+                      data-color={colorItem.swatch}
+                      className={isSelected ? 'selected' : ''}
+                    >
+                      <span className="color__swatch" style={{ backgroundColor: colorItem.swatch }}></span>
+                      <span>{label}</span>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )}
+
           {specs && specs.length > 0 ? (
             <div className="features-container">
               {specs.map((spec) => (
@@ -63,42 +93,6 @@ export default function PriceSidebar({
             </p>
           )}
 
-          {/* Color Selector Section */}
-          {colors && colors.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-white/20">
-              <p className="mb-3 text-sm font-semibold text-gray-700">
-                {t('productDetails.colors')}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {colors.map((colorItem) => {
-                  const isSelected = selectedColor === colorItem.name
-                  const label = resolveLocalizedValue(
-                    colorItem.name,
-                    colorItem.name_i18n,
-                    language
-                  )
-
-                  return (
-                    <button
-                      key={`color-${colorItem.name}`}
-                      type="button"
-                      onClick={() => onColorChange(colorItem.name)}
-                      className={`h-8 w-8 rounded-full border-2 transition ${
-                        isSelected
-                          ? 'border-[#f5b754] ring-2 ring-[#f5b754]/30'
-                          : 'border-gray-400'
-                      }`}
-                      title={label}
-                      aria-label={label}
-                      style={{ backgroundColor: colorItem.swatch || '#E5E7EB' }}
-                    >
-                      <span className="sr-only">{label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

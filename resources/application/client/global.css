@@ -1866,7 +1866,6 @@ section .swiper-button-prev::after {
     z-index: 1;
 }
 
-
 .v-middle {
     position: absolute;
     width: 100%;
@@ -1904,10 +1903,11 @@ section .swiper-button-prev::after {
     position: relative;
     display: block;
     padding: 0;
-    background: #f2f2f2;
+    background: var(--background);
     border-radius: 20px;
     margin-top: -225px;
     z-index: 9;
+    border : 1px var(--sidebar-border) solid;
 }
 
 .car-details .sidebar-car .title {
@@ -1919,7 +1919,6 @@ section .swiper-button-prev::after {
 }
 
 .car-details .sidebar-car .title h4 {
-    font-family: 'Outfit', sans-serif;
     font-size: 32px;
     line-height: 1.2em;
     color: #1b1b1b;
@@ -1928,7 +1927,6 @@ section .swiper-button-prev::after {
 }
 
 .car-details .sidebar-car .title h4 > span {
-    font-family: 'Outfit', sans-serif;
     margin-bottom: 0;
     font-size: 14px;
     color: #1b1b1b;
@@ -1992,7 +1990,6 @@ section .swiper-button-prev::after {
     position: relative;
     text-align: center;
     margin: 10px 0;
-    font-family: 'peyda', sans-serif;
     font-size: 14px;
     font-weight: 300;
 }
@@ -2091,7 +2088,6 @@ section .swiper-button-prev::after {
     position: relative;
 }
 .gallery-filter li {
-    font-family: 'peyda', sans-serif;
     font-size: 17px;
     font-weight: 700;
     margin-left: 15px;
@@ -2134,10 +2130,7 @@ section .swiper-button-prev::after {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    /* align-items: center; */
     cursor: pointer;
-    /* text-align: center; */
     border-radius: 20px;
     isolation: isolate;
     width: 100%;
@@ -2220,4 +2213,51 @@ section .swiper-button-prev::after {
 
 .product-gallery-swiper .swiper-slide .gallery-box {
     height: 100%;
+}
+
+.colors .color__title {
+    display: block;
+    padding: 10px 0;
+    font-size: 1.1rem;
+}
+
+.colors ul.color__items {
+    display: block;
+    margin: 20px 0;
+    list-style: none;
+    padding: 0;
+}
+
+.colors ul.color__items li {
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: 1px var(--sidebar-border) solid;
+    margin: 0 5px;
+    padding: 5px 5px 5px 15px;
+    overflow: hidden;
+}
+
+.colors ul.color__items li span.color__swatch{
+    display: block;
+    float: right;
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    border: 1px solid var(--sidebar-border);
+    transition: all 0.3s ease;
+    margin: 6px;
+}
+
+.colors ul.color__items li span {
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.colors ul.color__items li.selected {
+    border: 1px solid var(--palette-accent);
+    box-shadow: 0 0 5px var(--palette-accent);
+    background: transparent;
 }
