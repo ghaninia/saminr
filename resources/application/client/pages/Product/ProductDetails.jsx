@@ -148,7 +148,7 @@ export default function ProductDetails() {
                 {normalized.description || t('productDetails.noDescription')}
               </div>
 
-              {imageItems.length > 0 && (
+              {normalized.gallery && normalized.gallery.length > 0 && imageItems.length > 0 && (
                 <GallerySection
                   imageItems={imageItems}
                   language={language}
