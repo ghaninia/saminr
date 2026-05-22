@@ -1,4 +1,7 @@
 import { resolveLocalizedValue } from '../../utils/index'
+import {
+  sanitizeSvg,
+} from '../../utils/index'
 
 export default function AttributeSelector({ attribute, selectedValue, onChange, language }) {
   if (!attribute || !attribute.values || attribute.values.length === 0) {
@@ -14,6 +17,13 @@ export default function AttributeSelector({ attribute, selectedValue, onChange, 
   return (
     <div className="attributes">
       <div className="attribute__title">
+        {sanitizeSvg(attribute?.icon_svg) ? (
+            <i
+                className="attribute__icon"
+                aria-hidden="true"
+                dangerouslySetInnerHTML={{ __html: sanitizeSvg(attribute.icon_svg) }}
+                />
+            ) : null}
         {label}
       </div>
       <ul className="attribute__items">
