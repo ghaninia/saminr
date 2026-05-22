@@ -68,31 +68,6 @@ export default function PriceSidebar({
               </ul>
             </div>
           )}
-
-          {specs && specs.length > 0 ? (
-            <div className="features-container">
-              {specs.map((spec) => (
-                <div key={spec.key} className="features">
-                  <span>
-                    {spec.iconSvg && (
-                      <i
-                        className="spec-icon"
-                        dangerouslySetInnerHTML={{ __html: spec.iconSvg }}
-                      />
-                    )}
-                    {!spec.iconSvg && <i className="spec-icon-placeholder">•</i>}
-                    {spec.label}
-                  </span>
-                  <p>{spec.value}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-slate-400 text-sm mb-30">
-              {t('productDetails.noSpecs')}
-            </p>
-          )}
-
         </div>
       </div>
     </div>
