@@ -39,9 +39,6 @@ export default function PriceSidebar({
             <span className="product-price-unit">
               {priceUnit}
             </span>
-            {variant.unit && (
-              <span> / {variant.unit}</span>
-            )}
           </h4>
         </div>
 
