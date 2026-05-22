@@ -2268,10 +2268,10 @@ section .swiper-button-prev::after {
     display: inline-block;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 20px;
+    border-radius: 10px;
     border: 1px var(--sidebar-border) solid;
     margin: 0 5px;
-    padding: 5px 15px;
+    padding:5px 15px;
     overflow: hidden;
 }
 
