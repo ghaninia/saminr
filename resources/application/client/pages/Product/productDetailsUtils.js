@@ -106,27 +106,12 @@ export function getAvailableAttributesFromVariants(variants) {
 export function getGalleryImages(normalized, translate) {
   if (!normalized) return []
 
-  const items = [
-    {
-      type: 'image',
-      url: normalized.image,
-      label: normalized.title || translate('productDetails.mediaImageFallback'),
-    },
-    ...normalized.gallery.map((url, index) => ({
-      type: 'image',
-      url,
-      label: `${normalized.title || translate('productDetails.mediaProductFallback')} ${index + 1}`,
-    })),
-  ]
-
-  if (normalized.introVideo) {
-    items.push({
-      type: 'video',
-      url: normalized.introVideo,
-      label: `${normalized.title || translate('productDetails.mediaProductFallback')} ${translate('productDetails.mediaVideoSuffix')}`,
-    })
-  }
-
+  const items = normalized.gallery.map((url, index) => ({
+    type: 'image',
+    url,
+    label: `${normalized.title || translate('productDetails.mediaProductFallback')} ${index + 1}`,
+  }))
+  
   return items
 }
 
