@@ -1,0 +1,74 @@
+.variant-unit-container {
+    border-top: 1px rgba(255, 255, 255, 0.1) solid;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.variant-unit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.8;
+  border: none;
+  outline: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(128, 128, 128, 0.15);
+  border: none;
+  border-radius: 10px;
+  color: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background-color: #b1955c;
+  color: #fff;
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.qty-value {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.variant-unit-help {
+  font-size: 12px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.pre-order-text {
+  color: #d97706; /* Orange warning color */
+}
+
+.stock-text {
+  color: #059669; /* Green success color */
+}

@@ -62,7 +62,10 @@
     "mediaVideoSuffix": "video",
     "noDescription": "No description provided for this product.",
     "noMedia": "No media available for this product.",
-    "noSpecs": "No specifications provided for this product."
+    "noSpecs": "No specifications provided for this product.",
+    "preOrderNote": "⚠️ This product is available for pre-order.",
+    "inStockLabel": "In Stock: {count} items",
+    "outOfStockLabel": "❌ Out of Stock"
   },
   "hero": {
     "slider": {
