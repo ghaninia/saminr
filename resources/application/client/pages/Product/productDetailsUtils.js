@@ -24,6 +24,8 @@ export function normalizeProduct(product, language, translate) {
       ? product.image
       : ASSETS.IMAGES.NOT_FOUND
 
+  const isFallbackImage = image === ASSETS.IMAGES.NOT_FOUND
+    
   const gallery = Array.isArray(product.gallery)
     ? product.gallery.filter((item) => typeof item === 'string' && item.trim())
     : []
@@ -55,6 +57,7 @@ export function normalizeProduct(product, language, translate) {
     colors,
     attributes,
     defaultVariant,
+    isFallbackImage,
   }
 }
 

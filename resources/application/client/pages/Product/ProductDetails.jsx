@@ -4,7 +4,7 @@ import { apiClient } from '../../services/apiClient'
 import { useLanguage } from '../../contexts/LanguageContext'
 import { useGlobalLoading } from '../../contexts/LoadingContext'
 import { normalizeObjectResponse } from '../../utils/index'
-import { LOCALES } from '../../constants/index'
+import { LOCALES, ASSETS } from '../../constants/index'
 import ImageLightbox from '../../components/ImageLightbox'
 import PriceSidebar from './PriceSidebar'
 import GallerySection from './GallerySection'
@@ -124,9 +124,20 @@ export default function ProductDetails() {
       <section
         className="banner-header section-padding bg-img"
         data-overlay-dark="5"
-        data-background={normalized.image}
-        style={{ backgroundImage: `url('${normalized.image}')` }}
+        style={normalized.isFallbackImage ? {} : { backgroundImage: `url('${normalized.image}')` }}
       >
+        {
+          normalized.isFallbackImage && (
+            <div className="fallback-image-placeholder">
+              <img
+                src={ASSETS.IMAGES.NOT_FOUND}
+                alt={normalized.title}
+                loading="lazy"
+              />
+            </div>
+          )
+        }
+
         <div className="v-middle">
           <div className="container">
             <div className="col-md-12">
