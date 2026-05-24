@@ -6,6 +6,7 @@ import { useGlobalLoading } from '../../contexts/LoadingContext'
 import { normalizeObjectResponse } from '../../utils/index'
 import { LOCALES, ASSETS } from '../../constants/index'
 import ImageLightbox from '../../components/ImageLightbox'
+import Footer from '../../components/Footer'
 import PriceSidebar from './PriceSidebar'
 import GallerySection from './GallerySection'
 import {
@@ -199,6 +200,8 @@ export default function ProductDetails() {
         dir={direction}
         onClose={() => setIsLightboxOpen(false)}
       />
+
+      <Footer />
     </>
   )
 }
