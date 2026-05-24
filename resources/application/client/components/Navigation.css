@@ -130,20 +130,23 @@
 
 /* Premium Navigation Cart styling */
 .nav-cart-btn {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
-  opacity: 0.82;
-  transition: all 0.3s ease;
-  padding: 8px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s;
+  color: var(--foreground);
+  position: relative;
 }
 
 .nav-cart-btn:hover {
-  opacity: 1;
-  color: var(--palette-accent);
-  transform: scale(1.05);
+    background-color: var(--cover);
+    transform: scale(1.1);
 }
 
 .nav-cart-badge {
