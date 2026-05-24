@@ -128,8 +128,41 @@
   border-radius: 0.5rem;
 }
 
+/* Premium Navigation Cart styling */
+.nav-cart-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  opacity: 0.82;
+  transition: all 0.3s ease;
+  padding: 8px;
+}
+
+.nav-cart-btn:hover {
+  opacity: 1;
+  color: var(--palette-accent);
+  transform: scale(1.05);
+}
+
+.nav-cart-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: var(--palette-accent);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: bold;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .nav-hamburger:focus {
-  outline: 2px solid var(--secondary);
   outline-offset: 2px;
 }
 

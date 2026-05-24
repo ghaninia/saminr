@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
 import { formatPrice, resolveLocalizedValue } from '../../utils/index'
+import { useCart } from '../../contexts/CartContext'
 import AttributeSelector from './AttributeSelector'
 import './PriceSidebar.css'
 
 export default function PriceSidebar({
+  productId,
+  productTitle,
+  slug,
+  image,
   variant,
   specs,
   colors,
@@ -12,10 +16,15 @@ export default function PriceSidebar({
   attributes,
   selectedAttributes,
   onAttributeChange,
+  quantity,
+  onQuantityChange,
   language,
   t,
   priceUnit,
+  productRaw, // Full raw normalized product
 }) {
+  const { addToCart } = useCart()
+
   if (!variant) {
     return (
       <div className="car-details">
@@ -29,6 +38,42 @@ export default function PriceSidebar({
         </div>
       </div>
     )
+  }
+
+  const isNumeric = variant?.unit_type === 'numeric';
+  const isContact = variant?.unit_type === 'contact';
+  const isInfinite = variant?.unit_type === 'infinite';
+  
+  // For numeric, max allowed is current unit count, for infinite/contact it's unlimited (e.g. 99)
+  const maxQuantity = isNumeric ? (variant?.unit || 0) : 99;
+
+  const handleIncrement = () => {
+    if (quantity < maxQuantity) {
+      onQuantityChange(quantity + 1);
+    }
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      onQuantityChange(quantity - 1);
+    }
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      productId,
+      productTitle,
+      slug,
+      image,
+      selectedVariant: variant,
+      variantAttributes: selectedAttributes,
+      quantity,
+      price: variant.price,
+      product: productRaw, // store full nested product detail with its initial properties
+      rawAttributes: attributes // original translated dynamic structures
+    })
+    // Reset quantity back to 1
+    onQuantityChange(1)
   }
 
   return (
@@ -88,79 +133,66 @@ export default function PriceSidebar({
           ))}
 
           {/* Unit Type & Quantity Controls */}
-          {(() => {
-            const isNumeric = variant?.unit_type === 'numeric';
-            const isContact = variant?.unit_type === 'contact';
-            const isInfinite = variant?.unit_type === 'infinite';
-            
-            // For numeric, max allowed is current unit count, for infinite/contact it's unlimited (e.g. 99)
-            const maxQuantity = isNumeric ? (variant?.unit || 0) : 99;
-            const [quantity, setQuantity] = useState(1);
-
-            // Automatically reset or limit quantity if variant changes and current state exceeds max
-            useEffect(() => {
-              if (quantity > maxQuantity) {
-                setQuantity(maxQuantity > 0 ? 1 : 0);
-              } else if (quantity === 0 && maxQuantity > 0) {
-                setQuantity(1);
-              }
-            }, [variant, maxQuantity]);
-
-            const handleIncrement = () => {
-              if (quantity < maxQuantity) {
-                setQuantity(prev => prev + 1);
-              }
-            };
-
-            const handleDecrement = () => {
-              if (quantity > 1) {
-                setQuantity(prev => prev - 1);
-              }
-            };
-
-            return (
-              <div className="variant-unit-container">
-                <div
-                  onClick={() => alert(`Variant ID: ${variant?.id}`)}
-                  className="variant-unit-btn"
+          <div className="variant-unit-container">
+            {/* Click container alerts active Variant ID */}
+            <div
+              onClick={() => alert(`Variant ID: ${variant?.id}`)}
+              className="variant-unit-btn"
+              style={{ cursor: 'pointer', opacity: 1 }}
+            >
+              <div className="quantity-controls" onClick={(e) => e.stopPropagation()}>
+                <button 
+                  type="button"
+                  className="qty-btn" 
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1 || (isNumeric && variant?.unit === 0)}
                 >
-                  <div className="quantity-controls" onClick={(e) => e.stopPropagation()}>
-                    <button 
-                      type="button"
-                      className="qty-btn" 
-                      onClick={handleDecrement}
-                      disabled={quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span className="qty-value">{quantity}</span>
-                    <button 
-                      type="button"
-                      className="qty-btn" 
-                      onClick={handleIncrement}
-                      disabled={quantity >= maxQuantity}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {isContact && (
-                  <p className="variant-unit-help">
-                    {t('productDetails.preOrderNote')}
-                  </p>
-                )}
-
-                {isNumeric && (
-                  <p className="variant-unit-help">
-                    {variant?.unit > 0 
-                      ? t('productDetails.inStockLabel').replace('{count}', variant?.unit)
-                      : t('productDetails.outOfStockLabel')}
-                  </p>
-                )}
+                  -
+                </button>
+                <span className="qty-value">{(isNumeric && variant?.unit === 0) ? 0 : quantity}</span>
+                <button 
+                  type="button"
+                  className="qty-btn" 
+                  onClick={handleIncrement}
+                  disabled={quantity >= maxQuantity || (isNumeric && variant?.unit === 0)}
+                >
+                  +
+                </button>
               </div>
-            );
-          })()}
+            </div>
+
+            {/* Add to Cart Premium CTA Button */}
+            <button
+              onClick={handleAddToCart}
+              className="btn-primary"
+              style={{
+                width: '100%',
+                marginTop: '15px',
+                padding: '12px',
+                fontSize: '15px',
+                fontWeight: '600',
+                borderRadius: '8px',
+                textAlign: 'center'
+              }}
+              disabled={isNumeric && variant?.unit === 0}
+            >
+              {t('productDetails.addToCart')}
+            </button>
+
+            {isContact && (
+              <p className="variant-unit-help pre-order-text">
+                {t('productDetails.preOrderNote')}
+              </p>
+            )}
+
+            {isNumeric && (
+              <p className="variant-unit-help stock-text">
+                {variant?.unit > 0 
+                  ? t('productDetails.inStockLabel').replace('{count}', variant?.unit)
+                  : t('productDetails.outOfStockLabel')}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

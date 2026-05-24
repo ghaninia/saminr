@@ -48,8 +48,11 @@ export function normalizeProduct(product, language, translate) {
   return {
     ...product,
     title,
+    title_i18n: product.title,
     subtitle,
+    subtitle_i18n: product.subtitle,
     description,
+    description_i18n: product.description,
     image,
     gallery,
     introVideo,
@@ -83,6 +86,7 @@ export function getAvailableAttributesFromVariants(variants) {
         attributesMap[attr.key] = {
           key: attr.key,
           label: attr.label,
+          label_i18n: attr.label_i18n || attr.labelI18n,
           icon_svg: attr.icon_svg || attr.iconSvg,
           values: [],
           values_i18n: [],

@@ -65,7 +65,24 @@
     "noSpecs": "No specifications provided for this product.",
     "preOrderNote": "⚠️ This product is available for pre-order.",
     "inStockLabel": "In Stock: {count} items",
-    "outOfStockLabel": "❌ Out of Stock"
+    "outOfStockLabel": "❌ Out of Stock",
+    "addToCart": "Add to Cart",
+    "qtyIndicator": "Quantity",
+    "addToCartConfirm": "Would you like to add this variant with selected quantity to the cart before changing?"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "item": "Product Item",
+    "price": "Price",
+    "quantity": "Quantity",
+    "subtotal": "Subtotal",
+    "summary": "Cart Summary",
+    "totalItems": "Total Items",
+    "totalPrice": "Total Price",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "backToStore": "Back to Home"
   },
   "hero": {
     "slider": {
