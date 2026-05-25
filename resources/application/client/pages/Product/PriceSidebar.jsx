@@ -61,16 +61,12 @@ export default function PriceSidebar({
 
   const handleAddToCart = () => {
     addToCart({
+      product: productRaw,
       productId,
-      productTitle,
       slug,
-      image,
       selectedVariant: variant,
-      variantAttributes: selectedAttributes,
       quantity,
       price: variant.price,
-      product: productRaw, // store full nested product detail with its initial properties
-      rawAttributes: attributes // original translated dynamic structures
     })
     // Reset quantity back to 1
     onQuantityChange(1)

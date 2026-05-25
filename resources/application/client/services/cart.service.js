@@ -21,9 +21,9 @@ export const CartService = {
    * @returns {Array} Updated cart items
    */
   addToCart: (itemParams) => {
-    const { productId, productTitle, slug, image, selectedVariant, variantAttributes, quantity, price } = itemParams
+    const { product, productId, slug, selectedVariant, quantity, price } = itemParams
 
-    if (!productId || !productTitle || !selectedVariant || !selectedVariant.id) {
+    if (!productId || !product || !selectedVariant || !selectedVariant.id) {
       console.warn('Invalid item params details for cart submission')
       return CartService.getCart()
     }
@@ -40,11 +40,9 @@ export const CartService = {
     } else {
       currentCart.push({
         productId,
-        productTitle,
+        product,
         slug,
-        image,
         selectedVariant,
-        variantAttributes,
         quantity,
         price,
         addedAt: new Date().toISOString()
