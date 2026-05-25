@@ -7,30 +7,28 @@ import './Cart.css'
 
 export default function Cart() {
   const { t, language } = useLanguage()
-  const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
 
+  const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
   const priceUnit = t('products.currencyUnit')
+
 
   if (cartItems.length === 0) {
     return (
-      <div className="cart-page-wrapper">
-        <div className="container mx-auto px-4">
-          <div className="cart-empty-state">
-            <h2 className="cart-title">{t('cart.title')}</h2>
-
-            <p className="cart-empty-text">
-              {t('cart.empty')}
-            </p>
-
-            <Link to={ROUTES.HOME} className="btn-primary">
-              {t('cart.backToStore')}
-            </Link>
+      <section className="cart-header section-padding">
+        <div className="v-middle">
+          <div className="container">
+            <div className="col-md-12">
+              <h1>{t('cart.title')}</h1>
+              <h6>{t('cart.empty')}</h6>
+              <Link to={ROUTES.HOME} className="back">
+                {t('cart.backToStore')}
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     )
   }
-
   return (
     <div className="cart-page-wrapper">
       <div className="container mx-auto px-4">

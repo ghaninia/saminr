@@ -8,9 +8,9 @@
         <meta name="keywords" content="{{ $meta['keywords'] ?? '' }}">
         <meta name="robots" content="{{ $meta['robots'] ?? 'index,follow' }}">
         <link rel="canonical" href="{{ $meta['canonical'] ?? url()->current() }}">
-        <link rel="icon" type="image/x-icon" href="{{ $meta['favicon'] ?? '/favicon.ico' }}">
-        <link rel="shortcut icon" href="{{ $meta['favicon'] ?? '/favicon.ico' }}">
-        <link rel="apple-touch-icon" href="{{ $meta['apple_touch_icon'] ?? ($meta['favicon'] ?? '/favicon.ico') }}">
+        <!-- <link rel="icon" type="image/x-icon" href="{{ $meta['favicon'] ?? '/favicon.ico' }}"> -->
+        <!-- <link rel="shortcut icon" href="{{ $meta['favicon'] ?? '/favicon.ico' }}"> -->
+        <!-- <link rel="apple-touch-icon" href="{{ $meta['apple_touch_icon'] ?? ($meta['favicon'] ?? '/favicon.ico') }}"> -->
         <meta name="theme-color" content="{{ $meta['default_theme'] ?? 'dark' }}">
 
         <meta property="og:type" content="{{ $meta['type'] ?? 'website' }}">
@@ -18,13 +18,13 @@
         <meta property="og:description" content="{{ $meta['description'] ?? '' }}">
         <meta property="og:url" content="{{ $meta['canonical'] ?? url()->current() }}">
         <meta property="og:site_name" content="{{ $meta['site_name'] ?? ($site['title'] ?? __('meta.site_title')) }}">
-        <meta property="og:image" content="{{ $meta['image'] ?? '' }}">
+        <!-- <meta property="og:image" content="{{ $meta['image'] ?? '' }}"> -->
         <meta property="og:locale" content="{{ $meta['locale'] ?? 'fa_IR' }}">
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ $meta['title'] ?? ($site['title'] ?? __('meta.site_title')) }}">
         <meta name="twitter:description" content="{{ $meta['description'] ?? '' }}">
-        <meta name="twitter:image" content="{{ $meta['image'] ?? '' }}">
+        <!-- <meta name="twitter:image" content="{{ $meta['image'] ?? '' }}"> -->
         <meta name="twitter:site" content="{{ $meta['twitter_site'] ?? '' }}">
 
         <script type="application/ld+json">

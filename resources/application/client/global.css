@@ -1807,6 +1807,40 @@ section .swiper-button-prev::after {
 
 
 /* ======= Banner Header style ======= */
+.cart-header {
+    height: 70vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--hero-slogan-bg);
+    color: var(--white);
+}
+
+.cart-header a.back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    color: var(--foreground);
+    position: relative;
+    text-decoration: none;
+    margin: 20px 0 0;
+}
+
+.cart-header a.back:hover {
+    background-color: var(--cover);
+    transform: scale(1.1);
+}
+
+
 .banner-header {
     height: 70vh;
     background-position: center;
