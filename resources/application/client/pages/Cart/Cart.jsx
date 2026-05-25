@@ -31,20 +31,27 @@ export default function Cart() {
           </div>
         </div>
       </section>
-
       <Footer />
       </>
     )
   }
   return (
-    <div className="cart-page-wrapper">
-      <div className="container mx-auto px-4">
-        <h2 className="cart-title">{t('cart.title')}</h2>
-
-        <div className="cart-grid">
-          {/* Cart Items */}
-          <div className="cart-items-section space-y-4">
-            {cartItems.map((item) => {
+    <>
+      <section className="cart-header section-padding">
+        <div className="v-middle">
+          <div className="container">
+            <div className="col-md-12">
+              <h1 className="title">{t('cart.title')}</h1>
+              <h6 className="desc">{t('cart.description')}</h6>
+            </div>
+          </div>
+        </div>
+      </section>
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <div className="space-y-8 lg:col-span-8">
+              <div className="cart-page-wrapper">
+              {cartItems.map((item) => {
               const maxQty =
                 item.selectedVariant?.unit_type === 'numeric'
                   ? item.selectedVariant?.unit || 0
@@ -154,39 +161,17 @@ export default function Cart() {
                 </div>
               )
             })}
-          </div>
-
-          {/* Summary */}
-          <div className="cart-summary-section h-fit">
-            <h3 className="text-xl font-bold mb-6">
-              {t('cart.summary')}
-            </h3>
-
-            <div className="summary-row">
-              <span className="text-slate-400">
-                {t('cart.totalItems')}
-              </span>
-
-              <span className="font-semibold">
-                {formatPrice(totalItems, language)}
-              </span>
             </div>
-
-            <div className="summary-row total">
-              <span>{t('cart.totalPrice')}</span>
-
-              <span>
-                {formatPrice(totalPrice, language)} {priceUnit}
-              </span>
             </div>
-
-            <button className="btn-primary btn-checkout">
-              {t('cart.checkout')}
-            </button>
-          </div>
+            <aside className="lg:col-span-4">
+            
+            </aside>
         </div>
-      </div>
     </div>
+
+    <Footer />
+    </>
+
   )
 }
 

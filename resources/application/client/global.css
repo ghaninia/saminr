@@ -1808,6 +1808,10 @@ section .swiper-button-prev::after {
 
 /* ======= Banner Header style ======= */
 
+.section-mininal-padding{
+    padding : 200px 0;
+}
+
 .cart-header {
     height: 70vh;
     background-position: center;
@@ -1815,7 +1819,6 @@ section .swiper-button-prev::after {
     background-size: cover;
     overflow: hidden;
     position: relative;
-    /* background-color: var(--hero-slogan-bg); */
     text-align: center;
 }
 
