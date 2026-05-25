@@ -113,11 +113,13 @@ export function getAvailableAttributesFromVariants(variants) {
 export function getGalleryImages(normalized, translate) {
   if (!normalized) return []
 
-  const items = normalized.gallery.map((url, index) => ({
-    type: 'image',
-    url,
-    label: `${normalized.title || translate('productDetails.mediaProductFallback')} ${index + 1}`,
-  }))
+  const items = normalized.gallery
+    .filter((url) => url !== normalized.image)
+    .map((url, index) => ({
+      type: 'image',
+      url,
+      label: `${normalized.title || translate('productDetails.mediaProductFallback')} ${index + 1}`,
+    }))
   
   return items
 }

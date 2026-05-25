@@ -1807,6 +1807,7 @@ section .swiper-button-prev::after {
 
 
 /* ======= Banner Header style ======= */
+
 .cart-header {
     height: 70vh;
     background-position: center;
@@ -1814,16 +1815,29 @@ section .swiper-button-prev::after {
     background-size: cover;
     overflow: hidden;
     position: relative;
-    background-color: var(--hero-slogan-bg);
+    /* background-color: var(--hero-slogan-bg); */
+    text-align: center;
+}
+
+.cart-header .title {
+    margin-bottom: 20px;
+}
+
+.cart-header .desc {
+    line-height: 1.6em;
+}
+
+
+[data-theme="dark"] .cart-header .title {
+    color: var(--white);
+}
+
+[data-theme="dark"] .cart-header .desc {
     color: var(--white);
 }
 
 .cart-header a.back {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
+    display: inline-block;
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -1832,14 +1846,21 @@ section .swiper-button-prev::after {
     color: var(--foreground);
     position: relative;
     text-decoration: none;
-    margin: 20px 0 0;
+    margin: 30px 0 ;
+    padding: 10px 10px !important;
 }
 
 .cart-header a.back:hover {
-    background-color: var(--cover);
     transform: scale(1.1);
 }
 
+[data-theme="dark"] .cart-header a.back {
+    color: var(--white);
+}
+
+[data-theme="dark"] .cart-header a.back:hover {
+    background-color: var(--cover);
+}
 
 .banner-header {
     height: 70vh;
@@ -1849,6 +1870,7 @@ section .swiper-button-prev::after {
     overflow: hidden;
     position: relative;
 }
+
 .banner-header .fallback-image-placeholder {
     position: absolute;
     top: calc(50% - 40px);

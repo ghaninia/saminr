@@ -4,6 +4,8 @@ import { formatPrice, resolveLocalizedText } from '../../utils/index'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '../../constants/index'
 import './Cart.css'
+import Footer from '../../components/Footer'
+import CartEmpty from './CartEmpty'
 
 export default function Cart() {
   const { t, language } = useLanguage()
@@ -14,12 +16,14 @@ export default function Cart() {
 
   if (cartItems.length === 0) {
     return (
+      <>
       <section className="cart-header section-padding">
         <div className="v-middle">
           <div className="container">
             <div className="col-md-12">
-              <h1>{t('cart.title')}</h1>
-              <h6>{t('cart.empty')}</h6>
+              <CartEmpty />
+              <h1 className="title">{t('cart.title')}</h1>
+              <h6  className="desc">{t('cart.empty')}</h6>
               <Link to={ROUTES.HOME} className="back">
                 {t('cart.backToStore')}
               </Link>
@@ -27,6 +31,9 @@ export default function Cart() {
           </div>
         </div>
       </section>
+
+      <Footer />
+      </>
     )
   }
   return (
