@@ -47,6 +47,7 @@
   display: block;
   border: 1px var(--sidebar-border) solid;
   border-radius: 12px;
+  margin-bottom: 30px;
 }
 
 .cart-item-row {
@@ -104,8 +105,12 @@
   padding: 0.35rem 0.75rem;
   border-radius : 20px;
   border: 1px solid var(--palette-accent);
-  color: var(--white);
   font-size: 0.5rem;
+  color: var(--black);
+}
+
+[data-theme="dark"] .cart-attr-badge{
+  color: var(--white);
 }
 
 .cart-item-remove {

@@ -72,6 +72,7 @@
   },
   "cart": {
     "title": "Shopping Cart",
+    "description": "View and manage your selected products",
     "empty": "Your cart is empty",
     "item": "Product Item",
     "price": "Price",
