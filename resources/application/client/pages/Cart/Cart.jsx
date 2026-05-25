@@ -47,126 +47,126 @@ export default function Cart() {
           </div>
         </div>
       </section>
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            <div className="space-y-8 lg:col-span-8">
-              <div className="cart-page-wrapper">
-              {cartItems.map((item) => {
-              const maxQty =
-                item.selectedVariant?.unit_type === 'numeric'
-                  ? item.selectedVariant?.unit || 0
-                  : 99
+      <div className="container mx-auto px-4 mb-16">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="space-y-8 lg:col-span-8">
+            <div className="cart-page-wrapper">
+            {cartItems.map((item) => {
+            const maxQty =
+              item.selectedVariant?.unit_type === 'numeric'
+                ? item.selectedVariant?.unit || 0
+                : 99
 
-              const subtotal = item.price * item.quantity
+            const subtotal = item.price * item.quantity
 
-              const title = item.product?.title_i18n
-                ? resolveLocalizedText(item.product.title_i18n, language)
-                : item.product?.title
+            const title = item.product?.title_i18n
+              ? resolveLocalizedText(item.product.title_i18n, language)
+              : item.product?.title
 
-              return (
-                <div
-                  key={`${item.productId}-${item.selectedVariant.id}`}
-                  className="cart-item-row"
-                >
-                  {/* Product Image */}
-                  <img
-                    src={item.product?.image}
-                    alt={title}
-                    className="cart-item-img"
-                  />
+            return (
+              <div
+                key={`${item.productId}-${item.selectedVariant.id}`}
+                className="cart-item-row"
+              >
+                {/* Product Image */}
+                <img
+                  src={item.product?.image}
+                  alt={title}
+                  className="cart-item-img"
+                />
 
-                  {/* Product Info */}
-                  <div className="cart-item-details">
-                    <Link
-                      to={`/products/${item.slug}`}
-                      className="cart-item-title"
-                    >
-                      {title}
-                    </Link>
+                {/* Product Info */}
+                <div className="cart-item-details">
+                  <Link
+                    to={`/products/${item.slug}`}
+                    className="cart-item-title"
+                  >
+                    {title}
+                  </Link>
 
-                    {/* Variant Attributes */}
-                    {item.selectedVariant && item.selectedVariant.attributes &&(
-                    <div className="cart-item-attributes">
-                        {Object.entries(item.selectedVariant.attributes).map(([key, value]) => {
+                  {/* Variant Attributes */}
+                  {item.selectedVariant && item.selectedVariant.attributes &&(
+                  <div className="cart-item-attributes">
+                      {Object.entries(item.selectedVariant.attributes).map(([key, value]) => {
 
-                        const localizedValue = resolveLocalizedText(value.value_i18n, language)
-                        const localizedKey = resolveLocalizedText(value.label, language)
+                      const localizedValue = resolveLocalizedText(value.value_i18n, language)
+                      const localizedKey = resolveLocalizedText(value.label, language)
 
-                        return (
-                            <span key={key} className="cart-attr-badge">
-                                {localizedKey}: {localizedValue}
-                            </span>
-                        )
-                        })}
-                    </div>
-                    )}
-
-                    <button
-                      className="cart-item-remove mt-2 self-start"
-                      onClick={() =>
-                        removeFromCart(
-                          item.productId,
-                          item.selectedVariant.id
-                        )
-                      }
-                    >
-                      {t('cart.remove')}
-                    </button>
+                      return (
+                          <span key={key} className="cart-attr-badge">
+                              {localizedKey}: {localizedValue}
+                          </span>
+                      )
+                      })}
                   </div>
+                  )}
 
-                  {/* Price */}
-                  <div className="cart-item-price hidden sm:block">
-                    {formatPrice(item.price, language)} {priceUnit}
-                  </div>
-
-                  {/* Quantity */}
-                  <div className="cart-item-quantity">
-                    <button
-                      className="qty-control-btn"
-                      onClick={() =>
-                        updateQuantity(
-                          item.productId,
-                          item.selectedVariant.id,
-                          item.quantity - 1
-                        )
-                      }
-                      disabled={item.quantity <= 1}
-                    >
-                      -
-                    </button>
-
-                    <span className="qty-val">
-                      {item.quantity}
-                    </span>
-
-                    <button
-                      className="qty-control-btn"
-                      onClick={() =>
-                        updateQuantity(
-                          item.productId,
-                          item.selectedVariant.id,
-                          item.quantity + 1
-                        )
-                      }
-                      disabled={item.quantity >= maxQty}
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  {/* Total */}
-                  <div className="cart-item-total">
-                    {formatPrice(subtotal, language)} {priceUnit}
-                  </div>
+                  <button
+                    className="cart-item-remove mt-2 self-start"
+                    onClick={() =>
+                      removeFromCart(
+                        item.productId,
+                        item.selectedVariant.id
+                      )
+                    }
+                  >
+                    {t('cart.remove')}
+                  </button>
                 </div>
-              )
-            })}
-            </div>
-            </div>
-            <aside className="lg:col-span-4">
-            
-            </aside>
-        </div>
+
+                {/* Price */}
+                <div className="cart-item-price hidden sm:block">
+                  {formatPrice(item.price, language)} {priceUnit}
+                </div>
+
+                {/* Quantity */}
+                <div className="cart-item-quantity">
+                  <button
+                    className="qty-control-btn"
+                    onClick={() =>
+                      updateQuantity(
+                        item.productId,
+                        item.selectedVariant.id,
+                        item.quantity - 1
+                      )
+                    }
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+
+                  <span className="qty-val">
+                    {item.quantity}
+                  </span>
+
+                  <button
+                    className="qty-control-btn"
+                    onClick={() =>
+                      updateQuantity(
+                        item.productId,
+                        item.selectedVariant.id,
+                        item.quantity + 1
+                      )
+                    }
+                    disabled={item.quantity >= maxQty}
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Total */}
+                <div className="cart-item-total">
+                  {formatPrice(subtotal, language)} {priceUnit}
+                </div>
+              </div>
+            )
+          })}
+          </div>
+          </div>
+          <aside className="lg:col-span-4">
+          
+          </aside>
+      </div>
     </div>
 
     <Footer />
