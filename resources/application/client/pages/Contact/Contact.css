@@ -180,3 +180,94 @@
   }
 }
 
+
+
+/* ======= Contact Box style ======= */
+.contact-box {
+    position: relative;
+    margin-bottom: 0px;
+    margin-top: -100px;
+}
+.contact-box .container {
+    position: relative;
+    z-index: 2;
+}
+.contact-box .item {
+    background: #222;
+    padding: 60px 30px;
+    -webkit-transition: .5s;
+    transition: .5s;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 30px;
+    line-height: 1;
+    text-align: left;
+    overflow: hidden;
+    transition: background-color 300ms ease, transform 300ms ease, color 300ms ease;
+    transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;
+    border-radius: 20px;
+}
+.contact-box .item.active {
+    background: #f5b754;
+}
+.contact-box .item:hover {
+    background: #f5b754;
+    transform: translate3d(0px, -15px, 0.01px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;
+
+}
+.contact-box .item h5 {
+    font-size: 21px;
+    color: #fff;
+    margin-bottom: 0px;
+}
+.contact-box .item.active h5 {
+    color: #1b1b1b
+}
+.contact-box .item:hover h5 {
+    color: #1b1b1b;
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+.contact-box .item p {
+    color: #999;
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 0;
+}
+.contact-box .item.active p {
+    color: #1b1b1b;
+}
+.contact-box .item:hover p {
+    color: #1b1b1b;
+}
+.contact-box .item span {
+    font-size: 35px;
+    color: #f5b754;
+    line-height: 1;
+    margin-bottom: 15px;
+    display: inline-block;
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+.contact-box .item.active span {
+    color: #1b1b1b;
+}
+.contact-box .item:hover span {
+    color: #1b1b1b;
+}
+.contact-box .item i.numb {
+    font-size: 120px;
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    color: rgba(255, 255, 255, 0.1);
+    opacity: .2;
+}
+.contact-box .item.active i.numb {
+    color: rgba(0, 0, 0, 0.2);
+}
+.contact-box .item:hover .numb {
+    color: rgba(0, 0, 0, 0.2);
+}
