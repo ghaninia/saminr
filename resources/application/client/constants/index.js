@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     PRODUCTS: '/api/client/products',
     REVIEWS: '/api/client/reviews',
     SUBSCRIBE: '/api/client/subscribe',
+    CONTACT: '/api/client/contact',
   },
 }
 

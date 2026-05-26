@@ -11,6 +11,7 @@ use App\Modules\Products\Http\Controllers\Admin\ProductController as AdminProduc
 use App\Modules\Reviews\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingController;
 use App\Modules\Uploads\Http\Controllers\Admin\UploadController;
+use App\Modules\Contacts\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Modules\Users\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,4 +64,9 @@ Route::middleware(AdminJwtMiddleware::class)->group(function (): void {
     Route::post('/products/{product}/upload', [AdminProductController::class, 'upload']);
     Route::delete('/products/{product}/media', [AdminProductController::class, 'deleteMedia']);
     Route::get('/product-attributes', [AdminProductAttributeController::class, 'index']);
+
+    Route::get('/contact-messages', [AdminContactController::class, 'index']);
+    Route::post('/contact-messages/{contactMessage}/mark-read', [AdminContactController::class, 'markRead']);
+    Route::post('/contact-messages/{contactMessage}/reply', [AdminContactController::class, 'reply']);
+    Route::delete('/contact-messages/{contactMessage}', [AdminContactController::class, 'destroy']);
 });

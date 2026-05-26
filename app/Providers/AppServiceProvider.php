@@ -32,6 +32,8 @@ use App\Modules\Settings\Services\Contracts\SettingServiceInterface;
 use App\Modules\Settings\Services\SettingService;
 use App\Modules\Uploads\Services\Contracts\UploadServiceInterface;
 use App\Modules\Uploads\Services\UploadService;
+use App\Modules\Contacts\Services\Contracts\ContactMessageServiceInterface;
+use App\Modules\Contacts\Services\ContactMessageService;
 use App\Modules\Users\Repositories\Contracts\UserRepositoryInterface;
 use App\Modules\Users\Repositories\EloquentUserRepository;
 use App\Modules\Users\Services\Contracts\UserServiceInterface;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
         $this->app->bind(GuestProductRepositoryInterface::class, EloquentGuestProductRepository::class);
         $this->app->bind(GuestProductServiceInterface::class, GuestProductService::class);
+        $this->app->bind(ContactMessageServiceInterface::class, ContactMessageService::class);
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(UserServiceInterface::class, UserService::class);
     }

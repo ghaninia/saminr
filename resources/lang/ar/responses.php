@@ -23,6 +23,13 @@ return [
         'subscribed' => 'تم الاشتراك.',
     ],
 
+    'contact' => [
+        'sent' => 'تم إرسال رسالتك. سنتواصل معك قريبًا.',
+        'marked_read' => 'تم تحديد الرسالة كمقروءة.',
+        'replied' => 'تم إرسال الرد بنجاح.',
+        'reply_subject' => 'رد على رسالتك',
+    ],
+
     'errors' => [
         'missing_app_key' => 'مفتاح APP_KEY مفقود. قم بتعيين APP_KEY أو DASHBOARD_JWT_SECRET.',
     ],

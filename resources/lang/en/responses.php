@@ -23,6 +23,13 @@ return [
         'subscribed' => 'Subscribed.',
     ],
 
+    'contact' => [
+        'sent' => 'Your message has been sent. We will get back to you soon.',
+        'marked_read' => 'Message marked as read.',
+        'replied' => 'Reply sent successfully.',
+        'reply_subject' => 'Reply to your message',
+    ],
+
     'errors' => [
         'missing_app_key' => 'Missing APP_KEY. Set APP_KEY or DASHBOARD_JWT_SECRET.',
     ],

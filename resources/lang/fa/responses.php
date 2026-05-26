@@ -23,6 +23,13 @@ return [
         'subscribed' => 'عضویت انجام شد.',
     ],
 
+    'contact' => [
+        'sent' => 'پیام شما ارسال شد. به زودی با شما تماس خواهیم گرفت.',
+        'marked_read' => 'پیام به‌عنوان خوانده‌شده علامت‌گذاری شد.',
+        'replied' => 'پاسخ با موفقیت ارسال شد.',
+        'reply_subject' => 'پاسخ به پیام شما',
+    ],
+
     'errors' => [
         'missing_app_key' => 'کلید APP_KEY وجود ندارد. APP_KEY یا DASHBOARD_JWT_SECRET را تنظیم کنید.',
     ],

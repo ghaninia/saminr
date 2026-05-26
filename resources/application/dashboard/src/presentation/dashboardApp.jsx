@@ -10,6 +10,7 @@ import { ForgotPasswordPage } from './pages/auth/forgotPasswordPage.jsx';
 import { HomePage } from './pages/homePage.jsx';
 import { SettingsPage } from './pages/settings/settingsPage.jsx';
 import { CategoriesPage } from './pages/categories/categoriesPage.jsx';
+import { ContactPage } from './pages/contact/contactPage.jsx';
 import { SubscribersPage } from './pages/newsletter/subscribersPage.jsx';
 import { NewslettersPage } from './pages/newsletter/newslettersPage.jsx';
 import { ReviewsPage } from './pages/reviews/reviewsPage.jsx';
@@ -41,6 +42,7 @@ export default function DashboardApp() {
                                 <Route path="/newsletter" element={<Navigate to="/newsletters" replace />} />
                                 <Route path="/users" element={<UsersPage />} />
                                 <Route path="/reviews" element={<ReviewsPage />} />
+                                <Route path="/contact-messages" element={<ContactPage />} />
                                 <Route path="/products" element={<ProductsPage />} />
                                 <Route path="/products/new" element={<ProductEditorPage />} />
                                 <Route path="/products/:productId/edit" element={<ProductEditorPage />} />
