@@ -1,0 +1,385 @@
+
+.cart-items-section, .cart-summary-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.cart-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+}
+
+.cart-empty-state {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.cart-empty-text {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+}
+
+.car-details .btn-primary {
+  display: inline-block;
+  background-color: var(--palette-accent);
+  color: var(--white);
+  padding: 15px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.car-details .btn-primary:hover {
+  background: var(--flame-dark);
+  transform: translateY(-2px);
+}
+
+.cart-page-wrapper {
+  display: block;
+  border: 1px var(--sidebar-border) solid;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.cart-item-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 140px;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.25rem 0;
+  border-bottom: 1px var(--sidebar-border) solid;
+  padding : 12px;
+}
+
+.cart-item-row:last-child {
+  border-bottom: none;
+}
+
+/* image section */
+.cart-item-img {
+  width: 110px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  border: 1px var(--sidebar-border) solid;
+}
+
+/* details section */
+.cart-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.cart-item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.7;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cart-item-title:hover {
+  opacity: 0.8;
+}
+
+.cart-item-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cart-attr-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius : 20px;
+  border: 1px solid var(--palette-accent);
+  font-size: 0.5rem;
+  color: var(--black);
+}
+
+[data-theme="dark"] .cart-attr-badge{
+  color: var(--white);
+}
+
+.cart-item-remove {
+  width: fit-content;
+  border: none;
+  background: var(--shine);
+  cursor: pointer;
+  color: var(--white);
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 0.5rem;
+  line-height: 10px;
+}
+
+.card-item-remove:hover {
+  opacity: 0.8;
+}
+
+/* quantity section */
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.qty-control-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: 1px var(--sidebar-border) solid;
+}
+
+.qty-control-btn:hover:not(:disabled) {
+  border-color: var(--palette-cream);
+}
+
+.qty-control-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qty-val {
+  min-width: 24px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* price */
+.cart-item-price,
+.cart-item-total {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .cart-item-row {
+    grid-template-columns: 90px 1fr;
+    grid-template-areas:
+      "image details"
+      "image quantity";
+
+    gap: 1rem;
+  }
+
+  .cart-item-img {
+    grid-area: image;
+
+    width: 90px;
+    height: 90px;
+  }
+
+  .cart-item-details {
+    grid-area: details;
+  }
+
+  .cart-item-quantity {
+    grid-area: quantity;
+    justify-content: flex-start;
+  }
+
+  .cart-item-price,
+  .cart-item-total {
+    display: none;
+  }
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  font-weight: 700;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+  color: #b1955c;
+}
+
+.btn-checkout {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+
+.empty-cart {
+  width: 50vw;
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.empty-cart svg {
+  max-width: 60%;
+  padding: 5rem 3rem;
+}
+.empty-cart svg #oval,
+.empty-cart svg #plus,
+.empty-cart svg #diamond,
+.empty-cart svg #bubble-rounded {
+  -webkit-animation: plopp 4s ease-out infinite;
+          animation: plopp 4s ease-out infinite;
+}
+.empty-cart svg #oval:nth-child(1),
+.empty-cart svg #plus:nth-child(1),
+.empty-cart svg #diamond:nth-child(1),
+.empty-cart svg #bubble-rounded:nth-child(1) {
+  -webkit-animation-delay: -240ms;
+          animation-delay: -240ms;
+}
+.empty-cart svg #oval:nth-child(2),
+.empty-cart svg #plus:nth-child(2),
+.empty-cart svg #diamond:nth-child(2),
+.empty-cart svg #bubble-rounded:nth-child(2) {
+  -webkit-animation-delay: -480ms;
+          animation-delay: -480ms;
+}
+.empty-cart svg #oval:nth-child(3),
+.empty-cart svg #plus:nth-child(3),
+.empty-cart svg #diamond:nth-child(3),
+.empty-cart svg #bubble-rounded:nth-child(3) {
+  -webkit-animation-delay: -720ms;
+          animation-delay: -720ms;
+}
+.empty-cart svg #oval:nth-child(4),
+.empty-cart svg #plus:nth-child(4),
+.empty-cart svg #diamond:nth-child(4),
+.empty-cart svg #bubble-rounded:nth-child(4) {
+  -webkit-animation-delay: -960ms;
+          animation-delay: -960ms;
+}
+.empty-cart svg #oval:nth-child(5),
+.empty-cart svg #plus:nth-child(5),
+.empty-cart svg #diamond:nth-child(5),
+.empty-cart svg #bubble-rounded:nth-child(5) {
+  -webkit-animation-delay: -1200ms;
+          animation-delay: -1200ms;
+}
+.empty-cart svg #oval:nth-child(6),
+.empty-cart svg #plus:nth-child(6),
+.empty-cart svg #diamond:nth-child(6),
+.empty-cart svg #bubble-rounded:nth-child(6) {
+  -webkit-animation-delay: -1440ms;
+          animation-delay: -1440ms;
+}
+.empty-cart svg #oval:nth-child(7),
+.empty-cart svg #plus:nth-child(7),
+.empty-cart svg #diamond:nth-child(7),
+.empty-cart svg #bubble-rounded:nth-child(7) {
+  -webkit-animation-delay: -1680ms;
+          animation-delay: -1680ms;
+}
+.empty-cart svg #oval:nth-child(8),
+.empty-cart svg #plus:nth-child(8),
+.empty-cart svg #diamond:nth-child(8),
+.empty-cart svg #bubble-rounded:nth-child(8) {
+  -webkit-animation-delay: -1920ms;
+          animation-delay: -1920ms;
+}
+.empty-cart svg #oval:nth-child(9),
+.empty-cart svg #plus:nth-child(9),
+.empty-cart svg #diamond:nth-child(9),
+.empty-cart svg #bubble-rounded:nth-child(9) {
+  -webkit-animation-delay: -2160ms;
+          animation-delay: -2160ms;
+}
+.empty-cart svg #oval:nth-child(10),
+.empty-cart svg #plus:nth-child(10),
+.empty-cart svg #diamond:nth-child(10),
+.empty-cart svg #bubble-rounded:nth-child(10) {
+  -webkit-animation-delay: -2400ms;
+          animation-delay: -2400ms;
+}
+.empty-cart svg #oval:nth-child(11),
+.empty-cart svg #plus:nth-child(11),
+.empty-cart svg #diamond:nth-child(11),
+.empty-cart svg #bubble-rounded:nth-child(11) {
+  -webkit-animation-delay: -2640ms;
+          animation-delay: -2640ms;
+}
+.empty-cart svg #oval:nth-child(12),
+.empty-cart svg #plus:nth-child(12),
+.empty-cart svg #diamond:nth-child(12),
+.empty-cart svg #bubble-rounded:nth-child(12) {
+  -webkit-animation-delay: -2880ms;
+          animation-delay: -2880ms;
+}
+.empty-cart svg #oval:nth-child(13),
+.empty-cart svg #plus:nth-child(13),
+.empty-cart svg #diamond:nth-child(13),
+.empty-cart svg #bubble-rounded:nth-child(13) {
+  -webkit-animation-delay: -3120ms;
+          animation-delay: -3120ms;
+}
+.empty-cart svg #oval:nth-child(14),
+.empty-cart svg #plus:nth-child(14),
+.empty-cart svg #diamond:nth-child(14),
+.empty-cart svg #bubble-rounded:nth-child(14) {
+  -webkit-animation-delay: -3360ms;
+          animation-delay: -3360ms;
+}
+.empty-cart svg #oval:nth-child(15),
+.empty-cart svg #plus:nth-child(15),
+.empty-cart svg #diamond:nth-child(15),
+.empty-cart svg #bubble-rounded:nth-child(15) {
+  -webkit-animation-delay: -3600ms;
+          animation-delay: -3600ms;
+}
+.empty-cart svg #oval:nth-child(16),
+.empty-cart svg #plus:nth-child(16),
+.empty-cart svg #diamond:nth-child(16),
+.empty-cart svg #bubble-rounded:nth-child(16) {
+  -webkit-animation-delay: -3840ms;
+          animation-delay: -3840ms;
+}
+.empty-cart svg #bg-line:nth-child(2) {
+  fill-opacity: 0.3;
+}
+.empty-cart svg #bg-line:nth-child(3) {
+  fill-opacity: 0.4;
+}
+@-webkit-keyframes plopp {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -10px);
+    opacity: 0;
+  }
+}
+@keyframes plopp {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -10px);
+    opacity: 0;
+  }
+}

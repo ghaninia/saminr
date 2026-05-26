@@ -22,6 +22,7 @@ export const ROUTES = {
   EVENTS: '/events',
   REGISTRATION_EVENT: '/registration-event',
   GET_TICKET: '/get-ticket',
+  CART: '/cart',
 }
 
 export const ASSETS = {

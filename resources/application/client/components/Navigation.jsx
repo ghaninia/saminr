@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useSettings } from '../contexts/SettingsContext'
 import { useTheme } from '../contexts/ThemeContext'
+import { useCart } from '../contexts/CartContext'
 import { removeWhitespace } from '../utils/index'
 import { DEFAULTS, ROUTES, LOCALES } from '../constants/index'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -13,6 +14,7 @@ function Navigation() {
   const { t } = useLanguage()
   const { getSetting } = useSettings()
   const { theme } = useTheme()
+  const { totalItems } = useCart()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navTitle = getSetting('title', { fallback: DEFAULTS.PHONE })
   const phone = getSetting('phone', { fallback: DEFAULTS.PHONE })
@@ -65,6 +67,16 @@ function Navigation() {
 
             {/* Actions (Theme & Language) */}
             <div className="nav-actions-desktop">
+              <Link to={ROUTES.CART} className="nav-cart-btn" title={t('cart.title')}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                {totalItems > 0 && (
+                  <span className="nav-cart-badge">{totalItems}</span>
+                )}
+              </Link>
               <ThemeSwitcher />
               <LanguageSwitcher />
               {/* Contact Info */}
@@ -100,6 +112,16 @@ function Navigation() {
             {/* Mobile Menu Button */}
             <div className="nav-mobile-header">
               <div className="nav-actions-mobile">
+                <Link to={ROUTES.CART} className="nav-cart-btn" style={{ marginRight: '8px', marginLeft: '8px' }} onClick={closeMenu} title={t('cart.title')}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  {totalItems > 0 && (
+                    <span className="nav-cart-badge">{totalItems}</span>
+                  )}
+                </Link>
                 <ThemeSwitcher />
                 <LanguageSwitcher />
               </div>
@@ -124,6 +146,11 @@ function Navigation() {
               <li>
                 <Link to={ROUTES.HOME} className="nav-mobile-link" onClick={closeMenu}>
                   {t('nav.home')}
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.CART} className="nav-mobile-link" onClick={closeMenu}>
+                  {t('cart.title')} {totalItems > 0 ? `(${totalItems})` : ''}
                 </Link>
               </li>
               <li>

@@ -6,6 +6,7 @@ import { useGlobalLoading } from '../../contexts/LoadingContext'
 import { normalizeObjectResponse } from '../../utils/index'
 import { LOCALES, ASSETS } from '../../constants/index'
 import ImageLightbox from '../../components/ImageLightbox'
+import Footer from '../../components/Footer'
 import PriceSidebar from './PriceSidebar'
 import GallerySection from './GallerySection'
 import {
@@ -19,15 +20,19 @@ import {
   getTextDirection,
 } from './productDetailsUtils'
 
+import { useCart } from '../../contexts/CartContext'
+
 export default function ProductDetails() {
   const { shortLink } = useParams()
   const { language, t } = useLanguage()
   const { startLoading, finishLoading } = useGlobalLoading()
+  const { cartItems, addToCart } = useCart()
   const [product, setProduct] = useState(null)
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedAttributes, setSelectedAttributes] = useState({})
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [quantity, setQuantity] = useState(1)
   
   const priceUnit = t('products.currencyUnit')
 
@@ -79,6 +84,7 @@ export default function ProductDetails() {
         })
       }
       setSelectedAttributes(initialAttrs)
+      setQuantity(1)
     }
   }, [product, language, t])
 
@@ -92,13 +98,6 @@ export default function ProductDetails() {
 
   // Filter variants first by selected color
   let visibleVariants = getVisibleVariants(normalized, selectedColor)
-
-  const handleAttributeChange = (key, value) => {
-    setSelectedAttributes((prev) => ({
-      ...prev,
-      [key]: value,
-    }))
-  }
 
   // Find active variant matching both selected color AND selected attributes
   let activeVariant = visibleVariants.find((variant) => {
@@ -114,6 +113,53 @@ export default function ProductDetails() {
   // Fallback: If no exact variant matches the combined options, select the first match in the color group
   if (!activeVariant && visibleVariants.length > 0) {
     activeVariant = visibleVariants[0]
+  }
+
+  // Intercepting variant attribute / color changes for "Add to Cart confirmation"
+  const checkAndConfirmCartAdd = (actionOnConfirm) => {
+    const isAlreadyInCart = cartItems.some(
+      (item) => item.productId === normalized.id && item.selectedVariant.id === activeVariant?.id
+    );
+
+    // If quantity > 1 OR current variant is already in cart, show confirm confirmation modal
+    if ((quantity > 1 || isAlreadyInCart) && activeVariant) {
+      const confirmed = window.confirm(t('productDetails.addToCartConfirm'));
+      if (confirmed) {
+        // Add to cart first
+        addToCart({
+          productId: normalized.id,
+          productTitle: normalized.title,
+          slug: shortLink,
+          image: normalized.image,
+          selectedVariant: activeVariant,
+          variantAttributes: selectedAttributes,
+          quantity,
+          price: activeVariant.price,
+          product: normalized, // Save entire normalized product with full i18n properties
+          rawAttributes: normalized.attributes // Save original translated/raw attributes array
+        });
+        setQuantity(1);
+        actionOnConfirm();
+      }
+      // If Canceled, do NOT perform actionOnConfirm (which reverts selection change)
+    } else {
+      actionOnConfirm();
+    }
+  };
+
+  const handleColorChange = (newColor) => {
+    checkAndConfirmCartAdd(() => {
+      setSelectedColor(newColor);
+    });
+  };
+
+  const handleAttributeChange = (key, value) => {
+    checkAndConfirmCartAdd(() => {
+      setSelectedAttributes((prev) => ({
+        ...prev,
+        [key]: value,
+      }))
+    });
   }
 
   const { specs } = getRenderedSpecs(activeVariant, normalized, language)
@@ -175,17 +221,24 @@ export default function ProductDetails() {
             {/* Sidebar */}
             <aside className="lg:col-span-4">
               <PriceSidebar
+                productId={normalized.id}
+                productTitle={normalized.title}
+                slug={shortLink}
+                image={normalized.image}
                 variant={activeVariant}
                 specs={specs}
                 colors={normalized.colors}
                 selectedColor={selectedColor}
-                onColorChange={setSelectedColor}
+                onColorChange={handleColorChange}
                 attributes={normalized.attributes}
                 selectedAttributes={selectedAttributes}
                 onAttributeChange={handleAttributeChange}
+                quantity={quantity}
+                onQuantityChange={setQuantity}
                 language={language}
                 t={t}
                 priceUnit={priceUnit}
+                productRaw={normalized}
               />
             </aside>
           </div>
@@ -199,6 +252,8 @@ export default function ProductDetails() {
         dir={direction}
         onClose={() => setIsLightboxOpen(false)}
       />
+
+      <Footer />
     </>
   )
 }

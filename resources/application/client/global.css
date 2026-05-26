@@ -1,9 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@source './**/*.{js,jsx,ts,tsx}';
-@source '../dashboard/**/*.{js,jsx,ts,tsx}';
-
 @font-face {
     font-family: 'iranbakhbold';
     src: url('/fonts/yekanbakh/YekanBakh-Bold.woff') format('woff');
@@ -1649,10 +1646,6 @@ section .swiper-button-prev::after {
     margin-inline-start: 0.5rem;
 }
 
-.app .app-social-link:last-of-type {
-    margin-inline-end: 0;
-}
-
 @media screen and (max-width: 991px) {
     .app .item {
     padding: 30px 30px 0px 30px;
@@ -1807,6 +1800,64 @@ section .swiper-button-prev::after {
 
 
 /* ======= Banner Header style ======= */
+
+.section-mininal-padding{
+    padding : 200px 0;
+}
+
+.cart-header {
+    height: 70vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+}
+
+.cart-header .title {
+    margin-bottom: 20px;
+}
+
+.cart-header .desc {
+    line-height: 1.6em;
+}
+
+
+[data-theme="dark"] .cart-header .title {
+    color: var(--white);
+}
+
+[data-theme="dark"] .cart-header .desc {
+    color: var(--white);
+}
+
+.cart-header a.back {
+    display: inline-block;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    color: var(--foreground);
+    position: relative;
+    text-decoration: none;
+    margin: 30px 0 ;
+    padding: 10px 10px !important;
+}
+
+.cart-header a.back:hover {
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] .cart-header a.back {
+    color: var(--white);
+}
+
+[data-theme="dark"] .cart-header a.back:hover {
+    background-color: var(--cover);
+}
+
 .banner-header {
     height: 70vh;
     background-position: center;
@@ -1815,6 +1866,7 @@ section .swiper-button-prev::after {
     overflow: hidden;
     position: relative;
 }
+
 .banner-header .fallback-image-placeholder {
     position: absolute;
     top: calc(50% - 40px);
