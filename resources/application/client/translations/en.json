@@ -192,6 +192,29 @@
     "aparat": "Aparat",
     "youtube": "YouTube"
   },
+  "aboutContact": {
+    "eyebrow": "Contact Details",
+    "title": "Ways to Reach Us",
+    "description": "This section reads from site settings so your contact details, address, and response hours stay current.",
+    "items": {
+      "email": {
+        "title": "Email us",
+        "value": "info@example.com"
+      },
+      "address": {
+        "title": "Our address",
+        "value": "Tehran, Iran"
+      },
+      "hours": {
+        "title": "Opening Hours",
+        "value": "Mon-Sat: 8 AM - 7 PM"
+      },
+      "phone": {
+        "title": "Call us",
+        "value": "+98 910 000 0000"
+      }
+    }
+  },
   "footer": {
     "contact": {
       "title": "Contact Us",

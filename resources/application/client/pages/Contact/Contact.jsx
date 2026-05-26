@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLanguage } from '../../contexts/LanguageContext'
 import { API_ENDPOINTS } from '../../constants/index'
+import AboutContactSection from '../Main/sections/components/AboutContactSection'
 import './Contact.css'
 
 const INITIAL_FORM = { fullname: '', email: '', content: '' }
@@ -96,7 +97,9 @@ function Contact() {
         <p className="contact-subtitle">{t('contact.subtitle')}</p>
       </div>
 
-      <div className="contact-wrapper">
+      <AboutContactSection />
+
+      {/* <div className="contact-wrapper">
         <div className="contact-card">
           {success ? (
             <div className="contact-success">
@@ -179,7 +182,7 @@ function Contact() {
             </form>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

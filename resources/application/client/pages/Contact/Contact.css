@@ -5,20 +5,17 @@
 }
 
 .contact-hero {
+  display: block;
   text-align: center;
-  padding: 3rem 1rem 2rem;
+  padding: 200px 0;
 }
 
 .contact-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-family: var(--font-bold, sans-serif);
   color: var(--foreground, #fff);
   margin-bottom: 0.75rem;
 }
 
 .contact-subtitle {
-  font-size: 1rem;
-  color: var(--foreground-muted, rgba(255,255,255,0.6));
   max-width: 500px;
   margin: 0 auto;
   line-height: 1.6;
@@ -30,8 +27,8 @@
 }
 
 .contact-card {
-  background: var(--cover, rgba(255,255,255,0.05));
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--cover, rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.25rem;
   padding: 2.5rem 2rem;
 }
@@ -57,8 +54,8 @@
 .contact-input,
 .contact-textarea {
   width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   font-size: 0.95rem;
@@ -72,7 +69,7 @@
 .contact-input:focus,
 .contact-textarea:focus {
   border-color: var(--secondary, #f5b754);
-  box-shadow: 0 0 0 3px rgba(245,183,84,0.15);
+  box-shadow: 0 0 0 3px rgba(245, 183, 84, 0.15);
 }
 
 .contact-input--error {
@@ -81,7 +78,7 @@
 
 .contact-input::placeholder,
 .contact-textarea::placeholder {
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .contact-input:disabled,
@@ -98,8 +95,8 @@
 .contact-server-error {
   font-size: 0.875rem;
   color: var(--red, #e95834);
-  background: rgba(233,88,52,0.1);
-  border: 1px solid rgba(233,88,52,0.25);
+  background: rgba(233, 88, 52, 0.1);
+  border: 1px solid rgba(233, 88, 52, 0.25);
   border-radius: 0.5rem;
   padding: 0.6rem 0.9rem;
 }
@@ -145,7 +142,7 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  background: rgba(46,140,54,0.15);
+  background: rgba(46, 140, 54, 0.15);
   border: 2px solid #2e8c36;
   font-size: 1.5rem;
   color: #2e8c36;
@@ -160,7 +157,7 @@
 
 .contact-btn-reset {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 0.5rem;
   padding: 0.5rem 1.25rem;
   font-size: 0.875rem;
@@ -171,7 +168,7 @@
 
 .contact-btn-reset:hover {
   border-color: var(--secondary, #f5b754);
-  background: rgba(245,183,84,0.08);
+  background: rgba(245, 183, 84, 0.08);
 }
 
 @media (max-width: 480px) {
@@ -184,90 +181,103 @@
 
 /* ======= Contact Box style ======= */
 .contact-box {
-    position: relative;
-    margin-bottom: 0px;
-    margin-top: -100px;
+  position: relative;
+  margin-bottom: 0px;
+  margin-top: -100px;
 }
+
 .contact-box .container {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
+
 .contact-box .item {
-    background: #222;
-    padding: 60px 30px;
-    -webkit-transition: .5s;
-    transition: .5s;
-    position: relative;
-    z-index: 1;
-    margin-bottom: 30px;
-    line-height: 1;
-    text-align: left;
-    overflow: hidden;
-    transition: background-color 300ms ease, transform 300ms ease, color 300ms ease;
-    transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
-    transform-style: preserve-3d;
-    border-radius: 20px;
+  padding: 60px 30px;
+  -webkit-transition: .5s;
+  transition: .5s;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 30px;
+  line-height: 1;
+  overflow: hidden;
+  transition: background-color 300ms ease, transform 300ms ease, color 300ms ease;
+  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+  transform-style: preserve-3d;
+  border-radius: 20px;
+  background: var(--sidebar-primary);
+  border: 1px var(--sidebar-border) solid;
 }
+
 .contact-box .item.active {
-    background: #f5b754;
+  background: #f5b754;
 }
+
 .contact-box .item:hover {
-    background: #f5b754;
-    transform: translate3d(0px, -15px, 0.01px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
-    transform-style: preserve-3d;
+  background: #f5b754;
+  transform: translate3d(0px, -15px, 0.01px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+  transform-style: preserve-3d;
 
 }
-.contact-box .item h5 {
-    font-size: 21px;
-    color: #fff;
-    margin-bottom: 0px;
+
+.contact-box .item h2 {
+  margin-bottom: 20px;
 }
-.contact-box .item.active h5 {
-    color: #1b1b1b
+
+.contact-box .item.active h2 {
+  color: #1b1b1b
 }
-.contact-box .item:hover h5 {
-    color: #1b1b1b;
-    -webkit-transition: .5s;
-    transition: .5s;
+
+.contact-box .item:hover h2 {
+  color: #1b1b1b;
+  -webkit-transition: .5s;
+  transition: .5s;
 }
+
 .contact-box .item p {
-    color: #999;
-    font-size: 14px;
-    font-weight: 300;
-    margin-bottom: 0;
+  font-weight: 300;
+  margin-bottom: 0;
 }
+
 .contact-box .item.active p {
-    color: #1b1b1b;
+  color: #1b1b1b;
 }
+
 .contact-box .item:hover p {
-    color: #1b1b1b;
+  color: #1b1b1b;
 }
+
 .contact-box .item span {
-    font-size: 35px;
-    color: #f5b754;
-    line-height: 1;
-    margin-bottom: 15px;
-    display: inline-block;
-    -webkit-transition: .5s;
-    transition: .5s;
+  font-size: 35px;
+  color: #f5b754;
+  line-height: 1;
+  margin-bottom: 15px;
+  display: inline-block;
+  -webkit-transition: .5s;
+  transition: .5s;
 }
+
 .contact-box .item.active span {
-    color: #1b1b1b;
+  color: #1b1b1b;
 }
+
 .contact-box .item:hover span {
-    color: #1b1b1b;
+  color: #1b1b1b;
 }
-.contact-box .item i.numb {
-    font-size: 120px;
-    position: absolute;
-    bottom: -20px;
-    right: -20px;
-    color: rgba(255, 255, 255, 0.1);
-    opacity: .2;
+
+.contact-box .item .numb {
+  font-size: 120px;
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  color: rgba(255, 255, 255, 0.1);
+  opacity: .2;
+  transform: rotate(45deg);
 }
-.contact-box .item.active i.numb {
-    color: rgba(0, 0, 0, 0.2);
+
+.contact-box .item.active .numb {
+  color: rgba(0, 0, 0, 0.2);
 }
+
 .contact-box .item:hover .numb {
-    color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.2);
 }
