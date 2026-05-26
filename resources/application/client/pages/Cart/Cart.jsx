@@ -4,7 +4,6 @@ import { formatPrice, resolveLocalizedText } from '../../utils/index'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '../../constants/index'
 import './Cart.css'
-import Footer from '../../components/Footer'
 import CartEmpty from './CartEmpty'
 
 export default function Cart() {
@@ -12,7 +11,6 @@ export default function Cart() {
 
   const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
   const priceUnit = t('products.currencyUnit')
-
 
   if (cartItems.length === 0) {
     return (
@@ -31,7 +29,6 @@ export default function Cart() {
           </div>
         </div>
       </section>
-      <Footer />
       </>
     )
   }
@@ -168,8 +165,6 @@ export default function Cart() {
           </aside>
       </div>
     </div>
-
-    <Footer />
     </>
 
   )

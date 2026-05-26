@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { ROUTES } from '../constants/index'
 import { AlertCircle } from 'lucide-react'
-import Footer from '../components/Footer'
 import './NotFound.css'
 
 export default function NotFound() {
@@ -34,7 +33,6 @@ export default function NotFound() {
           </div>
         </div>
       </section>
-      <Footer />
     </>
   )
 }

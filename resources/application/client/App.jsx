@@ -17,6 +17,7 @@ import Cart from './pages/Cart/Cart'
 import NotFound from './pages/NotFound'
 import { ROUTES } from './constants/index'
 import './App.css'
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path={ROUTES.CART} element={<Cart />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  <Footer />
                 </div>
               </Router>
             </CartProvider>
