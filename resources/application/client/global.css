@@ -1,9 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@source './**/*.{js,jsx,ts,tsx}';
-@source '../dashboard/**/*.{js,jsx,ts,tsx}';
-
 @font-face {
     font-family: 'iranbakhbold';
     src: url('/fonts/yekanbakh/YekanBakh-Bold.woff') format('woff');
