@@ -174,7 +174,7 @@ function Contact() {
                 )}
 
                 <div className="md:col-span-2">
-                  <button type="button" disabled={submitting}>
+                  <button type="submit" disabled={submitting}>
                     {submitting ? t('contact.sending') : t('contact.submit')}
                   </button>
                 </div>

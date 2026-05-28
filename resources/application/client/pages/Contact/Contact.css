@@ -26,7 +26,8 @@
 }
 
 .contact-card {
-  padding: 2.5rem 2rem;
+  padding:0 ;
+  
 }
 
 .contact-field {
@@ -36,8 +37,6 @@
 }
 
 .contact-label {
-  font-size: 0.875rem;
-  font-weight: 600;
   color: var(--foreground, #fff);
 }
 

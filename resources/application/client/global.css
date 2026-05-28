@@ -2404,14 +2404,10 @@ textarea {
     box-shadow: none;
     display: block;
     width: 100%;
-    line-height: 1.5em;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    font-weight: 300;
     color: var(--foreground);
     background-image: none;
     border: 1px solid var(--border);
-    border-radius: 30px;
+    border-radius: 16px;
 }
 
 [data-theme="dark"] input[type="password"],
@@ -2437,7 +2433,7 @@ input[type="button"] {
     background: var(--foreground);
     color: var(--background);
     border: none;
-}
+} 
 
 [data-theme="dark"] input[type="reset"],
 [data-theme="dark"] input[type="button"]{
