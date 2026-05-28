@@ -8,8 +8,6 @@ const INITIAL_FORM = { fullname: '', email: '', content: '' }
 
 function Contact() {
   const { t, language } = useLanguage()
-  const isRtl = language === 'fa'
-
   const [form, setForm] = useState(INITIAL_FORM)
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -91,15 +89,13 @@ function Contact() {
   }
 
   return (
-    <div className="contact-page" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="contact-page">
       <div className="contact-hero">
         <h1 className="contact-title">{t('contact.title')}</h1>
         <p className="contact-subtitle">{t('contact.subtitle')}</p>
       </div>
-
       <AboutContactSection />
-
-      {/* <div className="contact-wrapper">
+      <div className="container">
         <div className="contact-card">
           {success ? (
             <div className="contact-success">
@@ -114,75 +110,79 @@ function Contact() {
             </div>
           ) : (
             <form className="contact-form" onSubmit={handleSubmit} noValidate>
-              <div className="contact-field">
-                <label className="contact-label" htmlFor="contact-fullname">
-                  {t('contact.fields.fullname')}
-                </label>
-                <input
-                  id="contact-fullname"
-                  name="fullname"
-                  type="text"
-                  className={`contact-input${errors.fullname ? ' contact-input--error' : ''}`}
-                  placeholder={t('contact.placeholders.fullname')}
-                  value={form.fullname}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  autoComplete="name"
-                  maxLength={255}
-                />
-                {errors.fullname && <span className="contact-error">{errors.fullname}</span>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="contact-field">
+                  <label htmlFor="contact-fullname">
+                    {t('contact.fields.fullname')}
+                  </label>
+                  <input
+                    id="contact-fullname"
+                    name="fullname"
+                    type="text"
+                    className={`contact-input${errors.fullname ? ' contact-input--error' : ''}`}
+                    placeholder={t('contact.placeholders.fullname')}
+                    value={form.fullname}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    autoComplete="name"
+                    maxLength={255}
+                  />
+                  {errors.fullname && <span className="contact-error">{errors.fullname}</span>}
+                </div>
+
+                <div className="contact-field">
+                  <label htmlFor="contact-email">
+                    {t('contact.fields.email')}
+                  </label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    className={`contact-input${errors.email ? ' contact-input--error' : ''}`}
+                    placeholder={t('contact.placeholders.email')}
+                    value={form.email}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    autoComplete="email"
+                    maxLength={255}
+                  />
+                  {errors.email && <span className="contact-error">{errors.email}</span>}
+                </div>
+
+                <div className="contact-field md:col-span-2">
+                  <label htmlFor="contact-content">
+                    {t('contact.fields.content')}
+                  </label>
+                  <textarea
+                    id="contact-content"
+                    name="content"
+                    className={`contact-textarea${errors.content ? ' contact-input--error' : ''}`}
+                    placeholder={t('contact.placeholders.content')}
+                    value={form.content}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    rows={6}
+                    maxLength={5000}
+                  />
+                  {errors.content && <span className="contact-error">{errors.content}</span>}
+                </div>
+
+                {serverError && (
+                  <div className="md:col-span-2">
+                    <p className="contact-server-error">{serverError}</p>
+                  </div>
+                )}
+
+                <div className="md:col-span-2">
+                  <button type="button" disabled={submitting}>
+                    {submitting ? t('contact.sending') : t('contact.submit')}
+                  </button>
+                </div>
               </div>
-
-              <div className="contact-field">
-                <label className="contact-label" htmlFor="contact-email">
-                  {t('contact.fields.email')}
-                </label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  className={`contact-input${errors.email ? ' contact-input--error' : ''}`}
-                  placeholder={t('contact.placeholders.email')}
-                  value={form.email}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  autoComplete="email"
-                  maxLength={255}
-                />
-                {errors.email && <span className="contact-error">{errors.email}</span>}
-              </div>
-
-              <div className="contact-field">
-                <label className="contact-label" htmlFor="contact-content">
-                  {t('contact.fields.content')}
-                </label>
-                <textarea
-                  id="contact-content"
-                  name="content"
-                  className={`contact-textarea${errors.content ? ' contact-input--error' : ''}`}
-                  placeholder={t('contact.placeholders.content')}
-                  value={form.content}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  rows={6}
-                  maxLength={5000}
-                />
-                {errors.content && <span className="contact-error">{errors.content}</span>}
-              </div>
-
-              {serverError && <p className="contact-server-error">{serverError}</p>}
-
-              <button
-                type="submit"
-                className="contact-btn-submit"
-                disabled={submitting}
-              >
-                {submitting ? t('contact.sending') : t('contact.submit')}
-              </button>
             </form>
           )}
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }
