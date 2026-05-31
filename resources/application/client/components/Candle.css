@@ -454,3 +454,15 @@ html[dir="ltr"] .candle {
     transform: scale(0.5) rotate(10deg);
   }
 }
+
+@media screen and (max-width: 768px) {
+    .candle {
+      display: none;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .candle {
+      display: none;
+    }
+}
