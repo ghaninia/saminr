@@ -188,15 +188,15 @@ export function CategoriesPage() {
 
     return (
         <div>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">{t('categories.title')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('categories.description')}</div>
                     <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">{t('categories.showing', { current: pagedItems.length, total: filtered.length })}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
-                <div className="flex items-end gap-3">
-                    <div className="w-60">
+                <div className="flex flex-wrap items-end gap-2 w-full sm:w-auto">
+                    <div className="w-full sm:w-60">
                         <Field label={t('common.search')}>
                             <Input
                                 placeholder={t('categories.searchPlaceholder')}

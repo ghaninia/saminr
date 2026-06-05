@@ -111,15 +111,15 @@ export function SubscribersPage() {
 
     return (
         <div>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">{t('newsletter.subscribers.title')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('newsletter.subscribers.description')}</div>
                     <div className="mt-1 text-xs text-[color:var(--dash-muted-2)]">{subtitle}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
-                <div className="flex items-end gap-3">
-                    <div className="w-64">
+                <div className="flex flex-wrap items-end gap-2 w-full sm:w-auto">
+                    <div className="w-full sm:w-64">
                         <Field label={t('common.search')}>
                             <Input
                                 placeholder={t('newsletter.subscribers.searchPlaceholder')}

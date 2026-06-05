@@ -74,6 +74,7 @@ export const fa = {
         products: 'محصولات',
         logout: 'خروج',
         language: 'زبان',
+        toggleMenu: 'باز/بستن منو',
     },
     auth: {
         signIn: 'ورود',

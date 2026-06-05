@@ -201,3 +201,11 @@ html[data-theme='light'] {
     border: 2px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
 }
+
+/* Hide scrollbar for horizontal nav while keeping scroll functionality */
+#dashboard .no-scrollbar {
+    scrollbar-width: none;
+}
+#dashboard .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

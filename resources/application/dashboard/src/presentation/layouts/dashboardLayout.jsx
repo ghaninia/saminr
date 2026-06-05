@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../application/auth/authContext.jsx';
 import { Button } from '../../shared/ui/button.jsx';
-import { Card } from '../../shared/ui/card.jsx';
 import { LanguageToggle } from '../../shared/ui/languageToggle.jsx';
 import { ThemeToggle } from '../../shared/ui/themeToggle.jsx';
 import { useI18n } from '../../application/i18n/i18nContext.jsx';
@@ -80,30 +79,42 @@ function IconBox(props) {
     );
 }
 
-function NavItem({ to, label, icon: Icon }) {
+function IconMenu(props) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...props}>
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+    );
+}
+
+function IconClose(props) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...props}>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+    );
+}
+
+function NavItem({ to, label, icon: Icon, onClick }) {
     const location = useLocation();
-    const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
+    const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(`${to}/`));
 
     return (
         <Link
             to={to}
+            onClick={onClick}
             className={cx(
-                'group flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
-                'border border-transparent',
+                'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors border',
                 active
                     ? 'bg-[color:var(--dash-surface-2)] text-[color:var(--dash-fg)] border-[color:var(--dash-border)]'
-                    : 'text-[color:var(--dash-muted)] hover:bg-[color:var(--dash-surface-3)] hover:text-[color:var(--dash-fg)]',
+                    : 'text-[color:var(--dash-muted)] hover:bg-[color:var(--dash-surface-3)] hover:text-[color:var(--dash-fg)] border-transparent',
             )}
         >
-            <span
-                className={cx(
-                    'h-8 w-8 rounded-xl grid place-items-center',
-                    active ? 'bg-[color:var(--dash-surface-3)]' : 'bg-transparent group-hover:bg-[color:var(--dash-surface-3)]',
-                )}
-            >
-                <Icon className="h-4 w-4" />
-            </span>
-            {label}
+            <Icon className="h-4 w-4 shrink-0" />
+            <span className="whitespace-nowrap">{label}</span>
         </Link>
     );
 }
@@ -112,68 +123,100 @@ export function DashboardLayout() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const { t } = useI18n();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const navItems = [
+        { to: '/', label: t('layout.overview'), icon: IconHome },
+        { to: '/products', label: t('layout.products'), icon: IconBox },
+        { to: '/categories', label: t('layout.categories'), icon: IconTag },
+        { to: '/users', label: t('layout.users'), icon: IconUsers },
+        { to: '/reviews', label: t('layout.reviews'), icon: IconStar },
+        { to: '/subscribers', label: t('layout.subscribers'), icon: IconUsers },
+        { to: '/newsletters', label: t('layout.newsletters'), icon: IconMail },
+        { to: '/contact-messages', label: t('layout.contactMessages'), icon: IconMessage },
+        { to: '/settings', label: t('layout.settings'), icon: IconSettings },
+    ];
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/login', { replace: true });
+    };
 
     return (
-        <div className="dash-bg min-h-screen">
-            <div className="sticky top-0 z-40">
-                <div className="mx-auto max-w-7xl px-4 pt-6">
-                    <div className="rounded-2xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] backdrop-blur">
-                        <div className="flex items-center justify-between gap-3 px-4 py-3">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div className="h-10 w-10 rounded-2xl bg-[color:var(--dash-surface-2)] border border-[color:var(--dash-border)] grid place-items-center text-xs tracking-wider">
-                                    ADM
-                                </div>
-                                <div className="leading-tight min-w-0">
-                                    <div className="text-sm font-semibold truncate">{t('layout.brand')}</div>
-                                    <div className="text-xs text-[color:var(--dash-muted)] truncate">{user?.email}</div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <LanguageToggle />
-                                <ThemeToggle />
-                                <Button
-                                    variant="subtle"
-                                    onClick={async () => {
-                                        await logout();
-                                        navigate('/login', { replace: true });
-                                    }}
-                                >
-                                    {t('layout.logout')}
-                                </Button>
-                            </div>
+        <div className="dash-bg min-h-screen flex flex-col">
+            {/* ─── Top Navbar ─── */}
+            <header className="sticky top-0 z-50 border-b border-[color:var(--dash-border)] bg-[color:var(--dash-surface)] backdrop-blur-md">
+                <div className="flex items-center gap-3 px-4 py-3">
+                    {/* Brand */}
+                    <div className="flex items-center gap-3 shrink-0 me-2">
+                        <div className="h-9 w-9 rounded-xl bg-[color:var(--dash-surface-2)] border border-[color:var(--dash-border)] grid place-items-center text-[10px] font-bold tracking-widest">
+                            ADM
                         </div>
+                        <span className="text-sm font-semibold hidden sm:block truncate max-w-[140px]">
+                            {t('layout.brand')}
+                        </span>
+                    </div>
+
+                    {/* Desktop Nav — scrollable so it never wraps */}
+                    <nav className="hidden md:flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
+                        {navItems.map(item => (
+                            <NavItem key={item.to} to={item.to} label={item.label} icon={item.icon} />
+                        ))}
+                    </nav>
+
+                    {/* Right controls */}
+                    <div className="flex items-center gap-2 ms-auto shrink-0">
+                        <LanguageToggle />
+                        <ThemeToggle />
+                        <Button
+                            variant="subtle"
+                            onClick={handleLogout}
+                            className="hidden sm:inline-flex"
+                        >
+                            {t('layout.logout')}
+                        </Button>
+
+                        {/* Hamburger — visible on mobile/tablet only */}
+                        <button
+                            className="md:hidden p-2 rounded-xl border border-[color:var(--dash-border)] hover:bg-[color:var(--dash-surface-3)] transition-colors"
+                            onClick={() => setMobileMenuOpen(v => !v)}
+                            aria-label={t('layout.toggleMenu')}
+                            aria-expanded={mobileMenuOpen}
+                        >
+                            {mobileMenuOpen
+                                ? <IconClose className="h-5 w-5" />
+                                : <IconMenu className="h-5 w-5" />
+                            }
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div className="mx-auto max-w-7xl px-4 pb-10">
-                <div className="mt-4 grid grid-cols-12 gap-4">
-                    <aside className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <Card className="p-3">
-                            <div className="px-2 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--dash-muted-2)]">
-                                {t('layout.navigation')}
-                            </div>
-                            <nav className="space-y-1">
-                                <NavItem to="/" label={t('layout.overview')} icon={IconHome} />
-                                <NavItem to="/settings" label={t('layout.settings')} icon={IconSettings} />
-                                <NavItem to="/users" label={t('layout.users')} icon={IconUsers} />
-                                <NavItem to="/categories" label={t('layout.categories')} icon={IconTag} />
-                                <NavItem to="/subscribers" label={t('layout.subscribers')} icon={IconUsers} />
-                                <NavItem to="/newsletters" label={t('layout.newsletters')} icon={IconMail} />
-                                <NavItem to="/reviews" label={t('layout.reviews')} icon={IconStar} />
-                                <NavItem to="/contact-messages" label={t('layout.contactMessages')} icon={IconMessage} />
-                                <NavItem to="/products" label={t('layout.products')} icon={IconBox} />
-                            </nav>
-                        </Card>
-                    </aside>
-                    <main className="col-span-12 md:col-span-8 lg:col-span-9">
-                        <Card className="p-5 dash-scroll">
-                            <Outlet />
-                        </Card>
-                    </main>
-                </div>
-            </div>
+                {/* Mobile dropdown */}
+                {mobileMenuOpen && (
+                    <div className="md:hidden border-t border-[color:var(--dash-border)] px-4 py-3 flex flex-col gap-1 bg-[color:var(--dash-surface)]">
+                        {navItems.map(item => (
+                            <NavItem
+                                key={item.to}
+                                to={item.to}
+                                label={item.label}
+                                icon={item.icon}
+                                onClick={() => setMobileMenuOpen(false)}
+                            />
+                        ))}
+                        <div className="mt-2 pt-2 border-t border-[color:var(--dash-border)]">
+                            <div className="text-xs text-[color:var(--dash-muted)] mb-2 px-1 truncate">{user?.email}</div>
+                            <Button variant="subtle" className="w-full justify-center" onClick={handleLogout}>
+                                {t('layout.logout')}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </header>
+
+            {/* ─── Main Content ─── */}
+            <main className="flex-1 w-full px-4 py-6 dash-scroll">
+                <Outlet />
+            </main>
         </div>
     );
 }

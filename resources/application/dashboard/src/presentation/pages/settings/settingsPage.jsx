@@ -201,13 +201,13 @@ export function SettingsPage() {
 
     return (
         <div>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
                 <div>
                     <div className="text-lg font-semibold">{t('settings.title')}</div>
                     <div className="mt-1 text-sm text-[color:var(--dash-muted)]">{t('settings.description')}</div>
                     {notice ? <div className="mt-2 text-sm text-emerald-400">{notice}</div> : null}
                 </div>
-                <div className="w-60">
+                <div className="w-full sm:w-60">
                     <Field label={t('common.search')}>
                         <Input placeholder={t('settings.searchPlaceholder')} value={query} onChange={(e) => setQuery(e.target.value)} />
                     </Field>

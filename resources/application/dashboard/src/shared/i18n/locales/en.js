@@ -74,6 +74,7 @@ export const en = {
         products: 'Products',
         logout: 'Logout',
         language: 'Language',
+        toggleMenu: 'Toggle menu',
     },
     auth: {
         signIn: 'Sign in',
