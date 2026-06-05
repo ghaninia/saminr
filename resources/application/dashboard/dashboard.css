@@ -95,6 +95,17 @@ body {
 #dashboard {
     color-scheme: var(--dash-color-scheme, dark);
     min-height: 100%;
+
+    /* ── Radius Scale (theme-independent) ─────────────────── */
+    --dash-radius-xs:  0.25rem;   /*  4px — tags, badges          */
+    --dash-radius-sm:  0.5rem;    /*  8px — small chips           */
+    --dash-radius-md:  0.75rem;   /* 12px — button, input, select */
+    --dash-radius-lg:  0.875rem;  /* 14px — dropdown, nav, toggle */
+    --dash-radius-xl:  1rem;      /* 16px — card, modal           */
+    --dash-radius-2xl: 1.5rem;    /* 24px — large panels          */
+
+    /* ── Glass System (theme-independent) ─────────────────── */
+    --dash-glass-blur: 16px;
 }
 
 #dashboard .dash-bg {
@@ -143,6 +154,40 @@ html[data-theme='dark'] {
         radial-gradient(ellipse 700px 500px at 88%   5%, rgba(139,  92, 246, 0.16), transparent 60%),
         radial-gradient(ellipse 800px 500px at 50% 108%, rgba(16,  185, 129, 0.08), transparent 60%),
         linear-gradient(160deg, rgb(7, 8, 22) 0%, rgb(4, 5, 15) 100%);
+
+    /* ── Semantic Status ──────────────────────────────────── */
+    --dash-success:             rgb(52,  211, 153);
+    --dash-success-bg:          rgba(16, 185, 129, 0.10);
+    --dash-success-border:      rgba(52, 211, 153, 0.30);
+    --dash-warning:             rgb(251, 191,  36);
+    --dash-warning-bg:          rgba(245, 158,  11, 0.10);
+    --dash-warning-border:      rgba(251, 191,  36, 0.30);
+    --dash-danger:              rgb(252, 165, 165);
+    --dash-danger-bg:           rgba(239,  68,  68, 0.10);
+    --dash-danger-border:       rgba(252, 165, 165, 0.30);
+    --dash-danger-btn-bg:       rgba(239,  68,  68, 0.88);
+    --dash-danger-btn-fg:       rgb(255, 255, 255);
+    --dash-danger-btn-hover:    rgba(239,  68,  68, 1);
+
+    /* ── StatWidget Palette ────────────────────────────────── */
+    --dash-stat-blue-border:    rgba(99,  102, 241, 0.30);
+    --dash-stat-blue-bg:        rgba(99,  102, 241, 0.06);
+    --dash-stat-blue-fg:        rgb(129, 140, 248);
+    --dash-stat-emerald-border: rgba(16,  185, 129, 0.30);
+    --dash-stat-emerald-bg:     rgba(16,  185, 129, 0.06);
+    --dash-stat-emerald-fg:     rgb(52,  211, 153);
+    --dash-stat-amber-border:   rgba(245, 158,  11, 0.30);
+    --dash-stat-amber-bg:       rgba(245, 158,  11, 0.06);
+    --dash-stat-amber-fg:       rgb(251, 191,  36);
+    --dash-stat-red-border:     rgba(239,  68,  68, 0.30);
+    --dash-stat-red-bg:         rgba(239,  68,  68, 0.06);
+    --dash-stat-red-fg:         rgb(252, 165, 165);
+    --dash-stat-purple-border:  rgba(168,  85, 247, 0.30);
+    --dash-stat-purple-bg:      rgba(168,  85, 247, 0.06);
+    --dash-stat-purple-fg:      rgb(196, 148, 250);
+    --dash-stat-cyan-border:    rgba(6,   182, 212, 0.30);
+    --dash-stat-cyan-bg:        rgba(6,   182, 212, 0.06);
+    --dash-stat-cyan-fg:        rgb(34,  211, 238);
 }
 
 html[data-theme='light'] {
@@ -185,6 +230,40 @@ html[data-theme='light'] {
         radial-gradient(ellipse 700px 500px at 88%   5%, rgba(139,  92, 246, 0.11), transparent 60%),
         radial-gradient(ellipse 800px 500px at 50% 108%, rgba(244, 114, 182, 0.07), transparent 60%),
         linear-gradient(160deg, rgb(240, 244, 255) 0%, rgb(228, 234, 255) 100%);
+
+    /* ── Semantic Status ──────────────────────────────────── */
+    --dash-success:             rgb(5,   150, 105);
+    --dash-success-bg:          rgba(16, 185, 129, 0.08);
+    --dash-success-border:      rgba(5,  150, 105, 0.25);
+    --dash-warning:             rgb(217, 119,   6);
+    --dash-warning-bg:          rgba(245, 158,  11, 0.08);
+    --dash-warning-border:      rgba(217, 119,   6, 0.25);
+    --dash-danger:              rgb(220,  38,  38);
+    --dash-danger-bg:           rgba(239,  68,  68, 0.08);
+    --dash-danger-border:       rgba(220,  38,  38, 0.25);
+    --dash-danger-btn-bg:       rgb(220,  38,  38);
+    --dash-danger-btn-fg:       rgb(255, 255, 255);
+    --dash-danger-btn-hover:    rgb(185,  28,  28);
+
+    /* ── StatWidget Palette ────────────────────────────────── */
+    --dash-stat-blue-border:    rgba(99,  102, 241, 0.25);
+    --dash-stat-blue-bg:        rgba(99,  102, 241, 0.05);
+    --dash-stat-blue-fg:        rgb(79,   70, 229);
+    --dash-stat-emerald-border: rgba(5,  150, 105, 0.25);
+    --dash-stat-emerald-bg:     rgba(16, 185, 129, 0.05);
+    --dash-stat-emerald-fg:     rgb(5,   150, 105);
+    --dash-stat-amber-border:   rgba(217, 119,   6, 0.25);
+    --dash-stat-amber-bg:       rgba(245, 158,  11, 0.05);
+    --dash-stat-amber-fg:       rgb(217, 119,   6);
+    --dash-stat-red-border:     rgba(220,  38,  38, 0.25);
+    --dash-stat-red-bg:         rgba(239,  68,  68, 0.05);
+    --dash-stat-red-fg:         rgb(220,  38,  38);
+    --dash-stat-purple-border:  rgba(124,  58, 237, 0.25);
+    --dash-stat-purple-bg:      rgba(168,  85, 247, 0.05);
+    --dash-stat-purple-fg:      rgb(124,  58, 237);
+    --dash-stat-cyan-border:    rgba(8,   145, 178, 0.25);
+    --dash-stat-cyan-bg:        rgba(6,   182, 212, 0.05);
+    --dash-stat-cyan-fg:        rgb(8,   145, 178);
 }
 
 /* ─── Card — theme-aware glass shadows ───────────────────────── */
