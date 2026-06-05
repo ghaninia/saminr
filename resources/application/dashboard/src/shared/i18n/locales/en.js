@@ -75,6 +75,7 @@ export const en = {
         logout: 'Logout',
         language: 'Language',
         toggleMenu: 'Toggle menu',
+        logoutConfirm: 'Are you sure you want to sign out?',
     },
     auth: {
         signIn: 'Sign in',

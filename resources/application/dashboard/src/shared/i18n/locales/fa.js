@@ -75,6 +75,7 @@ export const fa = {
         logout: 'خروج',
         language: 'زبان',
         toggleMenu: 'باز/بستن منو',
+        logoutConfirm: 'آیا مطمئن هستید که میخواهید خارج شوید؟',
     },
     auth: {
         signIn: 'ورود',

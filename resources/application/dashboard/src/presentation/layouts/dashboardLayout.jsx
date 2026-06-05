@@ -89,6 +89,16 @@ function IconMenu(props) {
     );
 }
 
+function IconLogout(props) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+    );
+}
+
 function IconClose(props) {
     return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" {...props}>
@@ -138,6 +148,7 @@ export function DashboardLayout() {
     ];
 
     const handleLogout = async () => {
+        if (!window.confirm(t('layout.logoutConfirm'))) return;
         await logout();
         navigate('/login', { replace: true });
     };
@@ -168,13 +179,14 @@ export function DashboardLayout() {
                     <div className="flex items-center gap-2 ms-auto shrink-0">
                         <LanguageToggle />
                         <ThemeToggle />
-                        <Button
-                            variant="subtle"
+                        <button
+                            className="hidden sm:grid h-9 w-9 place-items-center rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-btn-subtle-bg)] text-[color:var(--dash-fg)] hover:bg-[color:var(--dash-btn-subtle-hover)] transition-colors"
                             onClick={handleLogout}
-                            className="hidden sm:inline-flex"
+                            title={t('layout.logout')}
+                            aria-label={t('layout.logout')}
                         >
-                            {t('layout.logout')}
-                        </Button>
+                            <IconLogout className="h-4 w-4" />
+                        </button>
 
                         {/* Hamburger — visible on mobile/tablet only */}
                         <button
@@ -205,7 +217,8 @@ export function DashboardLayout() {
                         ))}
                         <div className="mt-2 pt-2 border-t border-[color:var(--dash-border)]">
                             <div className="text-xs text-[color:var(--dash-muted)] mb-2 px-1 truncate">{user?.email}</div>
-                            <Button variant="subtle" className="w-full justify-center" onClick={handleLogout}>
+                            <Button variant="subtle" className="w-full justify-center gap-2" onClick={handleLogout}>
+                                <IconLogout className="h-4 w-4" />
                                 {t('layout.logout')}
                             </Button>
                         </div>
