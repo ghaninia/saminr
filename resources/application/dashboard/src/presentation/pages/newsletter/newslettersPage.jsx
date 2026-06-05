@@ -167,8 +167,8 @@ export function NewslettersPage() {
                         </Button>
                     </div>
 
-                    <div className="mt-4 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
-                        <div className="divide-y divide-[color:var(--dash-border)]">
+                    <div className="mt-4 overflow-x-auto rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                        <div className="min-w-[400px] divide-y divide-[color:var(--dash-border)]">
                             {newsletters.length === 0 ? (
                                 <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">{t('newsletter.newsletters.noItems')}</div>
                             ) : (

@@ -209,33 +209,51 @@ export function CategoriesPage() {
                 </div>
             </div>
 
-            <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
-                {pagedItems.map((item) => (
-                    <div
-                        key={item.id}
-                        className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]"
-                    >
-                        <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">
-                                {item?.title?.en || item?.title?.fa || t('categories.untitled')}
-                            </div>
-                            <div className="mt-1 text-xs text-[color:var(--dash-muted)] truncate">
-                                {item.short_link} · {item?.subtitle?.en || item?.subtitle?.fa || '—'}
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button type="button" size="sm" variant="ghost" onClick={() => openEdit(item)}>
-                                {t('common.edit')}
-                            </Button>
-                            <Button type="button" size="sm" variant="ghost" onClick={() => remove(item)}>
-                                {t('common.delete')}
-                            </Button>
-                        </div>
+            <div className="mt-4 overflow-x-auto rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                <div className="min-w-[440px]">
+                    <div className="grid grid-cols-[minmax(280px,2fr)_160px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
+                        <div className="px-4 py-3">{t('users.name')}</div>
+                        <div className="px-4 py-3">{t('products.actions')}</div>
                     </div>
-                ))}
-                {!filtered.length ? (
-                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">{t('categories.noItems')}</div>
-                ) : null}
+                    <div className="divide-y divide-[color:var(--dash-border)]">
+                        {pagedItems.map((item) => (
+                            <div
+                                key={item.id}
+                                className="grid grid-cols-[minmax(280px,2fr)_160px] gap-0 items-center bg-[color:var(--dash-surface)] hover:bg-[color:var(--dash-surface-3)]"
+                            >
+                                <div className="min-w-0 px-4 py-3">
+                                    <div className="text-sm font-medium truncate">
+                                        {item?.title?.en || item?.title?.fa || t('categories.untitled')}
+                                    </div>
+                                    <div className="mt-1 text-xs text-[color:var(--dash-muted)] truncate">
+                                        {item.short_link} · {item?.subtitle?.en || item?.subtitle?.fa || '—'}
+                                    </div>
+                                </div>
+                                <div className="px-4 py-3">
+                                    <div className="inline-flex overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)]">
+                                        <button
+                                            type="button"
+                                            className="px-3 py-1.5 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)]"
+                                            onClick={() => openEdit(item)}
+                                        >
+                                            {t('common.edit')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="border-l border-[color:var(--dash-border)] px-3 py-1.5 text-xs text-red-300 transition hover:bg-red-500/10"
+                                            onClick={() => remove(item)}
+                                        >
+                                            {t('common.delete')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        {!filtered.length ? (
+                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">{t('categories.noItems')}</div>
+                        ) : null}
+                    </div>
+                </div>
             </div>
 
             <Pagination

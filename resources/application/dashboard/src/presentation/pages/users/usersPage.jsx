@@ -243,62 +243,63 @@ export function UsersPage() {
                 </div>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
-                <div className="grid grid-cols-12 gap-2 bg-[color:var(--dash-surface-3)] px-3 py-2 text-xs text-[color:var(--dash-muted)]">
-                    <div className="col-span-5">{t('users.email')}</div>
-                    <div className="col-span-3">{t('users.role')}</div>
-                    <div className="col-span-2">{t('users.status')}</div>
-                    <div className="col-span-2 text-right">{t('products.actions')}</div>
-                </div>
-
-                <div className="divide-y divide-[color:var(--dash-border)]">
-                    {items.length === 0 ? (
-                        <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">{t('users.noItems')}</div>
-                    ) : (
-                        items.map((item) => (
-                            <div key={item.id} className="grid grid-cols-12 gap-2 px-3 py-2 text-sm items-center">
-                                <div className="col-span-5 truncate text-[color:var(--dash-muted)]">{item?.email || '-'}</div>
-                                <div className="col-span-3">
-                                    <span className="inline-flex rounded-full border border-[color:var(--dash-border)] px-2 py-0.5 text-xs">
-                                        {t(`users.roles.${item?.role ?? 'user'}`)}
-                                    </span>
-                                </div>
-                                <div className="col-span-1">
-                                    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${item?.deleted_at ? 'border-red-500/40 bg-red-500/10 text-red-300' : item?.is_active ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/40 bg-amber-500/10 text-amber-300'}`}>
-                                        {item?.deleted_at ? t('users.deletedStatus') : item?.is_active ? t('users.active') : t('users.inactive')}
-                                    </span>
-                                </div>
-                                <div className="col-span-2 text-right">
-                                    <div className="inline-flex overflow-hidden rounded-lg border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)]">
-                                        <button
-                                            type="button"
-                                            className="px-2.5 py-1 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)] disabled:opacity-50"
-                                            onClick={() => openEdit(item)}
-                                            disabled={Boolean(item?.deleted_at)}
-                                        >
-                                            {t('common.edit')}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="border-l border-[color:var(--dash-border)] px-2.5 py-1 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)] disabled:opacity-50"
-                                            disabled={busyUserId === item.id || Boolean(item?.deleted_at)}
-                                            onClick={() => toggleStatus(item)}
-                                        >
-                                            {item?.is_active ? t('users.deactivate') : t('users.activate')}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="border-l border-[color:var(--dash-border)] px-2.5 py-1 text-xs text-red-300 transition hover:bg-red-500/10 disabled:opacity-50"
-                                            disabled={busyUserId === item.id || Boolean(item?.deleted_at)}
-                                            onClick={() => removeUser(item)}
-                                        >
-                                            {t('common.delete')}
-                                        </button>
+            <div className="mt-5 overflow-x-auto rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                <div className="min-w-[680px]">
+                    <div className="grid grid-cols-[minmax(200px,2fr)_120px_130px_230px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
+                        <div className="px-4 py-3">{t('users.email')}</div>
+                        <div className="px-4 py-3">{t('users.role')}</div>
+                        <div className="px-4 py-3">{t('users.status')}</div>
+                        <div className="px-4 py-3">{t('products.actions')}</div>
+                    </div>
+                    <div className="divide-y divide-[color:var(--dash-border)]">
+                        {items.length === 0 ? (
+                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">{t('users.noItems')}</div>
+                        ) : (
+                            items.map((item) => (
+                                <div key={item.id} className="grid grid-cols-[minmax(200px,2fr)_120px_130px_230px] gap-0 items-center bg-[color:var(--dash-surface)]">
+                                    <div className="px-4 py-3 truncate text-sm text-[color:var(--dash-muted)]">{item?.email || '-'}</div>
+                                    <div className="px-4 py-3">
+                                        <span className="inline-flex rounded-full border border-[color:var(--dash-border)] px-2 py-0.5 text-xs">
+                                            {t(`users.roles.${item?.role ?? 'user'}`)}
+                                        </span>
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${item?.deleted_at ? 'border-red-500/40 bg-red-500/10 text-red-300' : item?.is_active ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/40 bg-amber-500/10 text-amber-300'}`}>
+                                            {item?.deleted_at ? t('users.deletedStatus') : item?.is_active ? t('users.active') : t('users.inactive')}
+                                        </span>
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <div className="inline-flex overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)]">
+                                            <button
+                                                type="button"
+                                                className="px-2.5 py-1.5 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)] disabled:opacity-50"
+                                                onClick={() => openEdit(item)}
+                                                disabled={Boolean(item?.deleted_at)}
+                                            >
+                                                {t('common.edit')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="border-l border-[color:var(--dash-border)] px-2.5 py-1.5 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)] disabled:opacity-50"
+                                                disabled={busyUserId === item.id || Boolean(item?.deleted_at)}
+                                                onClick={() => toggleStatus(item)}
+                                            >
+                                                {item?.is_active ? t('users.deactivate') : t('users.activate')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="border-l border-[color:var(--dash-border)] px-2.5 py-1.5 text-xs text-red-300 transition hover:bg-red-500/10 disabled:opacity-50"
+                                                disabled={busyUserId === item.id || Boolean(item?.deleted_at)}
+                                                onClick={() => removeUser(item)}
+                                            >
+                                                {t('common.delete')}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    )}
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
 

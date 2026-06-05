@@ -190,7 +190,7 @@ export function ContactPage() {
                 <div className="mt-6 text-sm text-[color:var(--dash-muted)]">{t('contact.noItems')}</div>
             ) : (
                 <div className="mt-4 overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
+                    <table className="w-full min-w-[680px] text-sm border-collapse">
                         <thead>
                             <tr className="border-b border-[color:var(--dash-border)] text-[color:var(--dash-muted)] text-xs uppercase">
                                 <th className="py-2 px-3 text-start font-medium">{t('contact.colFullname')}</th>

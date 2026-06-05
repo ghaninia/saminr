@@ -137,34 +137,36 @@ export function SubscribersPage() {
                 </div>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
-                <div className="grid grid-cols-12 gap-2 bg-[color:var(--dash-surface-3)] px-3 py-2 text-xs text-[color:var(--dash-muted)]">
-                    <div className="col-span-5">{t('newsletter.subscribers.fullname')}</div>
-                    <div className="col-span-6">{t('newsletter.subscribers.email')}</div>
-                    <div className="col-span-1 text-right"> </div>
-                </div>
-                <div className="divide-y divide-[color:var(--dash-border)]">
-                    {subscribers.length === 0 ? (
-                        <div className="px-3 py-4 text-sm text-[color:var(--dash-muted)]">{t('newsletter.subscribers.noItems')}</div>
-                    ) : (
-                        subscribers.map((item) => (
-                            <div key={item.id} className="grid grid-cols-12 gap-2 px-3 py-2 text-sm">
-                                <div className="col-span-5 truncate">
-                                    {safeText(item.fullname) || '—'}
+            <div className="mt-5 overflow-x-auto rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                <div className="min-w-[440px]">
+                    <div className="grid grid-cols-[minmax(160px,1fr)_minmax(200px,2fr)_80px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
+                        <div className="px-4 py-3">{t('newsletter.subscribers.fullname')}</div>
+                        <div className="px-4 py-3">{t('newsletter.subscribers.email')}</div>
+                        <div className="px-4 py-3"> </div>
+                    </div>
+                    <div className="divide-y divide-[color:var(--dash-border)]">
+                        {subscribers.length === 0 ? (
+                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">{t('newsletter.subscribers.noItems')}</div>
+                        ) : (
+                            subscribers.map((item) => (
+                                <div key={item.id} className="grid grid-cols-[minmax(160px,1fr)_minmax(200px,2fr)_80px] gap-0 items-center bg-[color:var(--dash-surface)]">
+                                    <div className="px-4 py-3 text-sm truncate">
+                                        {safeText(item.fullname) || '—'}
+                                    </div>
+                                    <div className="px-4 py-3 text-sm truncate text-[color:var(--dash-muted)]">{safeText(item.email)}</div>
+                                    <div className="px-4 py-3 text-right">
+                                        <button
+                                            type="button"
+                                            className="text-xs text-red-400 hover:text-red-300"
+                                            onClick={() => removeSubscriber(item)}
+                                        >
+                                            {t('common.delete')}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="col-span-6 truncate text-[color:var(--dash-muted)]">{safeText(item.email)}</div>
-                                <div className="col-span-1 text-right">
-                                    <button
-                                        type="button"
-                                        className="text-xs text-red-400 hover:text-red-300"
-                                        onClick={() => removeSubscriber(item)}
-                                    >
-                                        {t('common.delete')}
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    )}
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
 

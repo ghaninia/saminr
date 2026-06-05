@@ -225,41 +225,62 @@ export function ReviewsPage() {
                 </div>
             </div>
 
-            <div className="mt-4 divide-y divide-[color:var(--dash-border)] rounded-xl border border-[color:var(--dash-border)] overflow-hidden bg-[color:var(--dash-surface)]">
-                {pagedItems.map((item) => (
-                    <div
-                        key={item.id}
-                        className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[color:var(--dash-surface-3)]"
-                    >
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium truncate">
-                                    {item?.fullname?.en || item?.fullname?.fa || t('reviews.unknown')}
-                                </span>
-                                <span className="text-xs text-[color:var(--dash-muted)] shrink-0">
-                                    {'★'.repeat(item.star ?? 0)}{'☆'.repeat(5 - (item.star ?? 0))}
-                                </span>
-                                <span className="text-xs bg-[color:var(--dash-surface-2)] border border-[color:var(--dash-border)] rounded px-1.5 py-0.5 shrink-0">
-                                    {item.user_type}
-                                </span>
-                            </div>
-                            <div className="mt-1 text-xs text-[color:var(--dash-muted)] truncate">
-                                {item?.review?.en || item?.review?.fa || '—'}
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <Button type="button" size="sm" variant="ghost" onClick={() => openEdit(item)}>
-                                {t('common.edit')}
-                            </Button>
-                            <Button type="button" size="sm" variant="ghost" onClick={() => remove(item)}>
-                                {t('common.delete')}
-                            </Button>
-                        </div>
+            <div className="mt-4 overflow-x-auto rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface)]">
+                <div className="min-w-[560px]">
+                    <div className="grid grid-cols-[minmax(200px,1fr)_minmax(200px,2fr)_140px] gap-0 bg-[color:var(--dash-surface-2)] text-xs font-semibold uppercase tracking-wider text-[color:var(--dash-muted)]">
+                        <div className="px-4 py-3">{t('users.name')}</div>
+                        <div className="px-4 py-3">{t('reviews.review')}</div>
+                        <div className="px-4 py-3">{t('products.actions')}</div>
                     </div>
-                ))}
-                {!filtered.length ? (
-                    <div className="px-4 py-3 text-sm text-[color:var(--dash-muted)]">{t('reviews.noItems')}</div>
-                ) : null}
+                    <div className="divide-y divide-[color:var(--dash-border)]">
+                        {pagedItems.map((item) => (
+                            <div
+                                key={item.id}
+                                className="grid grid-cols-[minmax(200px,1fr)_minmax(200px,2fr)_140px] gap-0 items-center bg-[color:var(--dash-surface)] hover:bg-[color:var(--dash-surface-3)]"
+                            >
+                                <div className="min-w-0 px-4 py-3">
+                                    <div className="text-sm font-medium truncate">
+                                        {item?.fullname?.en || item?.fullname?.fa || t('reviews.unknown')}
+                                    </div>
+                                    <div className="mt-1 flex items-center gap-1.5">
+                                        <span className="text-xs text-[color:var(--dash-muted)]">
+                                            {'★'.repeat(item.star ?? 0)}{'☆'.repeat(5 - (item.star ?? 0))}
+                                        </span>
+                                        <span className="text-xs bg-[color:var(--dash-surface-2)] border border-[color:var(--dash-border)] rounded px-1.5 py-0.5">
+                                            {item.user_type}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="min-w-0 px-4 py-3">
+                                    <div className="text-xs text-[color:var(--dash-muted)] truncate">
+                                        {item?.review?.en || item?.review?.fa || '—'}
+                                    </div>
+                                </div>
+                                <div className="px-4 py-3">
+                                    <div className="inline-flex overflow-hidden rounded-xl border border-[color:var(--dash-border)] bg-[color:var(--dash-surface-2)]">
+                                        <button
+                                            type="button"
+                                            className="px-3 py-1.5 text-xs text-[color:var(--dash-fg)] transition hover:bg-[color:var(--dash-surface)]"
+                                            onClick={() => openEdit(item)}
+                                        >
+                                            {t('common.edit')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="border-l border-[color:var(--dash-border)] px-3 py-1.5 text-xs text-red-300 transition hover:bg-red-500/10"
+                                            onClick={() => remove(item)}
+                                        >
+                                            {t('common.delete')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        {!filtered.length ? (
+                            <div className="px-4 py-10 text-center text-sm text-[color:var(--dash-muted)]">{t('reviews.noItems')}</div>
+                        ) : null}
+                    </div>
+                </div>
             </div>
 
             <Pagination
