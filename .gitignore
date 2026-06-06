@@ -9,7 +9,6 @@
 /storage/pail/
 /public/storage
 /public/hot
-/public/build
 /bootstrap/cache/*.php
 .phpunit.result.cache
 /.phpunit.cache
