@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/ghanin/public_html/wickyland.com
+    - /bin/cp * $DEPLOYPATH
