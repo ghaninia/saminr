@@ -113,6 +113,13 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
+[data-theme='dark'] .categories-page .products .item {
+  background: rgba(0, 0, 0, .1);
+}
+
+[data-theme='light'] .categories-page .products .item {
+  background: rgba(214, 214, 214, 0.1);
+}
 
 /* ── Active filter summary row ───────────────────────────────────────────── */
 .categories-active-summary {
@@ -185,100 +192,36 @@
 /* ── Products grid ────────────────────────────────────────────────────────── */
 .categories-products-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* mobile: 1 column */
+  grid-template-columns: repeat(1, 1fr);
   gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
+/* cancel the vertical accent line that .products:after adds */
+.categories-products-grid::after {
+  display: none !important;
+}
+
+/* laptop: 2 columns */
+@media (min-width: 640px) {
+  .categories-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* desktop: 3 columns */
+@media (min-width: 1200px) {
   .categories-products-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 1200px) {
-  .categories-products-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* ── Product card ──────────────────────────────────────────────────────────── */
-.categories-product-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.03);
-  text-decoration: none;
-  color: var(--foreground);
-  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-}
-
-.categories-product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  border-color: rgba(212, 175, 55, 0.35);
-}
-
-.categories-product-card-img {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.categories-product-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s;
-}
-
-.categories-product-card:hover .categories-product-card-img img {
-  transform: scale(1.05);
-}
-
-.categories-product-card-body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.categories-product-card-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin: 0;
-}
-
-.categories-product-card-subtitle {
-  font-size: 0.8rem;
-  opacity: 0.6;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.categories-product-card-price {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--secondary);
-  margin: 0.25rem 0 0;
-}
-
-.categories-product-card-unit {
-  font-size: 0.75rem;
-  font-weight: 400;
-  opacity: 0.7;
-}
-
 /* ── Mobile ────────────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .categories-products-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
   .categories-filter-scroll {
     justify-content: flex-start;
   }
 }
+
+
 

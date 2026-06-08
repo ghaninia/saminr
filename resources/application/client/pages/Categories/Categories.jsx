@@ -2,8 +2,16 @@ import { useEffect, useMemo, useCallback, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useLanguage } from '../../contexts/LanguageContext'
 import { apiClient } from '../../apis'
-import { ROUTES, LOCALES } from '../../constants/index'
-import { resolveLocalizedText, formatPrice } from '../../utils/index'
+import { ROUTES, LOCALES, ASSETS } from '../../constants/index'
+import {
+  resolveLocalizedText,
+  resolveLocalizedValue,
+  formatPrice,
+  sanitizeSvg,
+  normalizeArrayResponse,
+} from '../../utils/index'
+import { ArrowUpRight } from 'lucide-react'
+import '../Main/sections/components/SectionComponents.css'
 import './Categories.css'
 
 const DEFAULT_IMAGE = '/images/file-corrupted.svg'
@@ -86,20 +94,36 @@ function Categories() {
   }, [slugsKey])
 
   const products = useMemo(() => {
-    return normalizeProductsResponse(rawProducts)
+    return normalizeArrayResponse(rawProducts)
       .map((product) => {
+        const variants = Array.isArray(product?.variants) ? product.variants : []
+        const defaultVariant =
+          product?.default_variant ??
+          variants.find((v) => v?.is_default) ??
+          variants[0] ??
+          null
         const rawImage = typeof product?.image === 'string' ? product.image.trim() : ''
         return {
           id: product?.id,
           short_link: product?.short_link ?? '',
           title: resolveLocalizedText(product?.title, language),
           subtitle: resolveLocalizedText(product?.subtitle, language),
-          image: rawImage || DEFAULT_IMAGE,
-          price: product?.default_variant?.price ?? null,
+          image: rawImage || ASSETS.IMAGES.NOT_FOUND,
+          isFallbackImage: !rawImage,
+          variants,
+          colors: Array.isArray(product?.colors) ? product.colors : [],
+          summaryAttributes: Array.isArray(product?.summary_attributes) ? product.summary_attributes : [],
+          defaultVariant,
         }
       })
       .filter((p) => p.title)
   }, [rawProducts, language])
+
+  const [selectedColorByProduct, setSelectedColorByProduct] = useState({})
+
+  const handleColorClick = useCallback((productId, color) => {
+    setSelectedColorByProduct((prev) => ({ ...prev, [productId]: color }))
+  }, [])
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const toggleSlug = useCallback((slug) => {
@@ -173,39 +197,102 @@ function Categories() {
         ) : products.length === 0 ? (
           <p className="categories-products-state">{t('categories.noProducts')}</p>
         ) : (
-          <div className="categories-products-grid">
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                to={product.short_link ? `${ROUTES.PRODUCTS}/${product.short_link}` : ROUTES.PRODUCTS}
-                className="categories-product-card"
-              >
-                <div className="categories-product-card-img">
+          <div className="categories-products-grid products">
+            {products.map((product) => {
+              const selectedColor =
+                selectedColorByProduct[product.id] ?? product.defaultVariant?.color ?? null
+
+              const filteredVariants = selectedColor
+                ? product.variants.filter((v) => (v?.color ?? null) === selectedColor)
+                : product.variants
+
+              const activeVariant =
+                filteredVariants.find((v) => v?.is_default) ??
+                filteredVariants[0] ??
+                product.defaultVariant
+
+              const detailAttributes = Array.isArray(activeVariant?.attributes)
+                ? activeVariant.attributes.filter((a) => a?.is_color !== true)
+                : []
+
+              return (
+                <div key={product.id ?? product.title} className="item">
+                  <div className="bottom-fade" />
                   <img
                     src={product.image}
                     alt={product.title}
                     loading="lazy"
+                    data-fallback={product.isFallbackImage ? '1' : undefined}
                     onError={(e) => {
                       if (e.currentTarget.dataset.fallbackApplied) return
                       e.currentTarget.dataset.fallbackApplied = '1'
-                      e.currentTarget.src = DEFAULT_IMAGE
+                      e.currentTarget.src = ASSETS.IMAGES.NOT_FOUND
                     }}
                   />
+                  {product.colors.length > 0 && (
+                    <div className={`product-color-rail ${language === LOCALES.FA ? 'rtl' : 'ltr'}`}>
+                      <div className="product-color-list-vertical">
+                        {product.colors.map((colorItem) => (
+                          <button
+                            key={`${product.id}-${colorItem.name}`}
+                            type="button"
+                            className={`product-color-dot ${selectedColor === colorItem.name ? 'active' : ''}`}
+                            onClick={() => handleColorClick(product.id, colorItem.name)}
+                            title={resolveLocalizedValue(colorItem.name, colorItem.name_i18n, language)}
+                            aria-label={resolveLocalizedValue(colorItem.name, colorItem.name_i18n, language)}
+                            style={{ backgroundColor: colorItem.swatch || '#E5E7EB' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="title">
+                    <h4>{product.title}</h4>
+                    {product.subtitle ? <p className="product-subtitle">{product.subtitle}</p> : null}
+                    {detailAttributes.slice(0, 2).length > 0 && (
+                      <div className="details">
+                        {detailAttributes.slice(0, 2).map((attr) => (
+                          <span key={`${product.id}-${activeVariant?.id}-${attr.key}`}>
+                            {sanitizeSvg(attr?.icon_svg) ? (
+                              <i
+                                className="detail-attr-icon"
+                                aria-hidden="true"
+                                dangerouslySetInnerHTML={{ __html: sanitizeSvg(attr.icon_svg) }}
+                              />
+                            ) : null}
+                            {resolveLocalizedValue(attr.value, attr.value_i18n, language)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="curv-butn icon-bg">
+                    <Link
+                      to={product.short_link ? `${ROUTES.PRODUCTS}/${product.short_link}` : ROUTES.PRODUCTS}
+                      className="vid"
+                    >
+                      <div className="icon">
+                        <div className="icon-show">
+                          <span>{activeVariant ? formatPrice(activeVariant.price, language) : '--'}</span>
+                          <div className="unit">{t('products.currencyUnit')}</div>
+                        </div>
+                        <ArrowUpRight className="icon-hidden" />
+                      </div>
+                    </Link>
+                    <div className="br-left-top">
+                      <svg viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-11 h-11">
+                        <path d="M11 1.54972e-06L0 0L2.38419e-07 11C1.65973e-07 4.92487 4.92487 1.62217e-06 11 1.54972e-06Z" />
+                      </svg>
+                    </div>
+                    <div className="br-right-bottom">
+                      <svg viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-11 h-11">
+                        <path d="M11 1.54972e-06L0 0L2.38419e-07 11C1.65973e-07 4.92487 4.92487 1.62217e-06 11 1.54972e-06Z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-                <div className="categories-product-card-body">
-                  <h3 className="categories-product-card-title">{product.title}</h3>
-                  {product.subtitle ? (
-                    <p className="categories-product-card-subtitle">{product.subtitle}</p>
-                  ) : null}
-                  {product.price !== null ? (
-                    <p className="categories-product-card-price">
-                      {formatPrice(product.price, language)}
-                      <span className="categories-product-card-unit"> {t('common.currencyUnit')}</span>
-                    </p>
-                  ) : null}
-                </div>
-              </Link>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
