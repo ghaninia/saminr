@@ -182,6 +182,11 @@ function Footer() {
                       {t('footer.quickLinks.contact')}
                     </Link>
                   </li>
+                  <li>
+                    <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.sitemap')}
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
