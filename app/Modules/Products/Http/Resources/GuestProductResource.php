@@ -49,6 +49,7 @@ class GuestProductResource extends JsonResource
                 ],
                 $dto->summaryAttributes,
             ),
+            'category_ids'       => $dto->categoryIds,
         ];
     }
 }

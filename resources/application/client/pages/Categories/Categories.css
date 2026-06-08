@@ -1,0 +1,268 @@
+.categories-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 120px;
+  padding-bottom: 4rem;
+}
+
+.categories-page-header {
+  text-align: center;
+  padding: 2rem 1rem 2.5rem;
+}
+
+/* ── Filter pills bar ─────────────────────────────────────────────────────── */
+.categories-filter-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  padding: 0 1rem;
+}
+
+.categories-filter-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.25rem;
+  /* hide scrollbar visually, keep functionality */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+  max-width: 100%;
+}
+
+.categories-filter-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.categories-filter-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+}
+
+/* ── Pill ── */
+.categories-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+  opacity: 0.75;
+  font-family: "iranbakhbold";
+  overflow: hidden;
+}
+
+.categories-pill .title { 
+    display:inline-block ;
+    padding: 10px 20px;
+}
+
+.categories-pill:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.categories-pill.active {
+  opacity: 1;
+  font-weight: 600;
+  /* border/bg/color are set via inline style (category color) */
+}
+
+/* fallback active style when category has no color */
+.categories-pill.active:not([style]) {
+  border-color: var(--secondary);
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--secondary);
+}
+
+/* ── Remove "×" inside pill ── */
+.categories-pill-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 15px 20px;
+}
+
+.categories-pill-remove:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ── Active filter summary row ───────────────────────────────────────────── */
+.categories-active-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.categories-active-label {
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.categories-active-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.categories-active-tag-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.categories-active-tag-remove:hover {
+  opacity: 1;
+}
+
+.categories-clear-all {
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.78rem;
+  color: var(--foreground);
+  opacity: 0.4;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: opacity 0.15s;
+}
+
+.categories-clear-all:hover {
+  opacity: 0.8;
+}
+
+/* ── Products state messages ──────────────────────────────────────────────── */
+.categories-products-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--foreground);
+  opacity: 0.5;
+  font-size: 0.95rem;
+}
+
+/* ── Products grid ────────────────────────────────────────────────────────── */
+.categories-products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .categories-products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .categories-products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Product card ──────────────────────────────────────────────────────────── */
+.categories-product-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: var(--foreground);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.categories-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.categories-product-card-img {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.categories-product-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.categories-product-card:hover .categories-product-card-img img {
+  transform: scale(1.05);
+}
+
+.categories-product-card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.categories-product-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.categories-product-card-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.categories-product-card-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--secondary);
+  margin: 0.25rem 0 0;
+}
+
+.categories-product-card-unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+/* ── Mobile ────────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .categories-products-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .categories-filter-scroll {
+    justify-content: flex-start;
+  }
+}
+

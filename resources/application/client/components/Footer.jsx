@@ -173,18 +173,8 @@ function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link to={ROUTES.PRODUCTS} className="text-gray-300 hover:text-yellow-500">
-                      {t('footer.quickLinks.cars')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={ROUTES.GALLERY} className="text-gray-300 hover:text-yellow-500">
-                      {t('footer.quickLinks.carTypes')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={ROUTES.HOME} className="text-gray-300 hover:text-yellow-500">
-                      {t('footer.quickLinks.team')}
+                    <Link to={ROUTES.CATEGORIES} className="text-gray-300 hover:text-yellow-500">
+                      {t('footer.quickLinks.categories')}
                     </Link>
                   </li>
                   <li>

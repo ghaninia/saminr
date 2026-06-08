@@ -148,11 +148,17 @@ export const apiClient = {
   },
 
   /**
-   * Gets all client products
+   * Gets all client products, optionally filtered by category slugs
+   * @param {Object} [params]
+   * @param {string[]} [params.categorySlugs] - Filter by category slugs (comma-joined)
    * @returns {Promise<any>} Products data
    */
-  getClientProducts() {
-    return httpGet(API_ENDPOINTS.CLIENT.PRODUCTS)
+  getClientProducts({ categorySlugs } = {}) {
+    const hasSlugs = Array.isArray(categorySlugs) && categorySlugs.length > 0
+    const url = hasSlugs
+      ? `${API_ENDPOINTS.CLIENT.PRODUCTS}?categories=${encodeURIComponent(categorySlugs.join(','))}`
+      : API_ENDPOINTS.CLIENT.PRODUCTS
+    return httpGet(url)
   },
 
   /**

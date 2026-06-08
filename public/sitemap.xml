@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Home -->
+  <url>
+    <loc>http://localhost:8080/</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Categories -->
+  <url>
+    <loc>http://localhost:8080/categories</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/categories"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/categories"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Products -->
+  <url>
+    <loc>http://localhost:8080/products</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/products"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/products"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Gallery -->
+  <url>
+    <loc>http://localhost:8080/gallery</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/gallery"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/gallery"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Events -->
+  <url>
+    <loc>http://localhost:8080/events</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/events"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/events"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>http://localhost:8080/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="http://localhost:8080/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="http://localhost:8080/contact"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

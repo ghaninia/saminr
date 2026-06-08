@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useSettings } from '../contexts/SettingsContext'
 import { useTheme } from '../contexts/ThemeContext'
@@ -16,6 +16,7 @@ function Navigation() {
   const { theme } = useTheme()
   const { totalItems } = useCart()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { pathname } = useLocation()
   const navTitle = getSetting('title', { fallback: DEFAULTS.PHONE })
   const phone = getSetting('phone', { fallback: DEFAULTS.PHONE })
   const phoneHref = `tel:${removeWhitespace(String(phone))}`
@@ -43,22 +44,17 @@ function Navigation() {
             <div className="nav-menu-desktop">
               <ul className="nav-menu-list">
                 <li>
-                  <Link to={ROUTES.HOME} className="nav-link">
+                  <Link to={ROUTES.HOME} className={`nav-link${pathname === ROUTES.HOME ? ' active' : ''}`}>
                     {t('nav.home')}
                   </Link>
                 </li>
                 <li>
-                  <Link to={ROUTES.EVENTS} className="nav-link">
-                    {t('nav.events')}
+                  <Link to={ROUTES.CATEGORIES} className={`nav-link${pathname === ROUTES.CATEGORIES ? ' active' : ''}`}>
+                    {t('nav.categories')}
                   </Link>
                 </li>
                 <li>
-                  <Link to={ROUTES.GALLERY} className="nav-link">
-                    {t('nav.gallery')}
-                  </Link>
-                </li>
-                <li>
-                  <Link to={ROUTES.CONTACT} className="nav-link">
+                  <Link to={ROUTES.CONTACT} className={`nav-link${pathname === ROUTES.CONTACT ? ' active' : ''}`}>
                     {t('nav.contact')}
                   </Link>
                 </li>
@@ -144,7 +140,7 @@ function Navigation() {
           <div className={`nav-mobile-menu ${isMenuOpen ? 'open' : ''}`}>
             <ul className="nav-mobile-list">
               <li>
-                <Link to={ROUTES.HOME} className="nav-mobile-link" onClick={closeMenu}>
+                <Link to={ROUTES.HOME} className={`nav-mobile-link${pathname === ROUTES.HOME ? ' active' : ''}`} onClick={closeMenu}>
                   {t('nav.home')}
                 </Link>
               </li>
@@ -154,17 +150,12 @@ function Navigation() {
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.EVENTS} className="nav-mobile-link" onClick={closeMenu}>
-                  {t('nav.events')}
+                <Link to={ROUTES.CATEGORIES} className={`nav-mobile-link${pathname === ROUTES.CATEGORIES ? ' active' : ''}`} onClick={closeMenu}>
+                  {t('nav.categories')}
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.GALLERY} className="nav-mobile-link" onClick={closeMenu}>
-                  {t('nav.gallery')}
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.CONTACT} className="nav-mobile-link" onClick={closeMenu}>
+                <Link to={ROUTES.CONTACT} className={`nav-mobile-link${pathname === ROUTES.CONTACT ? ' active' : ''}`} onClick={closeMenu}>
                   {t('nav.contact')}
                 </Link>
               </li>

@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "categories": "Categories",
     "events": "Events",
     "gallery": "Gallery",
     "contact": "Contact",
@@ -108,7 +109,11 @@
   },
   "categories": {
     "subtitle": "Our Categories",
-    "title": "Product Categories"
+    "title": "Product Categories",
+    "noProducts": "No products found in this category.",
+    "filteredBy": "Filtered by:",
+    "removeFilter": "Remove filter",
+    "clearAll": "Clear all"
   },
   "video": {
     "subtitle": "Explore",
@@ -234,6 +239,7 @@
     "quickLinks": {
       "title": "Quick Links",
       "about": "About Us",
+      "categories": "Categories",
       "cars": "Cars",
       "carTypes": "Car Types",
       "team": "Team",

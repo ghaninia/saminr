@@ -18,6 +18,7 @@ export const ROUTES = {
   HOME: '/',
   PRODUCTS: '/products',
   PRODUCT_DETAIL: '/products/:shortLink',
+  CATEGORIES: '/categories',
   CONTACT: '/contact',
   GALLERY: '/gallery',
   EVENTS: '/events',

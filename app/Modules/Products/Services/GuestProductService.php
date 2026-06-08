@@ -31,6 +31,20 @@ class GuestProductService implements GuestProductServiceInterface
             ->all();
     }
 
+    /**
+     * @param  list<string> $categorySlugs
+     * @return list<GuestProductDto>
+     */
+    public function listForGuestByCategories(array $categorySlugs): array
+    {
+        $products = $this->guestProductRepository->listActiveByCategories($categorySlugs);
+
+        return $products
+            ->map(fn (Product $product): GuestProductDto => $this->mapProduct($product, limitSummaryAttributes: true))
+            ->values()
+            ->all();
+    }
+
     public function findForGuest(string $shortLink): ?GuestProductDto
     {
         $product = $this->guestProductRepository->findActiveByShortLink($shortLink);
@@ -81,6 +95,9 @@ class GuestProductService implements GuestProductServiceInterface
             colors: $this->buildColors($variants),
             variants: $variants,
             summaryAttributes: $limitSummaryAttributes ? array_slice($summaryAttributes, 0, 2) : $summaryAttributes,
+            categoryIds: $product->relationLoaded('categories')
+                ? $product->categories->pluck('id')->map(fn ($id) => (int) $id)->all()
+                : [],
         );
     }
 

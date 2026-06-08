@@ -13,6 +13,7 @@ import Events from './pages/Events/Events'
 import RegistrationEvent from './pages/RegistrationEvent/RegistrationEvent'
 import GetTicket from './pages/GetTicket/GetTicket'
 import ProductDetails from './pages/Product/ProductDetails'
+import Categories from './pages/Categories/Categories'
 import Cart from './pages/Cart/Cart'
 import NotFound from './pages/NotFound'
 import { ROUTES } from './constants/index'
@@ -37,6 +38,7 @@ function App() {
                   <Navigation />
                   <Routes>
                     <Route path={ROUTES.HOME} element={<Main />} />
+                    <Route path={ROUTES.CATEGORIES} element={<Categories />} />
                     <Route path={ROUTES.PRODUCT_DETAIL} element={<ProductDetails />} />
                     <Route path={ROUTES.CONTACT} element={<Contact />} />
                     <Route path={ROUTES.GALLERY} element={<Gallery />} />
