@@ -29,12 +29,9 @@
     font-weight: 700;
 }
 /* first footer */
-.first-footer {
-    padding: 90px 0 0 0;
-}
 @media screen and (max-width: 992px) {
     .first-footer {
-        padding: 18px 14px 0 14px;
+        padding: 18px 0 0 0;
     }
 
     .links.dark.footer-contact-links,
