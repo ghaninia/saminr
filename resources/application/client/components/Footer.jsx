@@ -13,6 +13,7 @@ function Footer() {
   const { getSetting } = useSettings()
   const [fullname, setFullname] = useState('')
   const [subscriberEmail, setSubscriberEmail] = useState('')
+  const [activeContact, setActiveContact] = useState('phone')
   const [submitting, setSubmitting] = useState(false)
   const [subscribeError, setSubscribeError] = useState('')
   const [subscribeNotice, setSubscribeNotice] = useState('')
@@ -33,6 +34,30 @@ function Footer() {
   const copyright = getSetting('copyright', {
     fallback: `${t('footer.copyright.text')} ${t('footer.copyright.designer')}`,
   })
+
+  const contactItems = [
+    {
+      id: 'phone',
+      title: t('footer.contact.title'),
+      value: contactNumbers || t('footer.contact.phone'),
+      href: supportHref,
+      icon: <Phone className="w-6 h-6" />,
+    },
+    {
+      id: 'email',
+      title: t('footer.email.title'),
+      value: email,
+      href: `mailto:${email}`,
+      icon: <Mail className="w-6 h-6" />,
+    },
+    {
+      id: 'address',
+      title: t('footer.address.title'),
+      value: address,
+      href: null,
+      icon: <MapPin className="w-6 h-6" />,
+    },
+  ]
 
   const onSubscribe = async (event) => {
     event.preventDefault()
@@ -70,43 +95,41 @@ function Footer() {
           <div className="grid grid-cols-1">
             <div className="links dark footer-contact-links">
               <div className="footer-contact-links-wrapper grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon">
-                    <div className="icon-footer flex items-center justify-center">
-                      <Phone className="w-6 h-6" />
+                {contactItems.map((item, index) => {
+                  const isActive = activeContact === item.id
+
+                  return (
+                    <div key={item.id} className={`footer-contact-link-item${isActive ? ' is-active' : ''}`}>
+                      <div className="footer-contact-link-wrapper flex items-center">
+                        <button
+                          type="button"
+                          className="footer-contact-link-trigger"
+                          onClick={() => setActiveContact(item.id)}
+                          aria-pressed={isActive}
+                        >
+                          <div className="image-wrapper footer-contact-link-icon">
+                            <div className="icon-footer flex items-center justify-center">
+                              {item.icon}
+                            </div>
+                          </div>
+                          <div className="footer-contact-link-content">
+                            <h6>{item.title}</h6>
+                            <p>
+                              {item.href ? (
+                                <a href={item.href}>{item.value}</a>
+                              ) : (
+                                <span>{item.value}</span>
+                              )}
+                            </p>
+                          </div>
+                        </button>
+                      </div>
+                      {index < contactItems.length - 1 ? (
+                        <div className="footer-contact-links-divider hidden md:block"></div>
+                      ) : null}
                     </div>
-                  </div>
-                  <div className="footer-contact-link-content">
-                    <h6>{t('footer.contact.title')}</h6>
-                    <p>
-                      <a href={supportHref}>{contactNumbers || t('footer.contact.phone')}</a>
-                    </p>
-                  </div>
-                </div>
-                <div className="footer-contact-links-divider hidden md:block"></div>
-                <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon">
-                    <div className="icon-footer flex items-center justify-center">
-                      <Mail className="w-6 h-6" />
-                    </div>
-                  </div>
-                  <div className="footer-contact-link-content">
-                    <h6>{t('footer.email.title')}</h6>
-                    <p>{email}</p>
-                  </div>
-                </div>
-                <div className="footer-contact-links-divider hidden md:block"></div>
-                <div className="footer-contact-link-wrapper flex items-center">
-                  <div className="image-wrapper footer-contact-link-icon">
-                    <div className="icon-footer flex items-center justify-center">
-                      <MapPin className="w-6 h-6" />
-                    </div>
-                  </div>
-                  <div className="footer-contact-link-content">
-                    <h6>{t('footer.address.title')}</h6>
-                    <p>{address}</p>
-                  </div>
-                </div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -166,7 +189,7 @@ function Footer() {
             <div className="md:col-span-3 md:col-start-6 widget-area">
               <div className="widget usful-links">
                 <h3 className="widget-title mb-4">{t('footer.quickLinks.title')}</h3>
-                <ul className="space-y-2">
+                <ul className="footer-quick-links-list">
                   <li>
                     <Link to={ROUTES.HOME} className="text-gray-300 hover:text-yellow-500">
                       {t('footer.quickLinks.about')}
