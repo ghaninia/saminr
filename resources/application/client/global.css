@@ -524,6 +524,9 @@ html[data-theme='light'] .background {
     line-height: 50px;
   }
 
+  .video-wrapper {
+    border-radius: 10px;
+  }
 }
 
 .bottom-fade {
@@ -1194,7 +1197,7 @@ section .swiper-button-prev::after {
 /* ======= Video Section Styles ======= */
 .video-wrapper {
     position: relative;
-    min-height: 6لط0vh;
+    min-height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1221,7 +1224,7 @@ section .swiper-button-prev::after {
 }
 
 .video-wrapper .section-subtitle {
-    color: #f5b754;
+    color: var(--body);
     font-size: 14px;
     text-transform: uppercase;
     margin-bottom: 10px;
@@ -1564,12 +1567,6 @@ section .swiper-button-prev::after {
 .app {
     position: relative;
     padding: 80px 0;
-}
-
-@media (max-width: 768px) {
-    .app {
-        padding : 0 10px;
-    }
 }
 
 .app .item {

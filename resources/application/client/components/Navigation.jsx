@@ -30,6 +30,7 @@ function Navigation() {
   }
 
   return (
+    <>
     <nav className="navigation-wrapper">
       <div className={`navigation background ${theme === 'light' ? 'light-theme' : ''}`}>
         <div className="navigation-container">
@@ -118,8 +119,6 @@ function Navigation() {
                     <span className="nav-cart-badge">{totalItems}</span>
                   )}
                 </Link>
-                <ThemeSwitcher />
-                <LanguageSwitcher />
               </div>
               <button
                 onClick={toggleMenu}
@@ -136,34 +135,33 @@ function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Menu */}
-          <div className={`nav-mobile-menu ${isMenuOpen ? 'open' : ''}`}>
-            <ul className="nav-mobile-list">
-              <li>
-                <Link to={ROUTES.HOME} className={`nav-mobile-link${pathname === ROUTES.HOME ? ' active' : ''}`} onClick={closeMenu}>
-                  {t('nav.home')}
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.CART} className="nav-mobile-link" onClick={closeMenu}>
-                  {t('cart.title')} {totalItems > 0 ? `(${totalItems})` : ''}
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.CATEGORIES} className={`nav-mobile-link${pathname === ROUTES.CATEGORIES ? ' active' : ''}`} onClick={closeMenu}>
-                  {t('nav.categories')}
-                </Link>
-              </li>
-              <li>
-                <Link to={ROUTES.CONTACT} className={`nav-mobile-link${pathname === ROUTES.CONTACT ? ' active' : ''}`} onClick={closeMenu}>
-                  {t('nav.contact')}
-                </Link>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
     </nav>
+    <div className={`nav-mobile-menu ${isMenuOpen ? 'open' : ''}`}>
+      <ul className="nav-mobile-list">
+        <li>
+          <Link to={ROUTES.HOME} className={`nav-mobile-link${pathname === ROUTES.HOME ? ' active' : ''}`} onClick={closeMenu}>
+            {t('nav.home')}
+          </Link>
+        </li>
+        <li>
+          <Link to={ROUTES.CATEGORIES} className={`nav-mobile-link${pathname === ROUTES.CATEGORIES ? ' active' : ''}`} onClick={closeMenu}>
+            {t('nav.categories')}
+          </Link>
+        </li>
+        <li>
+          <Link to={ROUTES.CONTACT} className={`nav-mobile-link${pathname === ROUTES.CONTACT ? ' active' : ''}`} onClick={closeMenu}>
+            {t('nav.contact')}
+          </Link>
+        </li>
+      </ul>
+      <div className="nav-mobile-footer">
+        <ThemeSwitcher />
+        <LanguageSwitcher />
+      </div>
+    </div>
+    </>
   )
 }
 

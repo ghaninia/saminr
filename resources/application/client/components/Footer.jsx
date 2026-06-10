@@ -124,9 +124,6 @@ function Footer() {
                           </div>
                         </button>
                       </div>
-                      {index < contactItems.length - 1 ? (
-                        <div className="footer-contact-links-divider hidden md:block"></div>
-                      ) : null}
                     </div>
                   )
                 })}

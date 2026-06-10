@@ -199,12 +199,39 @@
   transform: rotate(-45deg) translateY(-8px);
 }
 
-/* Mobile Menu */
+/* Mobile Menu - Fullscreen Overlay */
 .nav-mobile-menu {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-inline-end: 1px solid rgba(0, 0, 0, 0.09);
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 4.5rem;
+}
+
+html[data-theme='light'] .nav-mobile-menu {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.46);
+}
+
+[dir="rtl"] .nav-mobile-menu {
+  transform: translateX(100%);
+}
+
+.nav-mobile-menu.open {
+  transform: translateX(0);
 }
 
 @media (min-width: 768px) {
@@ -213,18 +240,13 @@
   }
 }
 
-.nav-mobile-menu.open {
-  max-height: 400px;
-  opacity: 1;
-}
-
 .nav-mobile-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   list-style: none;
   margin: 0;
-  padding: 1rem 0;
+  padding: 1rem 1.5rem;
+  flex: 1;
 }
 
 .nav-mobile-link {
@@ -234,21 +256,23 @@
   font-weight: 500;
   transition: all 0.3s;
   opacity: 0.8;
-  padding: 0.5rem 0;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+  font-size: 1.1rem;
 }
 
-/* Dark theme mobile hover */
-.navigation:not(.light-theme) .nav-mobile-link:hover,
-.navigation:not(.light-theme) .nav-mobile-link.active {
+.nav-mobile-link:hover,
+.nav-mobile-link.active {
   color: var(--secondary);
   opacity: 1;
 }
 
-/* Light theme mobile hover */
-.navigation.light-theme .nav-mobile-link:hover,
-.navigation.light-theme .nav-mobile-link.active {
-  color: var(--secondary);
-  opacity: 1;
+.nav-mobile-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 /* Responsive */
