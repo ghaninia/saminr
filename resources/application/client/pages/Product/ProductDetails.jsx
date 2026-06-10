@@ -193,7 +193,7 @@ export default function ProductDetails() {
         </div>
       </section>
 
-      <section className="car-details section-padding">
+      <section className="section-padding">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Main Content */}

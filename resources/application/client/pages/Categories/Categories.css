@@ -26,7 +26,7 @@
   padding: 0.5rem 0.25rem;
   /* hide scrollbar visually, keep functionality */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.15) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   max-width: 100%;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .categories-filter-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
@@ -66,9 +66,9 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.categories-pill .title { 
-    display:inline-block ;
-    padding: 10px 20px;
+.categories-pill .title {
+  display: inline-block;
+  padding: 10px 20px;
 }
 
 .categories-pill:hover {
@@ -92,12 +92,12 @@
 
 /* ── Remove "×" inside pill ── */
 .categories-pill-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 15px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 15px 20px;
 }
 
 
@@ -143,7 +143,7 @@
   gap: 0.35rem;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -225,3 +225,8 @@
 
 
 
+@media (max-width: 768px) {
+  .categories-products-grid {
+    padding: 20px
+  }
+}
