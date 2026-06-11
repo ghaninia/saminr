@@ -884,6 +884,14 @@ html[data-theme="light"] .background {
     margin-bottom: 0;
     transition: all 500ms ease;
 }
+
+@media (max-width: 768px) {
+    .products .item .title .details {
+        display: block;
+    }
+}
+
+
 .products .item .title .details span {
     display: flex;
     align-items: center;
