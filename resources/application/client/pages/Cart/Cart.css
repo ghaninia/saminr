@@ -195,10 +195,12 @@
     grid-area: quantity;
     justify-content: flex-start;
   }
-
   .cart-item-price,
   .cart-item-total {
     display: none;
+  }
+  .empty-cart {
+    width: auto;
   }
 }
 
