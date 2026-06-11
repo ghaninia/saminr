@@ -891,12 +891,19 @@ html[data-theme="light"] .background {
     }
 }
 
+html[dir="rtl"] .products .item .title .details span {
+    margin-left: 10px;
+}
+
+html[dir="ltr"] .products .item .title .details span {
+    margin-right: 10px;
+}
 
 .products .item .title .details span {
     display: flex;
     align-items: center;
-    margin-left: 10px;
 }
+
 .products .item .title .details svg {
     display: inline-flex;
     width: 16px;
