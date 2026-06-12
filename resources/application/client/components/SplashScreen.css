@@ -305,3 +305,25 @@
 		animation-delay: 0.99s;
 	}
 }
+
+.splash-screen__text {
+    position: relative;
+    color: var(--foreground);
+}
+
+.splash-screen__text:before {
+    content: attr(data-text);
+    position: absolute;
+    overflow: hidden;
+    max-width: 7em;
+    white-space: nowrap;
+    animation: loading 8s linear;
+    color: rgba(0, 0, 0, 0.2);
+    font-size: .8em;
+}
+
+@keyframes loading {
+    0% {
+        max-width: 0;
+    }
+}

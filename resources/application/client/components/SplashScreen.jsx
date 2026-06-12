@@ -1,3 +1,4 @@
+import { useLanguage } from '../contexts/LanguageContext'
 import { useGlobalLoading } from '../contexts/LoadingContext'
 import { useTheme } from '../contexts/ThemeContext'
 import './SplashScreen.css'
@@ -9,6 +10,7 @@ import './SplashScreen.css'
 export default function SplashScreen() {
   const { isLoading, progress } = useGlobalLoading()
   const { theme } = useTheme()
+  const { t } = useLanguage()
 
   if (!isLoading) {
     return null
@@ -28,16 +30,9 @@ export default function SplashScreen() {
               </g>
           </svg>
         </div>
-
-        {/* Loading Text */}
         <div className="splash-screen__text">
-          <div className="splash-screen__spinner">
-            <span className="splash-screen__dot splash-screen__dot--1" />
-            <span className="splash-screen__dot splash-screen__dot--2" />
-            <span className="splash-screen__dot splash-screen__dot--3" />
-          </div>
+          {t('splash.loading')}
         </div>
-
         {/* Progress Bar */}
         {progress > 0 && (
           <div className="splash-screen__progress-container">

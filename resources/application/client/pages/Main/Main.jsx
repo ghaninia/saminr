@@ -6,6 +6,7 @@ import VideoSection from './sections/components/VideoSection'
 import TestimonialsSection from './sections/components/TestimonialsSection'
 import AppSection from './sections/components/AppSection'
 import TimelineSection from './sections/components/TimelineSection.jsx'
+import Footer from '../../components/Footer'
 import './Main.css'
 
 function Main() {
@@ -19,6 +20,7 @@ function Main() {
         <VideoSection />
         <TestimonialsSection />
         <AppSection />
+        <Footer />
     </>
   )
 }
