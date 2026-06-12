@@ -22,8 +22,8 @@ export default function Cart() {
               <CartEmpty />
               <h1 className="title">{t('cart.title')}</h1>
               <h6  className="desc">{t('cart.empty')}</h6>
-              <Link to={ROUTES.HOME} className="back">
-                {t('cart.backToStore')}
+              <Link to={ROUTES.HOME} className="button-1 margin-top-10">
+                <span>{t('cart.backToStore')}</span>
               </Link>
             </div>
           </div>

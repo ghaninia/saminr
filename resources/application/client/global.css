@@ -2632,3 +2632,12 @@ input[type="submit"]:hover {
 [data-theme="dark"] :-ms-input-placeholder {
     color: #999;
 }
+
+
+.margin-top-10 {
+    margin-top: 10px;
+}
+
+.margin-top-20 {
+    margin-top: 20px;
+}
