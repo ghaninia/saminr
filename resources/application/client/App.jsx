@@ -16,6 +16,7 @@ import ProductDetails from './pages/Product/ProductDetails'
 import Categories from './pages/Categories/Categories'
 import Cart from './pages/Cart/Cart'
 import NotFound from './pages/NotFound'
+import ScrollToTop from './components/ScrollToTop'
 import { ROUTES } from './constants/index'
 import './App.css'
 
@@ -35,6 +36,7 @@ function App() {
                 <SplashScreen />
                 <div className="App">
                   <Navigation />
+                  <ScrollToTop />
                   <Routes>
                     <Route path={ROUTES.HOME} element={<Main />} />
                     <Route path={ROUTES.CATEGORIES} element={<Categories />} />
