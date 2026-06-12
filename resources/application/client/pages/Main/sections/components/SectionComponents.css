@@ -1008,43 +1008,27 @@
 
   .hero-slogans {
     position: absolute;
-    bottom: 8%;
-    left: 50%;
-    right: auto;
-    top: auto;
-    height: auto;
-    width: 100%;
-    transform: translateX(-50%);
-    display: flex;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    height: auto !important;
     justify-content: center;
     align-items: center;
-    padding: 0 1rem;
+    padding: 10px !important;
   }
 
   .hero-slogan {
+    max-width: none!important;
+    width: 100%;
     position: relative;
-    max-width: 90%;
-    left: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
     text-align: center;
-    animation-name: hero-slogan-fade-up;
-    animation-duration: 0.6s;
-  }
-
-  .hero-slogan::after {
-    content: none;
-    border-width: 0;
-  }
-
-  .hero-slogan.anim-fade-up,
-  .hero-slogan.anim-fade-down,
-  .hero-slogan.anim-zoom-in,
-  .hero-slogan.anim-slide-left,
-  .hero-slogan.anim-slide-right,
-  .hero-slogan.anim-rotate-in {
-    animation-name: hero-slogan-fade-up;
+    margin: 0!important;
+    border-radius: 16px !important;
   }
 }
 
