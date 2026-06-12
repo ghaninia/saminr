@@ -200,7 +200,7 @@
     display: none;
   }
   .empty-cart {
-    width: auto;
+    width: auto !important;
   }
 }
 

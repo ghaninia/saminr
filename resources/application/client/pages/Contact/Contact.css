@@ -1,24 +1,21 @@
 .contact-page {
   width: 100%;
-  min-height: 80vh;
-  padding: 0 1rem 4rem;
+  min-height: 100vh;
+  padding-top: 120px;
+  padding-bottom: 4rem;
 }
 
 .contact-hero {
-  display: block;
-  text-align: center;
-  padding: 200px 0;
+    text-align: center;
+    padding: 2rem 1rem 2.5rem;
 }
 
 .contact-title {
-  color: var(--foreground, #fff);
-  margin-bottom: 0.75rem;
+  display: block;
 }
 
 .contact-subtitle {
-  max-width: 500px;
-  margin: 0 auto;
-  line-height: 1.6;
+  display: block;
 }
 
 .contact-wrapper {
@@ -26,14 +23,20 @@
 }
 
 .contact-card {
-  padding:0 ;
-  
+  display: block;
+  margin: 0 1rem 0;
 }
 
 .contact-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.contact-field label {
+  font-size: .8rem;
+  margin: 0 0 10px 0;
+  font-family: "iranbakhbold";
 }
 
 .contact-label {
@@ -117,7 +120,7 @@
 
 @media (max-width: 480px) {
   .contact-card {
-    padding: 1.75rem 1.25rem;
+    padding: 30px 0;  
   }
 }
 
@@ -126,8 +129,7 @@
 /* ======= Contact Box style ======= */
 .contact-box {
   position: relative;
-  margin-bottom: 0px;
-  margin-top: -100px;
+  margin: 0 1rem 0;
 }
 
 .contact-box .container {
@@ -150,6 +152,13 @@
   border-radius: 20px;
   background: var(--sidebar-primary);
   border: 1px var(--sidebar-border) solid;
+}
+
+@media (max-width: 768px) {
+  .contact-box .item {
+    padding: 30px 30px !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 .contact-box .item.active {
