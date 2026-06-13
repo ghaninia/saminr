@@ -167,7 +167,7 @@ export default function ProductDetails() {
   return (
     <>
       <section
-        className="banner-header section-padding bg-img"
+        className="product-header bg-img"
         data-overlay-dark="5"
         style={normalized.isFallbackImage ? {} : { backgroundImage: `url('${normalized.image}')` }}
       >
@@ -193,29 +193,9 @@ export default function ProductDetails() {
         </div>
       </section>
 
-      <section className="section-padding">
+      <section>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            {/* Main Content */}
-            <div className="space-y-8 lg:col-span-8">
-              <div className="title">{t('productDetails.overview')}</div>
-
-              <div className="description">
-                {normalized.description || t('productDetails.noDescription')}
-              </div>
-
-              {normalized.gallery && normalized.gallery.length > 0 && imageItems.length > 0 && (
-                <GallerySection
-                  imageItems={imageItems}
-                  language={language}
-                  t={t}
-                  onImageClick={(index) => {
-                    setLightboxIndex(index)
-                    setIsLightboxOpen(true)
-                  }}
-                />
-              )}
-            </div>
 
             {/* Sidebar */}
             <aside className="lg:col-span-4">
@@ -240,6 +220,27 @@ export default function ProductDetails() {
                 productRaw={normalized}
               />
             </aside>
+
+            {/* Main Content */}
+            <div className="space-y-8 lg:col-span-8">
+              <div className="product-overview">
+                <h3 className="title">{t('productDetails.overview')}</h3>
+                <div className="description">
+                  {normalized.description || t('productDetails.noDescription')}
+                </div>
+                {normalized.gallery && normalized.gallery.length > 0 && imageItems.length > 0 && (
+                  <GallerySection
+                    imageItems={imageItems}
+                    language={language}
+                    t={t}
+                    onImageClick={(index) => {
+                      setLightboxIndex(index)
+                      setIsLightboxOpen(true)
+                    }}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>

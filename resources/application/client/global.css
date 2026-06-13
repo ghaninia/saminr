@@ -364,7 +364,7 @@ html[data-theme="light"] .background {
 
 /* ======= Process style ======= */
 .section-padding {
-    padding: 80px 0;
+    padding: 80px 15px;
 }
 
 .process {
@@ -1615,7 +1615,6 @@ section .swiper-button-prev::after {
 /* ======= App style ======= */
 .app {
     position: relative;
-    padding: 80px 0;
 }
 
 .app .item {
@@ -1924,7 +1923,7 @@ section .swiper-button-prev::after {
     background-color: var(--cover);
 }
 
-.banner-header {
+.product-header {
     height: 70vh;
     background-position: center;
     background-repeat: no-repeat;
@@ -1934,22 +1933,25 @@ section .swiper-button-prev::after {
 }
 
 @media (max-width: 768px) {
-    .banner-header {
+    .product-header {
         height: 30vh;
-        margin: 80px 20px;
+        margin: 80px 20px 0 20px;
         border-radius: 20px;
         overflow: hidden;
         padding: 20px;
     }
     .car-details {
-        padding: 20px 0 !important;
+        padding: 0 20px 0 20px !important;
     }
     .car-details .sidebar-car {
         margin-top: 20px !important;
     }
+    .product-overview {
+        margin: 0 20px 80px 20px !important;
+    }
 }
 
-.banner-header .fallback-image-placeholder {
+.product-header .fallback-image-placeholder {
     position: absolute;
     top: calc(50% - 40px);
     left: calc(50% - 40px);
@@ -1963,20 +1965,20 @@ section .swiper-button-prev::after {
     z-index: 1;
 }
 
-.banner-header .fallback-image-placeholder img {
+.product-header .fallback-image-placeholder img {
     display: block;
     height: 100%;
     width: 100%;
 }
 
-.banner-header.middle-height {
+.product-header.middle-height {
     min-height: 80vh;
 }
-.banner-header.full-height {
+.product-header.full-height {
     min-height: 100vh;
 }
 
-.banner-header .post-wrapper {
+.product-header .post-wrapper {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -1989,11 +1991,11 @@ section .swiper-button-prev::after {
     color: #fff;
     margin-bottom: 15px;
 }
-.banner-header .post-wrapper a {
+.product-header .post-wrapper a {
     color: #f5b754;
     font-weight: 300;
 }
-.banner-header .post-wrapper .divider {
+.product-header .post-wrapper .divider {
     width: 20px;
     height: 1px;
     margin-left: 15px;

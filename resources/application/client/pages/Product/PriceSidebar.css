@@ -72,3 +72,20 @@
 .stock-text {
   color: #059669; /* Green success color */
 }
+
+.add-to-cart-btn {
+  cursor: pointer;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.product-overview {
+  margin-top: 20px;
+  padding: 0 0.5rem;
+  display: block;
+}
+
+.product-overview .title {
+  display: block;
+  padding: 20px 0;
+}

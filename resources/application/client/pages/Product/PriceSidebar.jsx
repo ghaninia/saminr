@@ -132,7 +132,6 @@ export default function PriceSidebar({
           <div className="variant-unit-container">
             {/* Click container alerts active Variant ID */}
             <div
-              onClick={() => alert(`Variant ID: ${variant?.id}`)}
               className="variant-unit-btn"
               style={{ cursor: 'pointer', opacity: 1 }}
             >
@@ -159,17 +158,9 @@ export default function PriceSidebar({
 
             {/* Add to Cart Premium CTA Button */}
             <button
+              type="submit"
               onClick={handleAddToCart}
-              className="btn-primary"
-              style={{
-                width: '100%',
-                marginTop: '15px',
-                padding: '12px',
-                fontSize: '15px',
-                fontWeight: '600',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}
+              className="button-1 add-to-cart-btn"
               disabled={isNumeric && variant?.unit === 0}
             >
               {t('productDetails.addToCart')}

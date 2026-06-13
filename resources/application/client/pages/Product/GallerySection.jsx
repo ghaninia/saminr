@@ -15,7 +15,7 @@ export default function GallerySection({
 
   return (
     <div className="gallery gallery-items">
-      <div className="title">{t('productDetails.gallery')}</div>
+      <h3 className="title">{t('productDetails.gallery')}</h3>
       <div className="space-y-4">
         <Swiper
           key={language}

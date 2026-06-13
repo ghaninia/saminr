@@ -91,7 +91,7 @@ function Footer() {
     <footer className="footer">
       <div className="container mx-auto px-4">
         {/* first footer */}
-        <div className="first-footer py-16">
+        <div className="first-footer section-padding">
           <div className="grid grid-cols-1">
             <div className="links dark footer-contact-links">
               <div className="footer-contact-links-wrapper grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -124,6 +124,9 @@ function Footer() {
                           </div>
                         </button>
                       </div>
+                      {index < contactItems.length - 1 ? (
+                        <div className="footer-contact-links-divider hidden md:block"></div>
+                      ) : null}
                     </div>
                   )
                 })}
@@ -132,7 +135,7 @@ function Footer() {
           </div>
         </div>
         {/* second footer */}
-        <div className="second-footer border-b border-gray-700">
+        <div className="second-footer">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
             {/* about & social icons */}
             <div className="md:col-span-4 widget-area">

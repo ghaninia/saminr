@@ -13,7 +13,7 @@ function AppSection() {
   const youtube = getSetting('youtube', { fallback: '#', localized: false })
 
   return (
-    <section id="app-section" className="app section-padding">
+    <section className="app section-padding">
       <div className="container">
         <div className="item">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

@@ -15,7 +15,7 @@ export default function Cart() {
   if (cartItems.length === 0) {
     return (
       <>
-      <section className="cart-header section-padding">
+      <section className="cart-header">
         <div className="v-middle">
           <div className="container">
             <div className="col-md-12">
