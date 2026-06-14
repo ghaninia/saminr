@@ -263,7 +263,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
         $attribute->fill([
             'label' => (array) Arr::get($attributeData, 'label', $attribute->label),
-            'icon_svg' => Arr::get($attributeData, 'icon_svg', $attribute->icon_svg),
+            'icon_svg' => Arr::get($attributeData, 'icon_svg') ?? $attribute->icon_svg,
             'value_type' => (string) Arr::get($attributeData, 'value_type', $attribute->value_type),
             'sort_order' => (int) Arr::get($attributeData, 'sort_order', $attribute->sort_order),
         ])->save();
