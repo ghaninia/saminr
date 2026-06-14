@@ -22,40 +22,37 @@
 .quantity-controls {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.qty-btn {
-  width: 28px;
-  height: 28px;
+  /* gap: 16px; */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(128, 128, 128, 0.15);
-  border: none;
-  border-radius: 10px;
-  color: inherit;
-  font-size: 16px;
-  font-weight: bold;
+}
+
+.qty-btn {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  outline: none;
+  transition: 0.2s ease;
+  border: 1px var(--sidebar-border) solid;
+  align-items: center;
+  justify-content: center;
 }
 
 .qty-btn:hover:not(:disabled) {
-  background-color: #b1955c;
-  color: #fff;
+  border-color: var(--palette-cream);
 }
 
 .qty-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .qty-value {
-  font-size: 16px;
+  min-width: 24px;
+  font-size: .7rem;
   font-weight: 600;
-  min-width: 20px;
   text-align: center;
 }
 

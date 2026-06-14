@@ -2035,6 +2035,7 @@ section .swiper-button-prev::after {
 
 .car-details {
     position: relative;
+    margin-bottom: 50px;
 }
 
 .car-details h3 {
